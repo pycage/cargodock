@@ -10,7 +10,8 @@ TARGET = harbour-cargodock
 
 CONFIG += sailfishapp
 
-SOURCES += src/harbour-cargodock.cpp
+SOURCES += src/harbour-cargodock.cpp \
+    src/foldermodel.cpp
 
 OTHER_FILES += qml/harbour-cargodock.qml \
     qml/cover/CoverPage.qml \
@@ -19,4 +20,7 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     rpm/harbour-cargodock.yaml \
     harbour-cargodock.desktop \
     qml/pages/FolderPage.qml
+
+HEADERS += \
+    src/foldermodel.h
 

@@ -1,73 +1,232 @@
-/*
-  Copyright (C) 2013 Jolla Ltd.
-  Contact: Thomas Perl <thomas.perl@jollamobile.com>
-  All rights reserved.
-
-  You may use this file under the terms of BSD license as follows:
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the Jolla Ltd nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
-
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE FOR
-  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-
+import org.pycage.cargodock 1.0
 
 Page {
     id: page
 
-    // To enable PullDownMenu, place our content in a SilicaFlickable
-    SilicaFlickable {
-        anchors.fill: parent
+    property bool secondPane: false
+    property alias path: folderModel.path
+    property variant _breadcrumbs: folderModel.breadcrumbs
 
-        // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
+    property bool _selectionMode: false
+
+    signal copyCommand(variant sourceModel)
+    signal linkCommand(variant sourceModel)
+
+    function currentContentModel()
+    {
+        return folderModel;
+    }
+
+    FolderModel {
+        id: folderModel
+        path: "/home/nemo"
+    }
+
+    ListModel {
+        id: bookMarksModel
+
+        ListElement {
+            name: "Documents"
+            type: FolderModel.Folder
+            path: "/home/nemo/Documents"
+        }
+
+        ListElement {
+            name: "Downloads"
+            type: FolderModel.Folder
+            path: "/home/nemo/Downloads"
+        }
+
+        ListElement {
+            name: "Music"
+            type: FolderModel.Folder
+            path: "/home/nemo/Music"
+        }
+
+        ListElement {
+            name: "Videos"
+            type: FolderModel.Folder
+            path: "/home/nemo/Videos"
+        }
+
+        ListElement {
+            name: "Pictures"
+            type: FolderModel.Folder
+            path: "/home/nemo/Pictures"
+        }
+
+        ListElement {
+            name: "Camera"
+            type: FolderModel.Folder
+            path: "/home/nemo/Pictures/Camera"
+        }
+    }
+
+    Rectangle {
+        visible: _selectionMode
+        anchors.fill: parent
+        color: Theme.highlightColor
+        opacity: 0.3
+    }
+
+    SilicaListView {
+        id: bookmarksList
+
+        visible: true
+        anchors.fill: parent
+        model: bookMarksModel
+
+        header: PageHeader {
+            title: "Places"
+        }
+
         PullDownMenu {
             MenuItem {
-                text: "Show Page 2"
-                onClicked: pageStack.push(Qt.resolvedUrl("SecondPage.qml"))
+                text: "About"
+            }
+
+            MenuItem {
+                text: "Help"
+            }
+
+            MenuItem {
+                text: "Settings"
             }
         }
 
-        // Tell SilicaFlickable the height of its content.
-        contentHeight: column.height
-
-        // Place our content in a Column.  The PageHeader is always placed at the top
-        // of the page, followed by our content.
-        Column {
-            id: column
-
-            width: page.width
-            spacing: Theme.paddingLarge
-            PageHeader {
-                title: "UI Template"
+        delegate: ListItem {
+            Rectangle {
+                id: placeIcon
+                width: height
+                height: parent.height
+                color: type === FolderModel.Folder ? "red" : "blue"
             }
+
             Label {
-                x: Theme.paddingLarge
-                text: "Hello Sailors"
-                color: Theme.secondaryHighlightColor
-                font.pixelSize: Theme.fontSizeLarge
+                anchors.left: placeIcon.right
+                text: name
+            }
+
+            onClicked: {
+                contentlist.model.path = path;
+                bookmarksList.visible = false;
             }
         }
     }
-}
 
+    SilicaListView {
+        id: contentlist
+
+        visible: ! bookmarksList.visible
+        anchors.fill: parent
+
+        // improve performance when switching pages
+        model: page.status === PageStatus.Active ? folderModel : null
+
+        header: PageHeader {
+            title: folderModel.name
+        }
+
+        PullDownMenu {
+            MenuItem {
+                visible: _selectionMode
+                text: "Delete"
+            }
+            MenuItem {
+                visible: _selectionMode
+                text: "Copy to other side"
+
+                onClicked: {
+                    page.copyCommand(folderModel);
+                }
+            }
+            MenuItem {
+                visible: _selectionMode
+                text: "Link to other side"
+
+                onClicked: {
+                    page.linkCommand(folderModel);
+                }
+            }
+
+            MenuItem {
+                visible: ! _selectionMode
+                text: "Places"
+
+                onClicked: {
+                    bookmarksList.visible = true;
+                }
+            }
+
+            Repeater {
+                model: _selectionMode ? 0 : _breadcrumbs.length
+
+                MenuItem {
+                    text: _breadcrumbs[index] + "/"
+
+                    onClicked: {
+                        folderModel.cdUp(_breadcrumbs.length - index);
+                    }
+                }
+            }
+        }
+
+        delegate: ListItem {
+            showMenuOnPressAndHold: false
+
+            Rectangle {
+                anchors.fill: parent
+                color: selected ? Theme.highlightColor : "transparent"
+                opacity: 0.5
+            }
+
+            Rectangle {
+                id: icon
+                width: height
+                height: parent.height
+                color: type === FolderModel.Folder ? "red" : "blue"
+            }
+
+            Label {
+                anchors.left: icon.right
+                text: name
+            }
+
+            onClicked: {
+                if (! page._selectionMode)
+                {
+                    folderModel.open(name);
+                }
+                else
+                {
+                    folderModel.setSelected(index, ! selected);
+                }
+            }
+
+            onPressAndHold: {
+                if (! page._selectionMode)
+                {
+                    folderModel.setSelected(index, true);
+                    page._selectionMode = true;
+                }
+                else
+                {
+                    page._selectionMode = false;
+                    for (var i = 0; i < contentlist.count; ++i)
+                    {
+                        folderModel.setSelected(i, false);
+                    }
+                }
+            }
+        }
+
+        ViewPlaceholder {
+            enabled: ! folderModel.isReadable
+            text: "You have no permission for this folder."
+        }
+    }
+
+}
 
