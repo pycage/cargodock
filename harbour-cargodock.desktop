@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 X-Nemo-Application-Type=silica-qt5
-Name=harbour-cargodock
-Icon=/usr/share/icons/hicolor/90x90/apps/harbour-cargodock.png
+Name=Cargo Dock
+Icon=harbour-cargodock
 Exec=harbour-cargodock
 
