@@ -40,12 +40,17 @@ ApplicationWindow
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
 
     Component.onCompleted: {
-        pageStack.pushExtra(folderPage, { "secondPane": true });
+        pageStack.pushExtra(folderPage);
     }
 
     QtObject {
         id: sharedState
         property bool actionInProgress
+        property string actionName
+    }
+
+    Notification {
+        id: notification
     }
 
     Label {
@@ -87,20 +92,23 @@ ApplicationWindow
                 var destModel = destinationContentModel(sourceModel);
                 if (destModel)
                 {
+                    sharedState.actionName = "copying";
                     sharedState.actionInProgress = true;
                     sourceModel.copySelected(destModel);
                 }
             }
 
             onDeleteCommand: {
+                sharedState.actionName = "deleting";
                 sharedState.actionInProgress = true;
-                sourceModel.deleteSelected();
+                sourceModel.deleteItems(items);
             }
 
             onLinkCommand: {
                 var destModel = destinationContentModel(sourceModel);
                 if (destModel)
                 {
+                    sharedState.actionName = "linking";
                     sharedState.actionInProgress = true;
                     sourceModel.linkSelected(destModel);
                 }
@@ -108,6 +116,7 @@ ApplicationWindow
 
             onError: {
                 sharedState.actionInProgress = false;
+                notification.show(details);
             }
 
             onFinished: {

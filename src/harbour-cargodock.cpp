@@ -4,7 +4,10 @@
 #include <QQuickView>
 #include <QScopedPointer>
 #include <QtQml>
+
+#include "folderbase.h"
 #include "foldermodel.h"
+#include "placesmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,7 +23,10 @@ int main(int argc, char *argv[])
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
 
+    qmlRegisterUncreatableType<FolderBase>("org.pycage.cargodock", 1, 0, "FolderBase", "abstract");
     qmlRegisterType<FolderModel>("org.pycage.cargodock", 1, 0, "FolderModel");
+    qmlRegisterType<PlacesModel>("org.pycage.cargodock", 1, 0, "PlacesModel");
+
     view->setSource(SailfishApp::pathTo("qml/harbour-cargodock.qml"));
     view->show();
 

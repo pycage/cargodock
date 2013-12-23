@@ -5,111 +5,108 @@ import org.pycage.cargodock 1.0
 Page {
     id: page
 
-    property bool secondPane: false
-    property alias path: folderModel.path
-    property variant _breadcrumbs: folderModel.breadcrumbs
+    property variant _modelStack: []
+
+    property variant _breadcrumbs: []
 
     property bool _selectionMode: false
 
     signal copyCommand(variant sourceModel)
-    signal deleteCommand(variant sourceModel)
+    signal deleteCommand(variant sourceModel, variant items)
     signal linkCommand(variant sourceModel)
     signal finished()
     signal error(string details)
 
     function currentContentModel()
     {
-        return folderModel;
+        return _modelStack[_modelStack.length - 1];
     }
 
-    /*
-    onStatusChanged: {
-        if (status === PageStatus.Active)
+    function pushModel(name, path)
+    {
+        var props = {
+            "path": path
+        };
+        var model;
+        if (name === "places")
         {
-            contentList.contentY = contentList.position;
+            model = placesModelComponent.createObject(page, props);
         }
-    }
-    */
-
-    FolderModel {
-        id: folderModel
-        path: "/home/nemo"
-
-        onFinished: {
-            page.finished();
+        else
+        {
+            model = folderModelComponent.createObject(page, props);
         }
 
-        onError: {
-            page.error(details);
-        }
+        var stack = _modelStack;
+        stack.push(model);
+        _modelStack = stack;
+        contentlist.model = model;
     }
 
-    ListModel {
-        id: bookMarksModel
+    function popModels(model)
+    {
+        var stack = _modelStack;
+        while (stack.length > 0 && stack[stack.length - 1] !== model)
+        {
+            stack.pop();
+        }
+        _modelStack = stack;
+        contentlist.model = _modelStack[_modelStack.length - 1];
+    }
 
-        ListElement {
-            name: "Documents"
-            type: FolderModel.Folder
-            path: "/home/nemo/Documents"
-            depth: 3
-            icon: "image://theme/icon-m-document"
+    function collectBreadcrumbs(currentBreadcrumbs)
+    {
+        var crumbs = [];
+        for (var i = 0; i < _modelStack.length; ++i)
+        {
+            var model = _modelStack[i];
+            for (var j = 0; j < model.breadcrumbs.length; ++j)
+            {
+                var item = {
+                    "name": model.breadcrumbs[j],
+                    "model": model,
+                    "level": model.breadcrumbs.length - 1 -j
+                };
+                crumbs.push(item);
+            }
         }
 
-        ListElement {
-            name: "Downloads"
-            type: FolderModel.Folder
-            path: "/home/nemo/Downloads"
-            depth: 3
-            icon: "image://theme/icon-m-download"
+        // we're not interested in the last crumbs (current folder)
+        if (crumbs.length > 0) {
+            crumbs.pop();
         }
 
-        ListElement {
-            name: "Music"
-            type: FolderModel.Folder
-            path: "/home/nemo/Music"
-            depth: 3
-            icon: "image://theme/icon-m-music"
-        }
+        return crumbs;
+    }
 
-        ListElement {
-            name: "Videos"
-            type: FolderModel.Folder
-            path: "/home/nemo/Videos"
-            depth: 3
-            icon: "image://theme/icon-m-media"
-        }
+    Component {
+        id: folderModelComponent
+        FolderModel {
 
-        ListElement {
-            name: "Pictures"
-            type: FolderModel.Folder
-            path: "/home/nemo/Pictures"
-            depth: 3
-            icon: "image://theme/icon-m-image"
+            onFinished: {
+                page.finished();
+            }
+            onError: {
+                page.error(details);
+            }
         }
+    }
 
-        ListElement {
-            name: "Camera"
-            type: FolderModel.Folder
-            path: "/home/nemo/Pictures/Camera"
-            depth: 4
-            icon: "image://theme/icon-m-camera"
-        }
+    Component {
+        id: placesModelComponent
+        PlacesModel {
 
-        ListElement {
-            name: "Home"
-            type: FolderModel.Folder
-            path: "/home/nemo"
-            depth: 2
-            icon: "image://theme/icon-m-home"
+            onFinished: {
+                page.finished();
+            }
+            onError: {
+                page.error(details);
+            }
         }
+    }
 
-        ListElement {
-            name: "System"
-            type: FolderModel.Folder
-            path: "/"
-            depth: 0
-            icon: "image://theme/icon-m-device"
-        }
+    Component.onCompleted: {
+        pushModel("places", "Places");
     }
 
     RemorsePopup {
@@ -132,37 +129,47 @@ Page {
                 enabled: ! sharedState.actionInProgress
 
                 MenuItem {
-                    enabled: folderModel.selected > 0
+                    enabled: contentlist.model.selected > 0
                     text: "Copy to other side"
 
                     onClicked: {
-                        page.copyCommand(folderModel);
+                        page.copyCommand(contentlist.model);
                     }
                 }
                 MenuItem {
-                    enabled: folderModel.selected > 0
+                    enabled: contentlist.model.selected > 0
                     text: "Link to other side"
 
                     onClicked: {
-                        page.linkCommand(folderModel);
+                        page.linkCommand(contentlist.model);
                     }
                 }
                 MenuItem {
-                    enabled: folderModel.selected > 0
+                    enabled: contentlist.model.selected > 0
                     text: "Delete"
 
                     onClicked: {
                         var text = qsTr("Deleting %1 items")
-                                   .arg(folderModel.selected);
-                        remorse.execute(text, function() {
-                            page.deleteCommand(folderModel);
-                        });
+                        .arg(contentlist.model.selected);
+
+                        function closure(model, items)
+                        {
+                            return function() {
+                                console.log("deleting " + items.length + " items " + items);
+                                page.deleteCommand(model, items);
+                            }
+                        }
+
+                        remorse.execute(text,
+                                        closure(contentlist.model,
+                                                contentlist.model.selection.slice()));
                     }
                 }
             }
 
-            Column {
+            Item {
                 width: parent.width
+                height: parent.height - Theme.itemSizeSmall
 
                 Separator {
                     width: parent.width
@@ -171,67 +178,84 @@ Page {
                 }
 
                 IconButton {
+                    anchors.top: parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
                     icon.source: "image://theme/icon-m-close"
 
                     onClicked: {
-                        folderModel.unselectAll();
+                        contentlist.model.unselectAll();
                         _selectionMode = false;
                     }
                 }
 
                 Label {
+                    id: selectedLabel
                     visible: ! sharedState.actionInProgress
-                    width: drawerView.width
+                    anchors.centerIn: parent
                     color: Theme.highlightColor
                     horizontalAlignment: Text.AlignHCenter
-                    text: qsTr("%1 selected").arg(folderModel.selected)
+                    font.pixelSize: Theme.fontSizeExtraLarge
+                    text: qsTr("%1 selected").arg(contentlist.model.selected)
+                }
+
+                Label {
+                    anchors.top: selectedLabel.bottom
+                    visible: selectedLabel.visible
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: Theme.secondaryColor
+                    font.pixelSize: Theme.fontSizeSmall
+                    text: qsTr("Pull up for actions")
                 }
 
                 BusyIndicator {
+                    id: busyIndicator
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
                     running: sharedState.actionInProgress
                     size: BusyIndicatorSize.Large
-                }
-            }
-        }
 
-        SilicaListView {
-            id: bookmarksList
-
-            visible: true
-            anchors.fill: parent
-            model: bookMarksModel
-
-            header: PageHeader {
-                title: "Places"
-            }
-
-            PullDownMenu {
-                MenuItem {
-                    text: "About"
                 }
 
-                MenuItem {
-                    text: "Help"
+                Label {
+                    visible: busyIndicator.running
+                    anchors.centerIn: busyIndicator
+                    color: Theme.secondaryColor
+                    font.pixelSize: Theme.fontSizeSmall
+                    text: sharedState.actionName
+                }
 
-                    onClicked: {
-                        pageStack.push(Qt.resolvedUrl("HelpPage.qml"));
+            }
+
+            Item {
+                visible: ! sharedState.actionInProgress
+                anchors.bottom: parent.bottom
+                width: parent.width
+                height: Theme.itemSizeSmall
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: Theme.highlightColor
+                    opacity: 0.1
+                }
+
+                Row {
+                    anchors.centerIn: parent
+
+                    Button {
+                        text: "All"
+
+                        onClicked: {
+                            contentlist.model.selectAll();
+                        }
                     }
-                }
-            }
 
-            delegate: FileDelegate {
-                fileInfo: FileInfo {
-                    name: model.name
-                    type: model.type
-                    icon: model.icon
-                    uri: model.path
-                }
+                    Button {
+                        text: "None"
 
-                onClicked: {
-                    contentlist.model.minDepth = depth;
-                    contentlist.model.path = path;
-                    bookmarksList.visible = false;
+                        onClicked: {
+                            contentlist.model.unselectAll();
+                        }
+                    }
                 }
             }
         }
@@ -239,22 +263,17 @@ Page {
         SilicaListView {
             id: contentlist
 
-            property int position: contentY
-
-            visible: ! bookmarksList.visible
             anchors.fill: parent
-
-            // improve performance when switching pages
-            model: folderModel //page.status === PageStatus.Active ? folderModel : null
 
             header: Column {
                 width: contentlist.width
 
                 PageHeader {
-                    title: folderModel.name
+                    title: contentlist.model.name
                 }
 
                 ListItem {
+                    visible: contentlist.model.isWritable
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     Image {
@@ -274,13 +293,21 @@ Page {
 
                     onClicked: {
                         var dlg = pageStack.push(Qt.resolvedUrl("NewFolderDialog.qml"));
-                        dlg.accepted.connect(function() {
-                            folderModel.newFolder(name);
-                        });
+
+                        function closure(model, dlg)
+                        {
+                            return function()
+                            {
+                                model.newFolder(dlg.name);
+                            }
+                        }
+
+                        dlg.accepted.connect(closure(contentlist.model, dlg));
                     }
                 }
 
                 Separator {
+                    visible: contentlist.model.isWritable
                     width: parent.width
                     horizontalAlignment: Qt.AlignHCenter
                     color: Theme.highlightColor
@@ -289,22 +316,42 @@ Page {
             }
 
             PullDownMenu {
+
                 MenuItem {
-                    text: "Places"
+                    visible: breadcrumbRepeater.count === 0
+                    text: "About"
 
                     onClicked: {
-                        bookmarksList.visible = true;
+                        pageStack.push(Qt.resolvedUrl("AboutPage.qml"));
                     }
                 }
 
+                MenuItem {
+                    visible: breadcrumbRepeater.count === 0
+                    text: "Help"
+
+                    onClicked: {
+                        pageStack.push(Qt.resolvedUrl("HelpPage.qml"));
+                    }
+                }
+
+                // Menu of breadcrumbs
                 Repeater {
-                    model: _selectionMode ? 0 : _breadcrumbs.length
+                    id: breadcrumbRepeater
+                    model: collectBreadcrumbs(contentlist.model.breadcrumbs)
 
                     MenuItem {
-                        text: _breadcrumbs[index] + "/"
+                        text: modelData.name
 
                         onClicked: {
-                            folderModel.cdUp(_breadcrumbs.length - index);
+                            if (modelData.model !== contentlist.model)
+                            {
+                                popModels(modelData.model);
+                            }
+
+                            console.log("up " + modelData.level);
+                            _selectionMode = false;
+                            modelData.model.cdUp(modelData.level);
                         }
                     }
                 }
@@ -314,6 +361,7 @@ Page {
 
                 fileInfo: FileInfo {
                     source: model
+                    sourceModel: contentlist.model
                 }
 
                 selected: model.selected
@@ -322,7 +370,11 @@ Page {
                 onClicked: {
                     if (! page._selectionMode)
                     {
-                        if (model.type === FolderModel.File || model.type === FolderModel.FileLink)
+                        if (model.modelTarget)
+                        {
+                            pushModel(model.modelTarget, model.linkTarget);
+                        }
+                        else if (model.type === FolderBase.File || model.type === FolderBase.FileLink)
                         {
                             var props = {
                                 "fileInfo": fileInfo
@@ -338,43 +390,48 @@ Page {
                                 }
                             }
 
-                            dlg.accepted.connect(closure(folderModel, model.name));
+                            dlg.accepted.connect(closure(contentlist.model, model.name));
                         } else {
-                            folderModel.open(model.name);
+                            contentlist.model.open(model.name);
                         }
                     }
                     else
                     {
-                        folderModel.setSelected(index, ! selected);
+                        contentlist.model.setSelected(index, ! selected);
                     }
                 }
 
                 onPressAndHold: {
                     if (! page._selectionMode)
                     {
-                        folderModel.setSelected(index, true);
+                        contentlist.model.setSelected(index, true);
                         page._selectionMode = true;
                     }
                     else
                     {
                         page._selectionMode = false;
-                        folderModel.unselectAll();
+                        contentlist.model.unselectAll();
                     }
                 }
             }
 
             ViewPlaceholder {
-                enabled: ! folderModel.isReadable
+                enabled: ! contentlist.model.isReadable
                 text: "You have no permission for this folder"
             }
 
             ViewPlaceholder {
-                enabled: folderModel.count === 0 && folderModel.isReadable
+                enabled: contentlist.model.count === 0 && contentlist.model.isReadable
                 text: "No files"
             }
 
             ScrollDecorator { }
+
+        }//SilicaListView
+
+        FancyScroller {
+            flickable: contentlist
         }
-    }
+    }//Drawer
 }
 

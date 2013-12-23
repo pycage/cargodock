@@ -12,7 +12,9 @@ CONFIG += sailfishapp
 
 SOURCES += src/harbour-cargodock.cpp \
     src/foldermodel.cpp \
-    src/copyaction.cpp
+    src/copyaction.cpp \
+    src/folderbase.cpp \
+    src/placesmodel.cpp
 
 OTHER_FILES += qml/harbour-cargodock.qml \
     qml/cover/CoverPage.qml \
@@ -25,10 +27,18 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/pages/NewFolderDialog.qml \
     qml/pages/HelpPage.qml \
     qml/pages/KeyValue.qml \
-    qml/pages/FileInfo.qml
+    qml/pages/FileInfo.qml \
+    qml/pages/KeySwitch.qml \
+    qml/pages/Notification.qml \
+    qml/pages/FancyScroller.qml \
+    qml/pages/license.js \
+    qml/pages/LicensePage.qml \
+    qml/pages/AboutPage.qml
 
 HEADERS += \
     src/foldermodel.h \
     src/folderaction.h \
-    src/copyaction.h
+    src/copyaction.h \
+    src/folderbase.h \
+    src/placesmodel.h
 

@@ -1,5 +1,5 @@
 #include "copyaction.h"
-#include "foldermodel.h"
+#include "folderbase.h"
 
 #include <QFileInfo>
 #include <QIODevice>
@@ -62,8 +62,8 @@ private:
 };
 
 
-CopyAction::CopyAction(FolderModel* source,
-                       FolderModel* dest,
+CopyAction::CopyAction(FolderBase* source,
+                       FolderBase* dest,
                        const QList<QString>& sourcePaths,
                        const QString& destPath)
     : mySource(source)
@@ -83,20 +83,22 @@ void CopyAction::start()
 void CopyAction::copy(const QString& sourcePath, const QString& destPath)
 {
     qDebug() << Q_FUNC_INFO << sourcePath << "->" << destPath;
-    if (mySource->type(sourcePath) == FolderModel::Folder)
+    if (mySource->type(sourcePath) == FolderBase::Folder)
     {
         qDebug() << "folder type";
         const QString fileName = mySource->basename(sourcePath);
-        const QString destDir = myDestination->joinPath(destPath, fileName);
+        const QString destDir = myDestination->joinPath(
+                    QStringList() << destPath << fileName);
 
         myDestination->makeDirectory(destDir);
 
-        QList<QString> paths = mySource->list(sourcePath);
+        QStringList paths = mySource->list(sourcePath);
         qDebug() << "paths" << paths;
         foreach (const QString& path, paths)
         {
-            myCopyPaths << QPair<QString, QString>(mySource->joinPath(sourcePath, path),
-                                                   destDir);
+            myCopyPaths << QPair<QString, QString>(
+                        mySource->joinPath(QStringList() << sourcePath << path),
+                        destDir);
         }
         QTimer::singleShot(0, this, SLOT(slotProcessNext()));
     }
@@ -106,16 +108,24 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
         if (! myCopyThread)
         {
             const QString& destFile =
-                    myDestination->joinPath(destPath,
-                                            mySource->basename(sourcePath));
+                    myDestination->joinPath(QStringList()
+                                            << destPath
+                                            << mySource->basename(sourcePath));
             QIODevice* srcFd = mySource->openFile(sourcePath,
                                                   QIODevice::ReadOnly);
             QIODevice* destFd = myDestination->openFile(destFile,
                                                         QIODevice::WriteOnly);
-            myCopyThread = new CopyThread(srcFd, destFd);
-            connect(myCopyThread, SIGNAL(finished()),
-                    this, SLOT(slotCopyThreadFinished()));
-            myCopyThread->start();
+            if (srcFd && destFd)
+            {
+                myCopyThread = new CopyThread(srcFd, destFd);
+                connect(myCopyThread, SIGNAL(finished()),
+                        this, SLOT(slotCopyThreadFinished()));
+                myCopyThread->start();
+            }
+            else
+            {
+                emit error("cannot copy");
+            }
         }
     }
 }

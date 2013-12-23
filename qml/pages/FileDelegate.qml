@@ -19,7 +19,9 @@ ListItem {
         width: height
         height: parent.height
         asynchronous: true
+        fillMode: Image.PreserveAspectCrop
         source: fileInfo.icon !== "" ? fileInfo.icon : fileInfo.uri
+        clip: true
     }
 
     Label {
@@ -42,7 +44,7 @@ ListItem {
         truncationMode: TruncationMode.Fade
         font.pixelSize: Theme.fontSizeSmall
         color: Theme.secondaryColor
-        text: fileInfo.linkTarget !== "" ? "→ " + fileInfo.linkTarget
+        text: (fileInfo.type === FolderModel.FolderLink || fileInfo.type === FolderModel.FileLink) ? "→ " + fileInfo.linkTarget
                                 : Format.formatDate(fileInfo.mtime, Formatter.DurationElapsed) +
                                   (fileInfo.type === FolderModel.File ? " (" + Format.formatFileSize(fileInfo.size) + ")"
                                                              : "")

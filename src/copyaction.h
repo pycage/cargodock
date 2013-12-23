@@ -6,15 +6,15 @@
 #include <QPair>
 #include <QString>
 
-class FolderModel;
+class FolderBase;
 class CopyThread;
 
 class CopyAction : public FolderAction
 {
     Q_OBJECT
 public:
-    CopyAction(FolderModel* source,
-               FolderModel* dest,
+    CopyAction(FolderBase* source,
+               FolderBase* dest,
                const QList<QString>& sourcePaths,
                const QString& destPath);
 
@@ -28,8 +28,8 @@ private slots:
     void slotCopyThreadFinished();
 
 private:
-    FolderModel* mySource;
-    FolderModel* myDestination;
+    FolderBase* mySource;
+    FolderBase* myDestination;
     QList<QString> mySourcePaths;
     QList<QPair<QString, QString> > myCopyPaths;
     QString myDestinationPath;

@@ -9,45 +9,37 @@
 #include <QDebug>
 
 FolderModel::FolderModel(QObject* parent)
-    : QAbstractListModel(parent)
-    , myMinDepth(0)
+    : FolderBase(parent)
     , myIsReadable(true)
-    , mySelectionCount(0)
+    , myIsWritable(false)
 {
-    myRolenames.insert(NameRole, "name");
-    myRolenames.insert(PathRole, "path");
-    myRolenames.insert(UriRole, "uri");
-    myRolenames.insert(TypeRole, "type");
-    myRolenames.insert(MimeTypeRole, "mimeType");
-    myRolenames.insert(IconRole, "icon");
-    myRolenames.insert(SizeRole, "size");
-    myRolenames.insert(MtimeRole, "mtime");
-    myRolenames.insert(LinkTargetRole, "linkTarget");
-    myRolenames.insert(SelectedRole, "selected");
-
+    myIcons.insert("application/octet-stream",                "image://theme/icon-m-other");
     myIcons.insert("application/pdf",                         "image://theme/icon-m-document");
     myIcons.insert("application/vnd.android.package-archive", "image://theme/icon-s-android");
+    myIcons.insert("application/xml",                         "image://theme/icon-m-levels");
     myIcons.insert("application/x-core",                      "image://theme/icon-m-crash-reporter");
-    myIcons.insert("application/x-executable",                "image://theme/icon-m-other");
+    myIcons.insert("application/x-executable",                "image://theme/icon-m-play");
     myIcons.insert("application/x-gzip",                      "image://theme/icon-m-other");
     myIcons.insert("application/x-rpm",                       "image://theme/icon-lock-system-update");
+    myIcons.insert("application/x-sharedlib",                 "image://theme/icon-m-share");
     myIcons.insert("application/x-shellscript",               "image://theme/icon-m-other");
+    myIcons.insert("application/x-sqlite3",                   "image://theme/icon-m-levels");
+    myIcons.insert("application/x-x509-ca-cert",              "image://theme/icon-m-certificates");
+    myIcons.insert("audio/mp4",                               "image://theme/icon-m-music");
     myIcons.insert("audio/mpeg",                              "image://theme/icon-m-music");
     myIcons.insert("image/jpeg",                              "image://theme/icon-m-image");
     myIcons.insert("image/png",                               "");
     myIcons.insert("inode/directory",                         "image://theme/icon-m-folder");
     myIcons.insert("text/html",                               "image://theme/icon-m-region");
-    myIcons.insert("text/plain",                              "image://theme/icon-m-clipboard");
+    myIcons.insert("text/plain",                              "image://theme/icon-m-document");
+    myIcons.insert("text/vcard",                              "image://theme/icon-m-people");
+    myIcons.insert("text/x-c++src",                           "image://theme/icon-m-document");
+    myIcons.insert("text/x-qml",                              "image://theme/icon-m-levels");
     myIcons.insert("video/mp4",                               "image://theme/icon-m-video");
     myIcons.insert("video/x-flv",                             "image://theme/icon-m-video");
 }
 
-QHash<int, QByteArray> FolderModel::roleNames() const
-{
-    return myRolenames;
-}
-
-int FolderModel::rowCount(const QModelIndex& parent) const
+int FolderModel::rowCount(const QModelIndex&) const
 {
     return myItems.size();
 }
@@ -79,198 +71,114 @@ QVariant FolderModel::data(const QModelIndex& index, int role) const
         return item->size;
     case MtimeRole:
         return item->mtime;
+    case OwnerRole:
+        return item->owner;
+    case GroupRole:
+        return item->group;
+    case PermissionsRole:
+        return item->permissions;
     case LinkTargetRole:
         return item->linkTarget;
     case SelectedRole:
-        return item->isSelected;
+        return isSelected(index.row());
     default:
         return QVariant();
     }
 }
 
-void FolderModel::refresh()
+void FolderModel::setPermissions(const QString& name, int permissions)
 {
-    loadDirectory(myPath);
-}
+    qDebug() << "setting permissions" << QDir(path()).absoluteFilePath(name)
+                << permissions;
 
-void FolderModel::open(const QString& name)
-{
-    foreach (Item::ConstPtr item, myItems)
+    int idx = 0;
+    QVector<int> roles;
+    roles << PermissionsRole;
+    foreach (Item::Ptr item, myItems)
     {
         if (item->name == name)
         {
-            const QString path = QDir(myPath).filePath(name);
-            if (item->type == Folder || item->type == FolderLink)
+            // Qt behaves in a weird way here, so we need to double permissions,
+            // if we're the owner of the file
+            if (item->owner == getenv("USER"))
             {
-                loadDirectory(path);
-                myPath = path;
-                emit pathChanged();
+                if (permissions & QFile::ReadOwner)
+                    permissions |= QFile::ReadUser;
+                else if (permissions & QFile::ReadUser)
+                    permissions ^= QFile::ReadUser;
+
+                if (permissions & QFile::WriteOwner)
+                    permissions |= QFile::WriteUser;
+                else if (permissions & QFile::WriteUser)
+                    permissions ^= QFile::WriteUser;
+
+                if (permissions & QFile::ExeOwner)
+                    permissions |= QFile::ExeUser;
+                else if (permissions & QFile::ExeUser)
+                    permissions ^= QFile::ExeUser;
+            }
+
+            if (QFile::setPermissions(QDir(path()).absoluteFilePath(name),
+                                      (QFile::Permission) permissions))
+            {
+                item->permissions = permissions;
             }
             else
             {
-                QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+                emit error(QString("cannot change permissions on %1").arg(1));
             }
-        }
-    }
-}
-
-void FolderModel::cdUp(int amount)
-{
-    QDir dir(myPath);
-    for (int i = 0; i < amount; ++i)
-    {
-        dir.cdUp();
-    }
-
-    const QString path = dir.absolutePath();
-    qDebug() << "open" << amount << path;
-    loadDirectory(path);
-    myPath = path;
-    emit pathChanged();
-}
-
-void FolderModel::setSelected(int idx, bool value)
-{
-    if (idx < myItems.size())
-    {
-        myItems[idx]->isSelected = value;
-        mySelectionCount += value ? 1 : -1;
-        emit selectionChanged();
-        QVector<int> roles;
-        roles << SelectedRole;
-        emit dataChanged(index(idx), index(idx), roles);
-    }
-}
-
-void FolderModel::unselectAll()
-{
-    mySelectionCount = 0;
-    emit selectionChanged();
-
-    QVector<int> roles;
-    roles << SelectedRole;
-
-    for (int idx = 0; idx < myItems.size(); ++idx)
-    {
-        if (myItems[idx]->isSelected)
-        {
-            myItems[idx]->isSelected = false;
+            // emit a change even if it failed, so that the UI switch gets reset
+            // to the correct state
             emit dataChanged(index(idx), index(idx), roles);
+            break;
         }
+        ++idx;
     }
 }
 
-void FolderModel::copySelected(FolderModel* dest)
+void FolderModel::rename(const QString& name, const QString& newName)
 {
-    QList<QString> paths;
-    foreach (Item::ConstPtr item, selectedItems())
+    const QString source = joinPath(QStringList() << path() << name);
+    const QString dest = joinPath(QStringList() << path() << newName);
+    qDebug() << "rename" << source << dest;
+    if (! QFile::rename(source, dest))
     {
-        paths << joinPath(myPath, item->name);
-    }
-
-    CopyAction* action = new CopyAction(this, dest, paths, dest->path());
-    connect(action, SIGNAL(finished()),
-            this, SIGNAL(finished()));
-    connect(action, SIGNAL(error(QString)),
-            this, SIGNAL(error(QString)));
-    action->start();
-    unselectAll();
-}
-
-void FolderModel::deleteSelected()
-{
-    foreach (const Item::ConstPtr item, selectedItems())
-    {
-        qDebug() << "deleting" << item->name;
-        bool ok = true;
-        if (item->type == Folder)
-        {
-            QDir dir(joinPath(myPath, item->name));
-            ok = dir.removeRecursively();
-        }
-        else
-        {
-            QDir dir(myPath);
-            ok = dir.remove(item->name);
-        }
-        if (! ok)
-        {
-            emit error(QString("Could not delete file: %1").arg(item->name));
-        }
-    }
-    unselectAll();
-    emit finished();
-}
-
-void FolderModel::linkSelected(FolderModel* dest)
-{
-    qDebug() << "linking";
-    foreach (Item::ConstPtr item, selectedItems())
-    {
-        const QString endpoint = joinPath(myPath, item->name);
-        const QString destPath = dest->joinPath(dest->path(), item->name);
-        bool ok = dest->linkFile(destPath, endpoint);
-        if (! ok)
-        {
-            emit error(QString("Could not create link: %1 -> %2")
-                       .arg(destPath)
-                       .arg(endpoint));
-        }
-    }
-    unselectAll();
-    emit finished();
-}
-
-void FolderModel::newFolder(const QString& name)
-{
-    if (makeDirectory(joinPath(myPath, name)))
-    {
-        emit finished();
+        emit error("could not rename");
     }
     else
     {
-        emit error("could not create folder");
-    }
-}
-
-void FolderModel::setPath(const QString& path)
-{
-    loadDirectory(path);
-    myPath = path;
-    emit pathChanged();
-}
-
-void FolderModel::setMinDepth(int depth)
-{
-    myMinDepth = depth;
-    emit minDepthChanged();
-}
-
-QStringList FolderModel::breadcrumbs() const
-{
-    QStringList crumbs;
-
-    QDir dir(myPath);
-    while (dir.cdUp())
-    {
-        qDebug() << "dir" << dir.dirName();
-        if (dir.isRoot())
+        int idx = 0;
+        QVector<int> roles;
+        roles << NameRole << UriRole;
+        foreach (Item::Ptr item, myItems)
         {
-            crumbs.prepend("System");
-        }
-        else
-        {
-            crumbs.prepend(dir.dirName());
+            if (item->name == name)
+            {
+                item->name = newName;
+                item->uri = dest;
+                emit dataChanged(index(idx), index(idx), roles);
+                break;
+            }
+            ++idx;
         }
     }
-
-    qDebug() << "breadcrumbs" << crumbs;
-    return crumbs.mid(myMinDepth);
 }
 
 QString FolderModel::basename(const QString& path) const
 {
     return QFileInfo(path).fileName();
+}
+
+QString FolderModel::userBasename(const QString& path) const
+{
+    if (path == "/")
+    {
+        return "System";
+    }
+    else
+    {
+        return basename(path);
+    }
 }
 
 QString FolderModel::joinPath(const QStringList& parts) const
@@ -282,20 +190,26 @@ QString FolderModel::joinPath(const QStringList& parts) const
         {
             path += part;
         }
-        else
+        else if (! path.endsWith("/"))
         {
             path += "/" + part;
+        }
+        else
+        {
+            path += part;
         }
     }
     return path;
 }
 
-QString FolderModel::joinPath(const QString& p1, const QString& p2) const
+QString FolderModel::parentPath(const QString& path) const
 {
-    return joinPath(QStringList() << p1 << p2);
+    QDir dir(path);
+    dir.cdUp();
+    return dir.path();
 }
 
-QList<QString> FolderModel::list(const QString& path) const
+QStringList FolderModel::list(const QString& path) const
 {
     QDir dir(path);
     return dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
@@ -333,11 +247,6 @@ bool FolderModel::makeDirectory(const QString& path)
     return dir.mkdir(QFileInfo(path).fileName());
 }
 
-QString FolderModel::name() const
-{
-    return QDir(myPath).dirName();
-}
-
 void FolderModel::loadDirectory(const QString& path)
 {
     qDebug() << Q_FUNC_INFO << path;
@@ -345,7 +254,6 @@ void FolderModel::loadDirectory(const QString& path)
 
     beginResetModel();
     myItems.clear();
-    mySelectionCount = 0;
 
     QMimeDatabase mimeDb;
 
@@ -361,10 +269,20 @@ void FolderModel::loadDirectory(const QString& path)
             Item::Ptr item(new Item);
             item->name = finfo.fileName();
             item->path = path;
-            item->uri = joinPath(item->path, item->name);
-            item->isSelected = false;
+            item->uri = joinPath(QStringList() << item->path << item->name);
             item->type = type(finfo.absoluteFilePath());
             item->mimeType = mimeDb.mimeTypeForFile(finfo).name();
+            item->owner = finfo.owner();
+            if (item->owner.isEmpty())
+            {
+                item->owner = QString::number(finfo.ownerId());
+            }
+            item->group = finfo.group();
+            if (item->group.isEmpty())
+            {
+                item->group = QString::number(finfo.groupId());
+            }
+            item->permissions = finfo.permissions();
             item->icon = myIcons.value(item->mimeType, "image://theme/icon-m-other");
             item->size = finfo.size();
             item->mtime = finfo.lastModified();
@@ -387,24 +305,47 @@ void FolderModel::loadDirectory(const QString& path)
         myIsReadable = false;
     }
 
+    myIsWritable = QFileInfo(path).isWritable();
+
     endResetModel();
 }
 
-QList<FolderModel::Item::ConstPtr> FolderModel::selectedItems() const
+QString FolderModel::itemName(int idx) const
 {
-    QList<Item::ConstPtr> items;
-    foreach (Item::ConstPtr item, myItems)
+    if (idx < myItems.size())
     {
-        if (item->isSelected)
-        {
-            items << item;
-        }
+        return myItems[idx]->name;
     }
-    return items;
+    else
+    {
+        return QString();
+    }
 }
 
 bool FolderModel::linkFile(const QString& path, const QString& source)
 {
     qDebug() << "link file" << path << "to" << source;
     return QFile::link(source, path);
+}
+
+bool FolderModel::deleteFile(const QString& path)
+{
+    bool ok = false;
+    QFileInfo finfo(path);
+    if (! finfo.isSymLink() && finfo.isDir())
+    {
+        QDir dir(path);
+        ok = dir.removeRecursively();
+    }
+    else
+    {
+        QDir dir = finfo.dir();
+        ok = dir.remove(finfo.fileName());
+    }
+    return ok;
+}
+
+void FolderModel::runFile(const QString& path)
+{
+    QDesktopServices::openUrl(QUrl::fromLocalFile(path));
 }

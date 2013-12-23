@@ -50,8 +50,8 @@ Page {
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
                 text: "When you first open Cargo Dock, you see a collection " +
-                      "places on your phone, for instance your music or your " +
-                      "camera photos. Click on a place to look into it."
+                      "of places on your phone, for instance your music or your " +
+                      "camera photos. Tap on a place to look into it."
             }
 
             Label {
@@ -60,7 +60,7 @@ Page {
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
                 text: "Places contain files and folders, and folders in turn " +
-                      "may contain more files and folders. By clicking on a " +
+                      "may contain more files and folders. By tapping on a " +
                       "folder, you can look into it."
             }
 
@@ -71,7 +71,7 @@ Page {
                 color: Theme.primaryColor
                 text: "No matter how many folders deep you dived down, you can " +
                       "always dive up by dragging down the pulley menu. There " +
-                      "you will find a trail of 'breadcrumbs' to go find your " +
+                      "you will find a trail of 'breadcrumbs' to find your " +
                       "way up again."
             }
 
@@ -138,8 +138,8 @@ Page {
                 text: "Notice the drawer that opened on the bottom of the " +
                       "screen. You are now in selection mode and can select " +
                       "or unselect a number of files and folders by tapping " +
-                      "on them. In drawer you can see the amount of items " +
-                      "you have selected."
+                      "on them. Inside the drawer you will see the amount of items " +
+                      "selected."
             }
 
             Label {
@@ -148,7 +148,8 @@ Page {
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
                 text: "To cancel your selection and leave selection mode, tap " +
-                      "on the close button (X) in the drawer."
+                      "on the close button (X) in the drawer, or, alternatively, " +
+                      "tap and hold on any file."
             }
 
             SectionHeader {
@@ -160,7 +161,7 @@ Page {
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
-                text: "When you have selected files in selection mode, you " +
+                text: "When you have selected files in selection mode, you can " +
                       "open a pulley menu on the bottom of the drawer."
             }
 
@@ -198,12 +199,30 @@ Page {
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
-                text: "'Delete' delete the selected items. A remorse timer of " +
+                text: "'Delete' deletes the selected items. A remorse timer of " +
                       "five seconds will appear and give you a chance to " +
                       "revide your decision. Once deleted, files and folders " +
                       "cannot be brought back, so be careful with this action."
             }
 
+            SectionHeader {
+                text: "File properties"
+            }
+
+            Label {
+                width: parent.width
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                font.pixelSize: Theme.fontSizeSmall
+                color: Theme.primaryColor
+                text: "Tap on any file, while not in selection mode, to see its " +
+                      "properties. You can also rename the file here, or change " +
+                      "its permissions.\n" +
+                      "This view is actually a dialog with an 'Open' action to " +
+                      "open the file in the associated app. Note that not all " +
+                      "filetypes have an app associated to open with, though."
+            }
+
+            /*
             SectionHeader {
                 text: "Safety first"
             }
@@ -229,6 +248,7 @@ Page {
                       "device and enable it. Only then, Cargo Dock unlocks " +
                       "the dangerous areas."
             }
+            */
 
         }
 

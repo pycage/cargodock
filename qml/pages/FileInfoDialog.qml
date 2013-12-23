@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import org.pycage.cargodock 1.0
 
 Dialog {
     property FileInfo fileInfo
@@ -30,6 +31,28 @@ Dialog {
             TextField {
                 width: parent.width
                 text: fileInfo.name
+                inputMethodHints: Qt.ImhNoAutoUppercase
+
+                EnterKey.text: "Rename"
+                EnterKey.enabled: text !== ""
+                EnterKey.onClicked: {
+                    fileInfo.rename(text);
+                    focus = false;
+                }
+
+                onFocusChanged: {
+                    if (! focus)
+                    {
+                        text = fileInfo.name;
+                    }
+                }
+            }
+
+            KeyValue {
+                visible: fileInfo.type === FolderBase.FolderLink ||
+                         fileInfo.type === FolderBase.FileLink
+                key: "→"
+                value: fileInfo.linkTarget
             }
 
             KeyValue {
@@ -49,32 +72,95 @@ Dialog {
 
             KeyValue {
                 key: "Last modified"
+                value: Format.formatDate(fileInfo.mtime, Formatter.DurationElapsed)
+            }
+
+            KeyValue {
+                key: "Modification time"
                 value: Format.formatDate(fileInfo.mtime, Formatter.TimePoint)
             }
 
             KeyValue {
                 key: "Owner"
-                value: "nemo"
+                value: fileInfo.owner
             }
 
-            ListItem {
-                height: Theme.itemSizeSmall
+            KeyValue {
+                key: "Group"
+                value: fileInfo.group
+            }
 
-                Label {
-                    id: lblWritable
-                    anchors.left: parent.left
-                    anchors.leftMargin: Theme.paddingLarge
-                    text: "Writable"
-                }
+            SectionHeader {
+                text: "Permissions"
+            }
 
-                Switch {
-                    id: switchWritable
-                    anchors.right: parent.right
-                    anchors.rightMargin: Theme.paddingLarge
-                    anchors.verticalCenter: lblWritable.verticalCenter
+            Repeater {
+                model: [
+                    ["Readable", FolderBase.ReadOwner],
+                    ["Writable", FolderBase.WriteOwner],
+                    ["Executable", FolderBase.ExecOwner]
+                ]
+
+                KeySwitch {
+                    key: modelData[0]
+                    checked: fileInfo.permissions & modelData[1];
+
+                    onCheckedChanged: {
+                        fileInfo.setPermissions(
+                                    checked
+                                    ? fileInfo.permissions | modelData[1]
+                                    : fileInfo.permissions ^ modelData[1]);
+                    }
                 }
             }
 
+            SectionHeader {
+                text: "Group permissions"
+            }
+
+            Repeater {
+                model: [
+                    ["Readable", FolderBase.ReadGroup],
+                    ["Writable", FolderBase.WriteGroup],
+                    ["Executable", FolderBase.ExecGroup]
+                ]
+
+                KeySwitch {
+                    key: modelData[0]
+                    checked: fileInfo.permissions & modelData[1];
+
+                    onCheckedChanged: {
+                        fileInfo.setPermissions(
+                                    checked
+                                    ? fileInfo.permissions | modelData[1]
+                                    : fileInfo.permissions ^ modelData[1]);
+                    }
+                }
+            }
+
+            SectionHeader {
+                text: "World permissions"
+            }
+
+            Repeater {
+                model: [
+                    ["Readable", FolderBase.ReadOther],
+                    ["Writable", FolderBase.WriteOther],
+                    ["Executable", FolderBase.ExecOther]
+                ]
+
+                KeySwitch {
+                    key: modelData[0]
+                    checked: fileInfo.permissions & modelData[1];
+
+                    onCheckedChanged: {
+                        fileInfo.setPermissions(
+                                    checked
+                                    ? fileInfo.permissions | modelData[1]
+                                    : fileInfo.permissions ^ modelData[1]);
+                    }
+                }
+            }
         }
 
         ScrollDecorator { }
