@@ -17,9 +17,14 @@ ListItem {
         id: iconImage
         x: Theme.paddingMedium
         width: height
-        height: parent.height
+        height: Math.max(parent.height, 10)
         asynchronous: true
-        fillMode: Image.PreserveAspectCrop
+        sourceSize.width: fileInfo.icon !== "" ? undefined : width
+        sourceSize.height: fileInfo.icon !== "" ? undefined : height
+        fillMode: fileInfo.icon !== ""
+                  ? Image.Pad
+                  : Image.PreserveAspectCrop
+        smooth: fileInfo.icon !== "" ? false : true
         source: fileInfo.icon !== "" ? fileInfo.icon : fileInfo.uri
         clip: true
     }

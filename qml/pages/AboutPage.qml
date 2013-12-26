@@ -20,7 +20,7 @@ Page {
 
         Image {
             anchors.horizontalCenter: parent.horizontalCenter
-            source: Qt.resolvedUrl("../cargodock.png")
+            source: Qt.resolvedUrl("../icon.png")
             smooth: true
             asynchronous: true
         }

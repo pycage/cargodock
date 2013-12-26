@@ -1,5 +1,7 @@
 #include "placesmodel.h"
+#include "developermode.h"
 
+#include <QDateTime>
 #include <QDir>
 #include <QStandardPaths>
 
@@ -12,12 +14,14 @@ const QString ANDROID_STORAGE("/data/sdcard");
 PlacesModel::PlacesModel(QObject* parent)
     : FolderBase(parent)
 {
+    DeveloperMode developerMode;
+
     myPlaces << Item::Ptr(new Item("Documents",
                                    "image://theme/icon-m-document",
                                    "local",
                                    QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0]))
              << Item::Ptr(new Item("Downloads",
-                                   "image://theme/icon-m-download",
+                                   "image://theme/icon-m-cloud-download",
                                    "local",
                                    QStandardPaths::standardLocations(QStandardPaths::DownloadLocation)[0]))
              << Item::Ptr(new Item("Music",
@@ -37,14 +41,13 @@ PlacesModel::PlacesModel(QObject* parent)
                                    "local",
                                    QStandardPaths::standardLocations(QStandardPaths::PicturesLocation)[0] + "/Camera"));
 
-    myPlaces << Item::Ptr(new Item("Home",
-                                   "image://theme/icon-m-home",
-                                   "local",
-                                   QStandardPaths::standardLocations(QStandardPaths::HomeLocation)[0]))
-             << Item::Ptr(new Item("System",
-                                   "image://theme/icon-m-device",
-                                   "local",
-                                   "/"));
+    if (QDir(SD_CARD).exists())
+    {
+        myPlaces << Item::Ptr(new Item("SD Card",
+                                       "image://theme/icon-l-mass-storage",
+                                       "local",
+                                       SD_CARD));
+    }
 
     if (QDir(ANDROID_STORAGE).exists())
     {
@@ -54,12 +57,12 @@ PlacesModel::PlacesModel(QObject* parent)
                                        ANDROID_STORAGE));
     }
 
-    if (QDir(SD_CARD).exists())
+    if (developerMode.enabled())
     {
-        myPlaces << Item::Ptr(new Item("SD Card",
-                                       "image://theme/icon-l-mass-storage",
+        myPlaces << Item::Ptr(new Item("System",
+                                       "image://theme/icon-m-folder",
                                        "local",
-                                       SD_CARD));
+                                       "/"));
     }
 }
 
@@ -89,6 +92,8 @@ QVariant PlacesModel::data(const QModelIndex& index, int role) const
         return item->model;
     case SelectedRole:
         return isSelected(index.row());
+    case MtimeRole:
+        return QDateTime();
     default:
         return QVariant();
     }

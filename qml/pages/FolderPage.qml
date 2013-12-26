@@ -5,6 +5,8 @@ import org.pycage.cargodock 1.0
 Page {
     id: page
 
+    property bool isSecondPane
+
     property variant _modelStack: []
 
     property variant _breadcrumbs: []
@@ -41,6 +43,7 @@ Page {
         stack.push(model);
         _modelStack = stack;
         contentlist.model = model;
+        sharedState.currentContentModel = model;
     }
 
     function popModels(model)
@@ -52,6 +55,7 @@ Page {
         }
         _modelStack = stack;
         contentlist.model = _modelStack[_modelStack.length - 1];
+        sharedState.currentContentModel = contentlist.model;
     }
 
     function collectBreadcrumbs(currentBreadcrumbs)
@@ -77,6 +81,14 @@ Page {
         }
 
         return crumbs;
+    }
+
+    onStatusChanged: {
+        if (status === PageStatus.Active)
+        {
+            sharedState.currentContentModel = currentContentModel();
+            sharedState.isSecondPane = isSecondPane;
+        }
     }
 
     Component {
@@ -281,6 +293,7 @@ Page {
                         x: Theme.paddingMedium
                         width: height
                         height: parent.height
+                        fillMode: Image.Pad
                         source: "image://theme/icon-m-add"
                     }
 

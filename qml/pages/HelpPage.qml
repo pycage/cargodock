@@ -222,7 +222,6 @@ Page {
                       "filetypes have an app associated to open with, though."
             }
 
-            /*
             SectionHeader {
                 text: "Safety first"
             }
@@ -245,10 +244,9 @@ Page {
                 text: "Still, Cargo Dock is real filemanager. If you need " +
                       "access beyond what's safe, you have to accept the " +
                       "terms and conditions of the Developer Mode on your " +
-                      "device and enable it. Only then, Cargo Dock unlocks " +
+                      "device and enable it. Only then, Cargo Dock will unlock " +
                       "the dangerous areas."
             }
-            */
 
         }
 

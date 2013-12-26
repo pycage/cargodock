@@ -5,6 +5,7 @@
 #include <QScopedPointer>
 #include <QtQml>
 
+#include "developermode.h"
 #include "folderbase.h"
 #include "foldermodel.h"
 #include "placesmodel.h"
@@ -23,6 +24,7 @@ int main(int argc, char *argv[])
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
 
+    qmlRegisterType<DeveloperMode>("org.pycage.cargodock", 1, 0, "DeveloperMode");
     qmlRegisterUncreatableType<FolderBase>("org.pycage.cargodock", 1, 0, "FolderBase", "abstract");
     qmlRegisterType<FolderModel>("org.pycage.cargodock", 1, 0, "FolderModel");
     qmlRegisterType<PlacesModel>("org.pycage.cargodock", 1, 0, "PlacesModel");

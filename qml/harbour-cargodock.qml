@@ -1,5 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import org.pycage.cargodock 1.0
+import "cover"
 import "pages"
 
 ApplicationWindow
@@ -40,13 +42,23 @@ ApplicationWindow
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
 
     Component.onCompleted: {
-        pageStack.pushExtra(folderPage);
+        var props = {
+            "isSecondPane": true
+        };
+
+        pageStack.pushExtra(folderPage, props);
     }
 
     QtObject {
         id: sharedState
         property bool actionInProgress
         property string actionName
+        property variant currentContentModel
+        property bool isSecondPane
+    }
+
+    DeveloperMode {
+        id: developerMode
     }
 
     Notification {

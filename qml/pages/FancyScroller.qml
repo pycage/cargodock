@@ -61,7 +61,7 @@ Item {
         target: flickable
 
         onVerticalVelocityChanged: {
-            console.log("velocity: " + target.verticalVelocity);
+            //console.log("velocity: " + target.verticalVelocity);
 
             if (target.verticalVelocity < 0)
             {

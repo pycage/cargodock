@@ -73,6 +73,7 @@ public:
 
     Q_INVOKABLE virtual void setPermissions(const QString& name, int permissions);
     Q_INVOKABLE virtual void rename(const QString& name, const QString& newName);
+    Q_INVOKABLE virtual QString readFile(const QString& name) const;
 
     /* Refreshes the current folder by reloading its contents.
      */

@@ -15,7 +15,7 @@ FolderModel::FolderModel(QObject* parent)
 {
     myIcons.insert("application/octet-stream",                "image://theme/icon-m-other");
     myIcons.insert("application/pdf",                         "image://theme/icon-m-document");
-    myIcons.insert("application/vnd.android.package-archive", "image://theme/icon-s-android");
+    myIcons.insert("application/vnd.android.package-archive", "image://theme/icon-m-device");
     myIcons.insert("application/xml",                         "image://theme/icon-m-levels");
     myIcons.insert("application/x-core",                      "image://theme/icon-m-crash-reporter");
     myIcons.insert("application/x-executable",                "image://theme/icon-m-play");
@@ -27,7 +27,7 @@ FolderModel::FolderModel(QObject* parent)
     myIcons.insert("application/x-x509-ca-cert",              "image://theme/icon-m-certificates");
     myIcons.insert("audio/mp4",                               "image://theme/icon-m-music");
     myIcons.insert("audio/mpeg",                              "image://theme/icon-m-music");
-    myIcons.insert("image/jpeg",                              "image://theme/icon-m-image");
+    myIcons.insert("image/jpeg",                              "");
     myIcons.insert("image/png",                               "");
     myIcons.insert("inode/directory",                         "image://theme/icon-m-folder");
     myIcons.insert("text/html",                               "image://theme/icon-m-region");
@@ -161,6 +161,20 @@ void FolderModel::rename(const QString& name, const QString& newName)
             }
             ++idx;
         }
+    }
+}
+
+QString FolderModel::readFile(const QString& name) const
+{
+    const QString filePath = joinPath(QStringList() << path() << name);
+    QFile file(filePath);
+    if (file.open(QIODevice::ReadOnly))
+    {
+        return file.read(8192);
+    }
+    else
+    {
+        return QString();
     }
 }
 

@@ -34,7 +34,6 @@ void FolderBase::setPath(const QString& path)
     QString pp = parentPath(p);
     while (pp != p)
     {
-        qDebug() << pp << p;
         p = pp;
         pp = parentPath(p);
         ++depth;
@@ -42,7 +41,6 @@ void FolderBase::setPath(const QString& path)
     if (depth < myMinDepth)
     {
         myMinDepth = depth;
-        qDebug() << "new mindepth" << depth;
     }
 
     myPath = path;
@@ -172,6 +170,11 @@ void FolderBase::setPermissions(const QString&, int)
 void FolderBase::rename(const QString&, const QString&)
 {
     emit error("renaming not supported");
+}
+
+QString FolderBase::readFile(const QString&) const
+{
+    return QString();
 }
 
 void FolderBase::refresh()

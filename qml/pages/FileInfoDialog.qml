@@ -3,6 +3,8 @@ import Sailfish.Silica 1.0
 import org.pycage.cargodock 1.0
 
 Dialog {
+    id: dialog
+
     property FileInfo fileInfo
 
     SilicaFlickable {
@@ -18,14 +20,42 @@ Dialog {
                 title: "Open"
             }
 
-            Image {
-                width: parent.width
+            // preview item
+            Loader {
+
+                function componentFor(mimeType)
+                {
+                    if (mimeType.substring(0, 6) === "image/")
+                    {
+                        return "PreviewImage.qml";
+                    }
+                    else if (mimeType.substring(0, 6) === "audio/")
+                    {
+                        return "PreviewAudio.qml";
+                    }
+                    else if (mimeType === "text/plain")
+                    {
+                        return "PreviewText.qml";
+                    }
+                    else
+                    {
+                        return "PreviewFile.qml";
+                    }
+                }
+
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 height: 240
-                fillMode: Image.PreserveAspectFit
-                asynchronous: true
-                visible: source !== ""
-                source: fileInfo.mimeType.substring(0, 6) === "image/" ? fileInfo.uri
-                                                                       : ""
+                source: Qt.resolvedUrl(componentFor(fileInfo.mimeType))
+
+                onStatusChanged: {
+                    if (status === Loader.Ready)
+                    {
+                        item.fileInfo = fileInfo;
+                    }
+                }
             }
 
             TextField {
@@ -90,77 +120,83 @@ Dialog {
                 value: fileInfo.group
             }
 
-            SectionHeader {
-                text: "Permissions"
-            }
+            Column {
+                visible: developerMode.enabled
+                width: parent.width
 
-            Repeater {
-                model: [
-                    ["Readable", FolderBase.ReadOwner],
-                    ["Writable", FolderBase.WriteOwner],
-                    ["Executable", FolderBase.ExecOwner]
-                ]
+                SectionHeader {
+                    text: "Permissions"
+                }
 
-                KeySwitch {
-                    key: modelData[0]
-                    checked: fileInfo.permissions & modelData[1];
+                Repeater {
+                    model: [
+                        ["Readable", FolderBase.ReadOwner],
+                        ["Writable", FolderBase.WriteOwner],
+                        ["Executable", FolderBase.ExecOwner]
+                    ]
 
-                    onCheckedChanged: {
-                        fileInfo.setPermissions(
-                                    checked
-                                    ? fileInfo.permissions | modelData[1]
-                                    : fileInfo.permissions ^ modelData[1]);
+                    KeySwitch {
+                        key: modelData[0]
+                        checked: fileInfo.permissions & modelData[1];
+
+                        onCheckedChanged: {
+                            fileInfo.setPermissions(
+                                        checked
+                                        ? fileInfo.permissions | modelData[1]
+                                        : fileInfo.permissions ^ modelData[1]);
+                        }
+                    }
+                }
+
+                SectionHeader {
+                    text: "Group permissions"
+                }
+
+                Repeater {
+                    model: [
+                        ["Readable", FolderBase.ReadGroup],
+                        ["Writable", FolderBase.WriteGroup],
+                        ["Executable", FolderBase.ExecGroup]
+                    ]
+
+                    KeySwitch {
+                        key: modelData[0]
+                        checked: fileInfo.permissions & modelData[1];
+
+                        onCheckedChanged: {
+                            fileInfo.setPermissions(
+                                        checked
+                                        ? fileInfo.permissions | modelData[1]
+                                        : fileInfo.permissions ^ modelData[1]);
+                        }
+                    }
+                }
+
+                SectionHeader {
+                    text: "World permissions"
+                }
+
+                Repeater {
+                    model: [
+                        ["Readable", FolderBase.ReadOther],
+                        ["Writable", FolderBase.WriteOther],
+                        ["Executable", FolderBase.ExecOther]
+                    ]
+
+                    KeySwitch {
+                        key: modelData[0]
+                        checked: fileInfo.permissions & modelData[1];
+
+                        onCheckedChanged: {
+                            fileInfo.setPermissions(
+                                        checked
+                                        ? fileInfo.permissions | modelData[1]
+                                        : fileInfo.permissions ^ modelData[1]);
+                        }
                     }
                 }
             }
 
-            SectionHeader {
-                text: "Group permissions"
-            }
-
-            Repeater {
-                model: [
-                    ["Readable", FolderBase.ReadGroup],
-                    ["Writable", FolderBase.WriteGroup],
-                    ["Executable", FolderBase.ExecGroup]
-                ]
-
-                KeySwitch {
-                    key: modelData[0]
-                    checked: fileInfo.permissions & modelData[1];
-
-                    onCheckedChanged: {
-                        fileInfo.setPermissions(
-                                    checked
-                                    ? fileInfo.permissions | modelData[1]
-                                    : fileInfo.permissions ^ modelData[1]);
-                    }
-                }
-            }
-
-            SectionHeader {
-                text: "World permissions"
-            }
-
-            Repeater {
-                model: [
-                    ["Readable", FolderBase.ReadOther],
-                    ["Writable", FolderBase.WriteOther],
-                    ["Executable", FolderBase.ExecOther]
-                ]
-
-                KeySwitch {
-                    key: modelData[0]
-                    checked: fileInfo.permissions & modelData[1];
-
-                    onCheckedChanged: {
-                        fileInfo.setPermissions(
-                                    checked
-                                    ? fileInfo.permissions | modelData[1]
-                                    : fileInfo.permissions ^ modelData[1]);
-                    }
-                }
-            }
         }
 
         ScrollDecorator { }

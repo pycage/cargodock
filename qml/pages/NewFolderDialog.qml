@@ -29,6 +29,7 @@ Dialog {
                 anchors.leftMargin: Theme.paddingLarge
                 anchors.rightMargin: Theme.paddingLarge
 
+                inputMethodHints: Qt.ImhNoAutoUppercase
                 placeholderText: "Enter name"
                 focus: true
             }

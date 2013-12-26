@@ -33,12 +33,19 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/pages/FancyScroller.qml \
     qml/pages/license.js \
     qml/pages/LicensePage.qml \
-    qml/pages/AboutPage.qml
+    qml/pages/AboutPage.qml \
+    qml/pages/PreviewItem.qml \
+    qml/pages/PreviewFile.qml \
+    qml/pages/PreviewImage.qml \
+    qml/pages/PreviewText.qml \
+    qml/pages/PreviewAudio.qml \
+    qml/icon.png
 
 HEADERS += \
     src/foldermodel.h \
     src/folderaction.h \
     src/copyaction.h \
     src/folderbase.h \
-    src/placesmodel.h
+    src/placesmodel.h \
+    src/developermode.h
 

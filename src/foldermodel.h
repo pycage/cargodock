@@ -24,6 +24,7 @@ public:
 
     Q_INVOKABLE virtual void setPermissions(const QString& name, int permissions);
     Q_INVOKABLE virtual void rename(const QString& name, const QString& newName);
+    Q_INVOKABLE virtual QString readFile(const QString& name) const;
 
     virtual QString basename(const QString& path) const;
     virtual QString userBasename(const QString& path) const;

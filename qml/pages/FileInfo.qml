@@ -12,7 +12,7 @@ QtObject {
     property string mimeType: source.mimeType ? source.mimeType : "application/x-octet-stream"
     property string icon: source.icon !== undefined ? source.icon : "image://theme/icon-m-other"
     property int size: source.size ? source.size : 0
-    property date mtime: source.mtime ? source.mtime : Date()
+    property date mtime: source.mtime
     property string owner: source.owner ? source.owner : "?"
     property string group: source.group ? source.group : "?"
     property int permissions: source.permissions ? source.permissions : 0
@@ -29,5 +29,10 @@ QtObject {
     function rename(newName)
     {
         sourceModel.rename(name, newName);
+    }
+
+    function readFile()
+    {
+        return sourceModel.readFile(name);
     }
 }
