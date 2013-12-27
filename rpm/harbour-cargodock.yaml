@@ -1,13 +1,15 @@
 Name: harbour-cargodock
-Summary: A file manager for your Jolla.
-Version: 0.1
+Summary: A two-paned filemanager.
+Version: 0.1.2
 Release: 1
 Group: Qt/Qt
 License: LICENSE
 Sources:
 - '%{name}-%{version}.tar.bz2'
-Description: |
-  Short description of my SailfishOS Application
+Description: |-
+  A cargo dock is a harbour where cargo crates are being managed and moved around.
+  Cargo Dock on your phone helps you manage and move around files and folders in place of cargo.
+  It is a two-paned filemanager specially built for Sailfish OS.
 Configure: none
 Builder: qtc5
 PkgConfigBR:
@@ -16,6 +18,7 @@ PkgConfigBR:
 - Qt5Qml
 - Qt5Core
 Requires:
+- qt5-qtdeclarative-import-multimedia
 - sailfishsilica-qt5
 Files:
 - '%{_bindir}'

@@ -48,7 +48,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: qsTr("Version 0.1rc")
+            text: qsTr("Version 0.1.2")
         }
 
         Label {
@@ -58,6 +58,15 @@ Page {
             color: Theme.secondaryColor
             text: "Copyright © 2013 Martin Grimme"
         }
+
+        Label {
+            width: parent.width
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: Theme.fontSizeExtraSmall
+            color: Theme.secondaryColor
+            text: "Icon by Morpog"
+        }
+
 
         Item {
             width: 1

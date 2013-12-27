@@ -142,9 +142,7 @@ void FolderBase::linkSelected(FolderBase* dest)
 
         if (! linkFile(destPath, endpoint))
         {
-            emit error(QString("Could not create link: %1 -> %2")
-                       .arg(destPath)
-                       .arg(endpoint));
+            emit error("Could not link to destination.");
         }
     }
     emit finished();
@@ -158,18 +156,18 @@ void FolderBase::newFolder(const QString& name)
     }
     else
     {
-        emit error("could not create folder");
+        emit error(QString("Could not create folder: %1").arg(name));
     }
 }
 
 void FolderBase::setPermissions(const QString&, int)
 {
-    emit error("changing permissions not supported");
+    emit error("Changing permissions is not supported.");
 }
 
 void FolderBase::rename(const QString&, const QString&)
 {
-    emit error("renaming not supported");
+    emit error("Renaming is not supported.");
 }
 
 QString FolderBase::readFile(const QString&) const

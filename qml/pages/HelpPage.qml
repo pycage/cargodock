@@ -9,10 +9,7 @@ Page {
 
         Column {
             id: column
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: Theme.paddingLarge
-            anchors.rightMargin: Theme.paddingLarge
+            width: parent.width
             height: childrenRect.height
             spacing: Theme.paddingMedium
 
@@ -21,18 +18,24 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
                 text: "A cargo dock is a harbour where cargo crates are being " +
                       "managed and moved around.\n" +
                       "Cargo Dock on your phone helps you manage and move "+
-                      "around files and folders instead of real crates of cargo."
+                      "around files and folders in place of cargo."
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -45,7 +48,10 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -55,7 +61,10 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -65,7 +74,10 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -75,12 +87,29 @@ Page {
                       "way up again."
             }
 
+            Label {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                font.pixelSize: Theme.fontSizeSmall
+                color: Theme.primaryColor
+                text: "Hint: When scrolling fast through a long list of files, " +
+                      "a Up or Down button will appear, depending on your " +
+                      "direction of movement. Touch it to quickly jump to the " +
+                      "beginning or end of the list."
+            }
+
             SectionHeader {
                 text: "Creating folders"
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -96,7 +125,10 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -109,7 +141,10 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -121,7 +156,10 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -131,7 +169,10 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -143,7 +184,10 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -157,7 +201,10 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -166,16 +213,22 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
-                text: "In the menu you will find several actions that you " +
+                text: "In this menu you will find several actions that you " +
                       "can perform on the items you selected."
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -184,7 +237,10 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
@@ -195,12 +251,15 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
                 text: "'Delete' deletes the selected items. A remorse timer of " +
-                      "five seconds will appear and give you a chance to " +
+                      "some seconds will appear and give you a chance to " +
                       "revide your decision. Once deleted, files and folders " +
                       "cannot be brought back, so be careful with this action."
             }
@@ -210,14 +269,16 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
                 text: "Tap on any file, while not in selection mode, to see its " +
-                      "properties. You can also rename the file here, or change " +
-                      "its permissions.\n" +
-                      "This view is actually a dialog with an 'Open' action to " +
+                      "properties. You can also rename the file here.\n" +
+                      "This view is a dialog with an 'Open' action to " +
                       "open the file in the associated app. Note that not all " +
                       "filetypes have an app associated to open with, though."
             }
@@ -227,21 +288,27 @@ Page {
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
                 text: "Cargo Dock takes precautions that you cannot " +
-                      "accidentally delete files that would break your phone, " +
+                      "accidentally break your phone by delete files, " +
                       "so you are on the safe side."
             }
 
             Label {
-                width: parent.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.primaryColor
-                text: "Still, Cargo Dock is real filemanager. If you need " +
+                text: "Still, Cargo Dock is full filemanager. If you need " +
                       "access beyond what's safe, you have to accept the " +
                       "terms and conditions of the Developer Mode on your " +
                       "device and enable it. Only then, Cargo Dock will unlock " +

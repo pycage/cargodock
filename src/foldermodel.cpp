@@ -16,13 +16,13 @@ FolderModel::FolderModel(QObject* parent)
     myIcons.insert("application/octet-stream",                "image://theme/icon-m-other");
     myIcons.insert("application/pdf",                         "image://theme/icon-m-document");
     myIcons.insert("application/vnd.android.package-archive", "image://theme/icon-m-device");
-    myIcons.insert("application/xml",                         "image://theme/icon-m-levels");
+    myIcons.insert("application/xml",                         "image://theme/icon-m-document");
     myIcons.insert("application/x-core",                      "image://theme/icon-m-crash-reporter");
     myIcons.insert("application/x-executable",                "image://theme/icon-m-play");
     myIcons.insert("application/x-gzip",                      "image://theme/icon-m-other");
     myIcons.insert("application/x-rpm",                       "image://theme/icon-lock-system-update");
     myIcons.insert("application/x-sharedlib",                 "image://theme/icon-m-share");
-    myIcons.insert("application/x-shellscript",               "image://theme/icon-m-other");
+    myIcons.insert("application/x-shellscript",               "image://theme/icon-m-document");
     myIcons.insert("application/x-sqlite3",                   "image://theme/icon-m-levels");
     myIcons.insert("application/x-x509-ca-cert",              "image://theme/icon-m-certificates");
     myIcons.insert("audio/mp4",                               "image://theme/icon-m-music");
@@ -34,7 +34,7 @@ FolderModel::FolderModel(QObject* parent)
     myIcons.insert("text/plain",                              "image://theme/icon-m-document");
     myIcons.insert("text/vcard",                              "image://theme/icon-m-people");
     myIcons.insert("text/x-c++src",                           "image://theme/icon-m-document");
-    myIcons.insert("text/x-qml",                              "image://theme/icon-m-levels");
+    myIcons.insert("text/x-qml",                              "image://theme/icon-m-document");
     myIcons.insert("video/mp4",                               "image://theme/icon-m-video");
     myIcons.insert("video/x-flv",                             "image://theme/icon-m-video");
 }
@@ -125,7 +125,8 @@ void FolderModel::setPermissions(const QString& name, int permissions)
             }
             else
             {
-                emit error(QString("cannot change permissions on %1").arg(1));
+                emit error(QString("Could not change permissions: %1")
+                           .arg(item->name));
             }
             // emit a change even if it failed, so that the UI switch gets reset
             // to the correct state
@@ -143,7 +144,7 @@ void FolderModel::rename(const QString& name, const QString& newName)
     qDebug() << "rename" << source << dest;
     if (! QFile::rename(source, dest))
     {
-        emit error("could not rename");
+        emit error(QString("Could not rename file: %1").arg(name));
     }
     else
     {

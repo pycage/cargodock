@@ -17,7 +17,7 @@ Dialog {
             height: childrenRect.height
 
             DialogHeader {
-                title: "Open"
+                title: (fileInfo.mimeType.substring(0, 6) === "image/") ? "Open" : ""
             }
 
             // preview item
@@ -33,7 +33,10 @@ Dialog {
                     {
                         return "PreviewAudio.qml";
                     }
-                    else if (mimeType === "text/plain")
+                    else if (mimeType === "text/plain" ||
+                             mimeType === "text/x-qml" ||
+                             mimeType === "application/x-shellscript" ||
+                             mimeType === "application/xml")
                     {
                         return "PreviewText.qml";
                     }

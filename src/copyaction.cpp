@@ -124,7 +124,7 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
             }
             else
             {
-                emit error("cannot copy");
+                emit error("Could not copy to destination.");
             }
         }
     }

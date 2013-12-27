@@ -44,7 +44,7 @@ PlacesModel::PlacesModel(QObject* parent)
     if (QDir(SD_CARD).exists())
     {
         myPlaces << Item::Ptr(new Item("SD Card",
-                                       "image://theme/icon-l-mass-storage",
+                                       "image://theme/icon-m-device",
                                        "local",
                                        SD_CARD));
     }
