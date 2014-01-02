@@ -24,10 +24,10 @@ int main(int argc, char *argv[])
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
 
-    qmlRegisterType<DeveloperMode>("org.pycage.cargodock", 1, 0, "DeveloperMode");
-    qmlRegisterUncreatableType<FolderBase>("org.pycage.cargodock", 1, 0, "FolderBase", "abstract");
-    qmlRegisterType<FolderModel>("org.pycage.cargodock", 1, 0, "FolderModel");
-    qmlRegisterType<PlacesModel>("org.pycage.cargodock", 1, 0, "PlacesModel");
+    qmlRegisterType<DeveloperMode>("harbour.cargodock", 1, 0, "DeveloperMode");
+    qmlRegisterUncreatableType<FolderBase>("harbour.cargodock", 1, 0, "FolderBase", "abstract");
+    qmlRegisterType<FolderModel>("harbour.cargodock", 1, 0, "FolderModel");
+    qmlRegisterType<PlacesModel>("harbour.cargodock", 1, 0, "PlacesModel");
 
     view->setSource(SailfishApp::pathTo("qml/harbour-cargodock.qml"));
     view->show();
