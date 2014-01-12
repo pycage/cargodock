@@ -2,12 +2,36 @@
 #define COPYACTION_H
 
 #include "folderaction.h"
+#include <QIODevice>
 #include <QList>
 #include <QPair>
 #include <QString>
 
 class FolderBase;
 class CopyThread;
+
+class CopyJob : public QObject
+{
+    Q_OBJECT
+public:
+    CopyJob(QIODevice* source, QIODevice* dest);
+    bool hasFailed() const { return myHasFailed; }
+    void start();
+
+signals:
+    void finished();
+
+private:
+    void close();
+
+private slots:
+    void run();
+
+private:
+    QIODevice* mySource;
+    QIODevice* myDestination;
+    bool myHasFailed;
+};
 
 class CopyAction : public FolderAction
 {
@@ -35,6 +59,7 @@ private:
     QString myDestinationPath;
 
     CopyThread* myCopyThread;
+    CopyJob* myCopyJob;
 };
 
 #endif // COPYACTION_H

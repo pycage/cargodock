@@ -7,8 +7,12 @@
 
 #include "developermode.h"
 #include "folderbase.h"
-#include "foldermodel.h"
+
+#include "dropboxmodel.h"
 #include "placesmodel.h"
+#include "foldermodel.h"
+
+#include "dropboxthumbprovider.h"
 
 int main(int argc, char *argv[])
 {
@@ -26,8 +30,13 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<DeveloperMode>("harbour.cargodock", 1, 0, "DeveloperMode");
     qmlRegisterUncreatableType<FolderBase>("harbour.cargodock", 1, 0, "FolderBase", "abstract");
+
+    qmlRegisterType<DropboxModel>("harbour.cargodock", 1, 0, "DropboxModel");
     qmlRegisterType<FolderModel>("harbour.cargodock", 1, 0, "FolderModel");
     qmlRegisterType<PlacesModel>("harbour.cargodock", 1, 0, "PlacesModel");
+
+    QScopedPointer<DropboxThumbProvider> dropBoxThumbProvider(new DropboxThumbProvider);
+    view->engine()->addImageProvider("dropbox", dropBoxThumbProvider.data());
 
     view->setSource(SailfishApp::pathTo("qml/harbour-cargodock.qml"));
     view->show();

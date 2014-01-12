@@ -2,8 +2,8 @@
 #include "folderbase.h"
 
 #include <QFileInfo>
-#include <QIODevice>
 #include <QThread>
+#include <QTime>
 #include <QTimer>
 #include <QDebug>
 
@@ -62,6 +62,67 @@ private:
 };
 
 
+
+
+CopyJob::CopyJob(QIODevice* source, QIODevice* dest)
+    : QObject()
+    , mySource(source)
+    , myDestination(dest)
+    , myHasFailed(false)
+{
+
+}
+
+void CopyJob::start()
+{
+    if (mySource &&
+            mySource->isOpen() &&
+            mySource->isReadable() &&
+            myDestination &&
+            myDestination->isOpen() &&
+            myDestination->isWritable())
+    {
+        run();
+    }
+    else
+    {
+        close();
+    }
+}
+
+void CopyJob::close()
+{
+    mySource->close();
+    myDestination->close();
+    emit finished();
+}
+
+void CopyJob::run()
+{
+    QTime now;
+    now.start();
+    qDebug() << Q_FUNC_INFO;
+    while (now.elapsed() < 5)
+    {
+        qint64 bytes = myDestination->write(mySource->read(4096));
+        if (bytes == 0)
+        {
+            // done
+            close();
+            return;
+        }
+        else if (bytes < 0)
+        {
+            myHasFailed = true;
+            close();
+            return;
+        }
+    }
+    QTimer::singleShot(1, this, SLOT(run()));
+}
+
+
+
 CopyAction::CopyAction(FolderBase* source,
                        FolderBase* dest,
                        const QList<QString>& sourcePaths,
@@ -71,6 +132,7 @@ CopyAction::CopyAction(FolderBase* source,
     , mySourcePaths(sourcePaths)
     , myDestinationPath(destPath)
     , myCopyThread(0)
+    , myCopyJob(0)
 {
 
 }
@@ -105,7 +167,7 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
     else
     {
         qDebug() << "file type";
-        if (! myCopyThread)
+        if (! myCopyJob)
         {
             const QString& destFile =
                     myDestination->joinPath(QStringList()
@@ -117,10 +179,10 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
                                                         QIODevice::WriteOnly);
             if (srcFd && destFd)
             {
-                myCopyThread = new CopyThread(srcFd, destFd);
-                connect(myCopyThread, SIGNAL(finished()),
+                myCopyJob = new CopyJob(srcFd, destFd);
+                connect(myCopyJob, SIGNAL(finished()),
                         this, SLOT(slotCopyThreadFinished()));
-                myCopyThread->start();
+                myCopyJob->start();
             }
             else
             {
@@ -150,9 +212,9 @@ void CopyAction::slotProcessNext()
 
 void CopyAction::slotCopyThreadFinished()
 {
-    if (myCopyThread)
+    if (myCopyJob)
     {
-        if (! myCopyThread->hasFailed())
+        if (! myCopyJob->hasFailed())
         {
             qDebug() << "copying succeeded";
             QTimer::singleShot(0, this, SLOT(slotProcessNext()));
@@ -162,7 +224,7 @@ void CopyAction::slotCopyThreadFinished()
             qDebug() << "copying failed";
             emit finished();
         }
-        delete myCopyThread;
-        myCopyThread = 0;
+        delete myCopyJob;
+        myCopyJob = 0;
     }
 }

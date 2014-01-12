@@ -34,6 +34,10 @@ Page {
         {
             model = placesModelComponent.createObject(page, props);
         }
+        else if (name === "dropbox")
+        {
+            model = dropboxModelComponent.createObject(page, props);
+        }
         else
         {
             model = folderModelComponent.createObject(page, props);
@@ -113,6 +117,43 @@ Page {
             }
             onError: {
                 page.error(details);
+            }
+        }
+    }
+
+    Component {
+        id: dropboxModelComponent
+        DropboxModel {
+            id: dropboxModel
+
+            onFinished: {
+                page.finished();
+            }
+            onError: {
+                page.error(details);
+            }
+
+            onAuthorizationRequired: {
+                var props = {
+                    "url": url,
+                    "redirectionUri": redirectionUri
+                }
+
+                console.log("URL: " + url);
+                console.log("Redirection URI: " + redirectionUri);
+
+                notification.show("Authorization required.");
+                var dlg = pageStack.push(Qt.resolvedUrl("OAuthDialog.qml"), props);
+
+                function f(model, dlg)
+                {
+                    return function()
+                    {
+                        model.authorize(dlg.url);
+                    }
+                }
+
+                dlg.accepted.connect(f(dropboxModel, dlg));
             }
         }
     }

@@ -1,7 +1,9 @@
 #include "folderbase.h"
 #include "copyaction.h"
 
+#include <QSettings>
 #include <QDebug>
+
 
 FolderBase::FolderBase(QObject* parent)
     : QAbstractListModel(parent)
@@ -281,4 +283,16 @@ bool FolderBase::deleteFile(const QString&)
 void FolderBase::runFile(const QString& path)
 {
 
+}
+
+void FolderBase::setConfigValue(const QString& key, const QVariant& value)
+{
+    QSettings settings("harbour-cargodock", "CargoDock");
+    settings.setValue(key, value);
+}
+
+QVariant FolderBase::configValue(const QString& key) const
+{
+    QSettings settings("harbour-cargodock", "CargoDock");
+    return settings.value(key);
 }

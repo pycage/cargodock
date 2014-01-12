@@ -64,6 +64,11 @@ PlacesModel::PlacesModel(QObject* parent)
                                        "local",
                                        "/"));
     }
+
+    myPlaces << Item::Ptr(new Item("Dropbox",
+                                   "image://theme/icon-m-share",
+                                   "dropbox",
+                                   "/"));
 }
 
 int PlacesModel::rowCount(const QModelIndex&) const

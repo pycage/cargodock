@@ -10,6 +10,10 @@
 #include <QStringList>
 #include <QVariant>
 
+/* Base class for file system models.
+ * In order to create a new file system model, derive from this class and
+ * implement / override the virtual methods.
+ */
 class FolderBase : public QAbstractListModel
 {
     Q_OBJECT
@@ -166,6 +170,10 @@ protected:
         ModelTargetRole,
         SelectedRole
     };
+
+    void setConfigValue(const QString& key, const QVariant& value);
+    QVariant configValue(const QString& key) const;
+
 
     virtual void loadDirectory(const QString& path) = 0;
     virtual QString itemName(int idx) const = 0;

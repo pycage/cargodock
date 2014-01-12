@@ -9,12 +9,16 @@
 TARGET = harbour-cargodock
 
 CONFIG += sailfishapp
+QT += network xml
 
 SOURCES += src/harbour-cargodock.cpp \
     src/foldermodel.cpp \
     src/copyaction.cpp \
     src/folderbase.cpp \
-    src/placesmodel.cpp
+    src/placesmodel.cpp \
+    src/dropboxmodel.cpp \
+    src/dropboxapi/dropboxapi.cpp \
+    src/dropboxthumbprovider.cpp
 
 OTHER_FILES += qml/harbour-cargodock.qml \
     qml/cover/CoverPage.qml \
@@ -39,7 +43,11 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/pages/PreviewImage.qml \
     qml/pages/PreviewText.qml \
     qml/pages/PreviewAudio.qml \
-    qml/icon.png
+    qml/icon.png \
+    src/qtdropbox/LICENCE \
+    src/qtdropbox/AUTHORS.md \
+    qml/pages/SettingsPage.qml \
+    qml/pages/OAuthDialog.qml
 
 HEADERS += \
     src/foldermodel.h \
@@ -47,5 +55,9 @@ HEADERS += \
     src/copyaction.h \
     src/folderbase.h \
     src/placesmodel.h \
-    src/developermode.h
+    src/developermode.h \
+    src/dropboxmodel.h \
+    src/dropboxapi/dropboxapi.h \
+    src/dropboxthumbprovider.h \
+    src/dropboxapi/product.h
 
