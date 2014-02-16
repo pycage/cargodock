@@ -18,7 +18,9 @@ SOURCES += src/harbour-cargodock.cpp \
     src/placesmodel.cpp \
     src/dropboxmodel.cpp \
     src/dropboxapi/dropboxapi.cpp \
-    src/dropboxthumbprovider.cpp
+    src/dropboxthumbprovider.cpp \
+    src/dropboxapi/dropboxfile.cpp \
+    src/localfile.cpp
 
 OTHER_FILES += qml/harbour-cargodock.qml \
     qml/cover/CoverPage.qml \
@@ -47,7 +49,15 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     src/qtdropbox/LICENCE \
     src/qtdropbox/AUTHORS.md \
     qml/pages/SettingsPage.qml \
-    qml/pages/OAuthDialog.qml
+    qml/pages/OAuthDialog.qml \
+    qml/dropbox.png \
+    qml/pages/AddServiceDialog.qml \
+    qml/pages/ServiceObject.qml \
+    qml/pages/DropboxService.qml \
+    qml/pages/LocalService.qml \
+    qml/pages/PlacesService.qml \
+    qml/pages/ServiceDelegate.qml \
+    qml/pages/WebDavService.qml
 
 HEADERS += \
     src/foldermodel.h \
@@ -59,5 +69,7 @@ HEADERS += \
     src/dropboxmodel.h \
     src/dropboxapi/dropboxapi.h \
     src/dropboxthumbprovider.h \
-    src/dropboxapi/product.h
+    src/dropboxapi/product.h \
+    src/dropboxapi/dropboxfile.h \
+    src/localfile.h
 

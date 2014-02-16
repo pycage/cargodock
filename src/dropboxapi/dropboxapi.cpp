@@ -1,5 +1,5 @@
 #include "dropboxapi.h"
-#include "product.h"
+#include "../../../product.h"
 
 #include <QJsonDocument>
 #include <QNetworkAccessManager>
