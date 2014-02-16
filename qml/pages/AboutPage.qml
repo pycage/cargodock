@@ -48,7 +48,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: qsTr("Version 0.1.3")
+            text: qsTr("Version 0.2.0")
         }
 
         Label {
@@ -95,7 +95,16 @@ Page {
                 pageStack.push(Qt.resolvedUrl("LicensePage.qml"));
             }
         }
+    }
 
+    Image {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: Theme.paddingLarge
+        height: Theme.itemSizeLarge
+        fillMode: Image.PreserveAspectFit
+        smooth: true
+        source: Qt.resolvedUrl("../works-with-dropbox.png")
     }
 
     Label {

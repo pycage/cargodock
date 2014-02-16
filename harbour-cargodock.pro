@@ -57,7 +57,8 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/pages/LocalService.qml \
     qml/pages/PlacesService.qml \
     qml/pages/ServiceDelegate.qml \
-    qml/pages/WebDavService.qml
+    qml/pages/WebDavService.qml \
+    qml/works-with-dropbox.png
 
 HEADERS += \
     src/foldermodel.h \
