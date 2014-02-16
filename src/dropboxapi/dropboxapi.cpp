@@ -16,6 +16,7 @@ namespace
 const int API(1);
 const QString DROPBOX_ENDPOINT("https://www.dropbox.com");
 const QString API_DROPBOX_ENDPOINT("https://api.dropbox.com");
+const QString API_CONTENT_DROPBOX_ENDPOINT("https://api-content.dropbox.com");
 const QString REDIRECT_URI("https://localhost/oauth2code");
 
 enum
@@ -134,7 +135,8 @@ void DropboxApi::setAccessToken(const QString& accessToken, const QString& userI
 
 QNetworkReply* DropboxApi::sendRequest(RequestMethod method,
                                        const QUrl& url,
-                                       const QByteArray& payload)
+                                       const QByteArray& payload,
+                                       const QVariantMap& headers)
 {
     QNetworkRequest req(url);
     req.setRawHeader("Authorization",
@@ -142,6 +144,10 @@ QNetworkReply* DropboxApi::sendRequest(RequestMethod method,
                      .arg(myAccessToken)
                      .toUtf8());
 
+    foreach (const QString& key, headers.keys())
+    {
+        req.setRawHeader(key.toUtf8(), headers.value(key).toByteArray());
+    }
     qDebug() << Q_FUNC_INFO << myAccessToken << url;
 
     QNetworkReply* reply = 0;
@@ -168,7 +174,7 @@ QVariantMap DropboxApi::getReplyMap(QObject* sender)
     if (reply)
     {
         int code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        qDebug() << "HTTP Code" << code;
+        qDebug() << "HTTP Code" << reply->url() << code;
         QByteArray data = reply->readAll();
         qDebug() << data;
         if (code == HttpUnchanged)
@@ -191,6 +197,20 @@ QVariantMap DropboxApi::getReplyMap(QObject* sender)
     }
 
     return QVariantMap();
+}
+
+int DropboxApi::getReplyStatus(QObject* sender) const
+{
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender);
+    if (reply)
+    {
+        return reply->attribute(QNetworkRequest::HttpStatusCodeAttribute)
+                .toInt();
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 DropboxApi::Metadata DropboxApi::parseMetadata(const QVariantMap& map) const
@@ -308,6 +328,81 @@ void DropboxApi::deleteFile(const QString& path)
             this, SLOT(slotFileDeleted()));
 }
 
+void DropboxApi::createUpload(const QString& identifier)
+{
+    qDebug() << Q_FUNC_INFO << identifier;
+    QUrl url;
+    url.setUrl(API_CONTENT_DROPBOX_ENDPOINT, QUrl::StrictMode);
+    url.setPath(QString("/%1/chunked_upload")
+                .arg(API));
+    QUrlQuery query;
+    query.addQueryItem("offset", "0");
+    url.setQuery(query);
+    QNetworkReply* reply = sendRequest(PUT, url, QByteArray());
+    reply->setProperty("identifier", identifier);
+    connect(reply, SIGNAL(finished()),
+            this, SLOT(slotUploadCreated()));
+}
+
+void DropboxApi::upload(const QString& uploadId,
+                        qint64 offset,
+                        const QByteArray& chunk)
+{
+    qDebug() << uploadId << offset << chunk.size();
+    QUrl url;
+    url.setUrl(API_CONTENT_DROPBOX_ENDPOINT, QUrl::StrictMode);
+    url.setPath(QString("/%1/chunked_upload")
+                .arg(API));
+    QUrlQuery query;
+    query.addQueryItem("upload_id", uploadId);
+    query.addQueryItem("offset", QString::number(offset));
+    url.setQuery(query);
+    QNetworkReply* reply = sendRequest(PUT, url, chunk);
+    reply->setProperty("identifier", uploadId);
+    connect(reply, SIGNAL(finished()),
+            this, SLOT(slotUploadedChunk()));
+}
+
+void DropboxApi::commitUpload(const QString& uploadId, const QString& path)
+{
+    QUrl url;
+    url.setUrl(API_CONTENT_DROPBOX_ENDPOINT, QUrl::StrictMode);
+    url.setPath(QString("/%1/commit_chunked_upload/%2/%3")
+                .arg(API)
+                .arg(myRoot)
+                .arg(path));
+    QUrlQuery query;
+    query.addQueryItem("upload_id", uploadId);
+    QNetworkReply* reply = sendRequest(POST, url, query.toString().toUtf8());
+    reply->setProperty("identifier", uploadId);
+    connect(reply, SIGNAL(finished()),
+            this, SLOT(slotUploadCommitted()));
+}
+
+void DropboxApi::download(const QString& path,
+                          qint64 rangeBegin,
+                          qint64 rangeEnd)
+{
+    qDebug() << Q_FUNC_INFO << path << rangeBegin << rangeEnd;
+    QUrl url;
+    url.setUrl(API_CONTENT_DROPBOX_ENDPOINT, QUrl::StrictMode);
+    url.setPath(QString("/%1/files/%2/%3")
+                .arg(API)
+                .arg(myRoot)
+                .arg(path));
+
+    QVariantMap headers;
+    QString range("bytes=%1-%2");
+    range = rangeBegin >= 0 ? range.arg(rangeBegin) : range.arg("");
+    range = rangeEnd >= 0 ? range.arg(rangeEnd) : range.arg("");
+    headers.insert("Range", range.toUtf8());
+
+    QNetworkReply* reply = sendRequest(GET, url, QByteArray(), headers);
+    reply->setProperty("identifier", path);
+    connect(reply, SIGNAL(finished()),
+            this, SLOT(slotDownloaded()));
+}
+
 void DropboxApi::slotRequestFinished(QNetworkReply* reply)
 {
     reply->deleteLater();
@@ -373,5 +468,74 @@ void DropboxApi::slotFileDeleted()
     else
     {
         emit fileDeleted(QString());
+    }
+}
+
+void DropboxApi::slotUploadCreated()
+{
+    QString identifier = sender()->property("identifier").toString();
+    qDebug() << Q_FUNC_INFO << identifier;
+    QVariantMap jsonMap = getReplyMap(sender());
+    emit uploadCreated(identifier, jsonMap.value("upload_id", "").toString());
+}
+
+void DropboxApi::slotUploadedChunk()
+{
+    bool ok = true;
+    int status = getReplyStatus(sender());
+    if (status == 400)
+    {
+        // offset mismatch
+        ok = false;
+    }
+    else if (status == 404)
+    {
+        // unknown or expired upload_id
+        ok = false;
+    }
+
+    QString identifier = sender()->property("identifier").toString();
+    emit uploaded(identifier, ok);
+}
+
+void DropboxApi::slotUploadCommitted()
+{
+    bool ok = true;
+    int status = getReplyStatus(sender());
+    if (status == 400)
+    {
+        // unknown or expired upload_id
+        ok = false;
+    }
+
+    QString identifier = sender()->property("identifier").toString();
+    emit uploadCommitted(identifier, ok);
+}
+
+void DropboxApi::slotDownloaded()
+{
+    QString identifier = sender()->property("identifier").toString();
+    int status = getReplyStatus(sender());
+    qDebug() << Q_FUNC_INFO << identifier << status;
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
+    if (reply && status >= 200 && status < 400)
+    {
+        QByteArray metadata = reply->rawHeader("x-dropbox-metadata");
+        QVariantMap map;
+        QJsonParseError err;
+        QJsonDocument doc = QJsonDocument::fromJson(metadata, &err);
+        bool ok = (err.error == QJsonParseError::NoError);
+        if (ok)
+        {
+            map = doc.toVariant().toMap();
+        }
+
+        emit downloaded(identifier, reply->readAll(),
+                        map.value("bytes", 0).toLongLong(),
+                        true);
+    }
+    else
+    {
+        emit downloaded(identifier, QByteArray(), 0, false);
     }
 }

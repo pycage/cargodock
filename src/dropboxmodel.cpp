@@ -1,39 +1,28 @@
 #include "dropboxmodel.h"
+#include "dropboxapi/dropboxfile.h"
 
+#include <QDir>
 #include <QEventLoop>
-#include <QTimer>
+#include <QFile>
+#include <QString>
 #include <QDebug>
+
+namespace
+{
+const QString COOKIE_PATH_1(QDir::homePath() +
+                            "/.local/share/harbour-cargodock/"
+                            ".QtWebKit/cookies.db");
+const QString COOKIE_PATH_2(QDir::homePath() +
+                            "/.local/share/harbour-cargodock/harbour-cargodock/"
+                            ".QtWebKit/cookies.db");
+}
 
 DropboxModel::DropboxModel(QObject* parent)
     : FolderBase(parent)
     , myDropboxApi(new DropboxApi)
+    , myUserName("-")
+    , myIsLoading(false)
 {
-    myIcons.insert("application/octet-stream",                "image://theme/icon-m-other");
-    myIcons.insert("application/pdf",                         "image://theme/icon-m-document");
-    myIcons.insert("application/rtf",                         "image://theme/icon-m-document");
-    myIcons.insert("application/vnd.android.package-archive", "image://theme/icon-m-device");
-    myIcons.insert("application/xml",                         "image://theme/icon-m-document");
-    myIcons.insert("application/x-core",                      "image://theme/icon-m-crash-reporter");
-    myIcons.insert("application/x-executable",                "image://theme/icon-m-play");
-    myIcons.insert("application/x-gzip",                      "image://theme/icon-m-other");
-    myIcons.insert("application/x-redhat-package-manager",    "image://theme/icon-lock-system-update");
-    myIcons.insert("application/x-sharedlib",                 "image://theme/icon-m-share");
-    myIcons.insert("application/x-shellscript",               "image://theme/icon-m-document");
-    myIcons.insert("application/x-sqlite3",                   "image://theme/icon-m-levels");
-    myIcons.insert("application/x-x509-ca-cert",              "image://theme/icon-m-certificates");
-    myIcons.insert("audio/mp4",                               "image://theme/icon-m-music");
-    myIcons.insert("audio/mpeg",                              "image://theme/icon-m-music");
-    myIcons.insert("image/jpeg",                              "image://theme/icon-m-image");
-    myIcons.insert("image/png",                               "image://theme/icon-m-image");
-    myIcons.insert("inode/directory",                         "image://theme/icon-m-folder");
-    myIcons.insert("text/html",                               "image://theme/icon-m-region");
-    myIcons.insert("text/plain",                              "image://theme/icon-m-document");
-    myIcons.insert("text/vcard",                              "image://theme/icon-m-people");
-    myIcons.insert("text/x-c++src",                           "image://theme/icon-m-document");
-    myIcons.insert("text/x-qml",                              "image://theme/icon-m-document");
-    myIcons.insert("video/mp4",                               "image://theme/icon-m-video");
-    myIcons.insert("video/x-flv",                             "image://theme/icon-m-video");
-
     connect(myDropboxApi.data(), SIGNAL(authorizationRequest(QUrl,QUrl)),
             this, SIGNAL(authorizationRequired(QUrl,QUrl)));
     connect(myDropboxApi.data(), SIGNAL(authorized()),
@@ -41,6 +30,8 @@ DropboxModel::DropboxModel(QObject* parent)
     connect(myDropboxApi.data(), SIGNAL(error(DropboxApi::ErrorCode)),
             this, SLOT(slotError(DropboxApi::ErrorCode)));
 
+    connect(myDropboxApi.data(), SIGNAL(accountInfoReceived(DropboxApi::AccountInfo)),
+            this, SLOT(slotAccountInfoReceived(DropboxApi::AccountInfo)));
     connect(myDropboxApi.data(), SIGNAL(metadataReceived(DropboxApi::Metadata)),
             this, SLOT(slotMetaDataReceived(DropboxApi::Metadata)));
     connect(myDropboxApi.data(), SIGNAL(folderCreated(QString)),
@@ -49,8 +40,6 @@ DropboxModel::DropboxModel(QObject* parent)
             this, SLOT(slotFileMoved(QString)));
     connect(myDropboxApi.data(), SIGNAL(fileDeleted(QString)),
             this, SLOT(slotFileDeleted(QString)));
-
-    QTimer::singleShot(0, this, SLOT(slotInit()));
 }
 
 int DropboxModel::rowCount(const QModelIndex&) const
@@ -75,6 +64,8 @@ QVariant DropboxModel::data(const QModelIndex& index, int role) const
         return item->path;
     case UriRole:
         return item->uri;
+    case PreviewRole:
+        return item->icon + "?large";
     case TypeRole:
         return item->type;
     case MimeTypeRole:
@@ -86,11 +77,11 @@ QVariant DropboxModel::data(const QModelIndex& index, int role) const
     case MtimeRole:
         return item->mtime;
     case OwnerRole:
-        return item->owner;
+        return myUserName;
     case GroupRole:
-        return item->group;
+        return "-";
     case PermissionsRole:
-        return item->permissions;
+        return FolderBase::ReadOwner | FolderBase::WriteOwner;
     case LinkTargetRole:
         return item->linkTarget;
     case SelectedRole:
@@ -139,7 +130,6 @@ void DropboxModel::rename(const QString& name, const QString& newName)
 
 QString DropboxModel::parentPath(const QString& path) const
 {
-    qDebug() << "parent path of" << path;
     int idx = path.lastIndexOf("/");
     if (idx == 0)
     {
@@ -205,7 +195,7 @@ FolderBase::ItemType DropboxModel::type(const QString& path) const
 {
     foreach (Item::ConstPtr item, myItems)
     {
-        if (item->path == path)
+        if (item->uri == path)
         {
             return item->type;
         }
@@ -216,12 +206,9 @@ FolderBase::ItemType DropboxModel::type(const QString& path) const
 QIODevice* DropboxModel::openFile(const QString& path,
                                   QIODevice::OpenModeFlag mode)
 {
-    /*
-    QDropboxFile* fd = new QDropboxFile("/dropbox" + path, myDropbox.data());
+    DropboxFile* fd = new DropboxFile(path, myDropboxApi);
     fd->open(mode);
     return fd;
-    */
-    return 0;
 }
 
 bool DropboxModel::makeDirectory(const QString& path)
@@ -264,6 +251,8 @@ void DropboxModel::loadDirectory(const QString& path)
 
     if (myDropboxApi->accessToken().size())
     {
+        myIsLoading = true;
+        emit loadingChanged();
         myDropboxApi->requestMetadata(path);
     }
 }
@@ -287,18 +276,25 @@ void DropboxModel::authorize(const QUrl& uri)
     setPath(path());
 }
 
-void DropboxModel::slotInit()
+void DropboxModel::init()
 {
     if (configValue("dropbox-access-token").isValid())
     {
         qDebug() << "Already authorized by Dropbox";
         myDropboxApi->setAccessToken(configValue("dropbox-access-token").toString(),
                                      configValue("dropbox-uid").toString());
-        setPath(path());
     }
     else
     {
         qDebug() << "Authorization required for Dropbox";
+        if (QFile(COOKIE_PATH_1).exists())
+        {
+            QFile(COOKIE_PATH_1).remove();
+        }
+        if (QFile(COOKIE_PATH_2).exists())
+        {
+            QFile(COOKIE_PATH_2).remove();
+        }
         myDropboxApi->authorize();
     }
 }
@@ -310,6 +306,11 @@ void DropboxModel::slotAuthorized()
     setConfigValue("dropbox-uid", myDropboxApi->userId());
 }
 
+void DropboxModel::slotAccountInfoReceived(const DropboxApi::AccountInfo& info)
+{
+    myUserName = info.displayName;
+}
+
 void DropboxModel::slotMetaDataReceived(const DropboxApi::Metadata& metadata)
 {
     qDebug() << Q_FUNC_INFO << metadata.path << metadata.isDir;
@@ -319,7 +320,8 @@ void DropboxModel::slotMetaDataReceived(const DropboxApi::Metadata& metadata)
         {
             Item::Ptr item(new Item);
             item->name = basename(child.path);
-            item->path = child.path;
+            item->path = parentPath(child.path);
+            item->uri = child.path;
             item->type = child.isDir ? Folder : File;
             item->mimeType = child.mimeType;
             item->mtime = child.mtime;
@@ -334,7 +336,7 @@ void DropboxModel::slotMetaDataReceived(const DropboxApi::Metadata& metadata)
             {
                 item->icon = child.isDir
                         ? "image://theme/icon-m-folder"
-                        : myIcons.value(item->mimeType, "image://theme/icon-m-other");
+                        : mimeTypeIcon(item->mimeType);
             }
             qDebug() << "Icon" << item->name << item->icon;
 
@@ -342,6 +344,9 @@ void DropboxModel::slotMetaDataReceived(const DropboxApi::Metadata& metadata)
             myItems << item;
             endInsertRows();
         }
+
+        myIsLoading = false;
+        emit loadingChanged();
     }
 }
 

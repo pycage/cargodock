@@ -10,8 +10,10 @@ FolderBase::FolderBase(QObject* parent)
     , myMinDepth(INT_MAX)
 {
     myRolenames.insert(NameRole, "name");
+    myRolenames.insert(SectionRole, "section");
     myRolenames.insert(PathRole, "path");
     myRolenames.insert(UriRole, "uri");
+    myRolenames.insert(PreviewRole, "preview");
     myRolenames.insert(TypeRole, "type");
     myRolenames.insert(MimeTypeRole, "mimeType");
     myRolenames.insert(IconRole, "icon");
@@ -23,6 +25,46 @@ FolderBase::FolderBase(QObject* parent)
     myRolenames.insert(LinkTargetRole, "linkTarget");
     myRolenames.insert(ModelTargetRole, "modelTarget");
     myRolenames.insert(SelectedRole, "selected");
+
+    myMimeTypeIcons.insert("application/epub-zip",                    "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/octet-stream",                "image://theme/icon-m-other");
+    myMimeTypeIcons.insert("application/pdf",                         "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/rtf",                         "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/vnd.android.package-archive", "image://theme/icon-m-device");
+    myMimeTypeIcons.insert("application/xml",                         "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/x-core",                      "image://theme/icon-m-crash-reporter");
+    myMimeTypeIcons.insert("application/x-debian-package",            "image://theme/icon-m-other");
+    myMimeTypeIcons.insert("application/x-executable",                "image://theme/icon-m-play");
+    myMimeTypeIcons.insert("application/x-gzip",                      "image://theme/icon-m-other");
+    myMimeTypeIcons.insert("application/x-mobipocket-ebook",          "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/x-redhat-package-manager",    "image://theme/icon-lock-system-update");
+    myMimeTypeIcons.insert("application/x-rpm",                       "image://theme/icon-lock-system-update");
+    myMimeTypeIcons.insert("application/x-sharedlib",                 "image://theme/icon-m-share");
+    myMimeTypeIcons.insert("application/x-shellscript",               "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/x-sqlite3",                   "image://theme/icon-m-levels");
+    myMimeTypeIcons.insert("application/x-trash",                     "image://theme/icon-m-dismiss");
+    myMimeTypeIcons.insert("application/x-x509-ca-cert",              "image://theme/icon-m-certificates");
+    myMimeTypeIcons.insert("application/zip",                         "image://theme/icon-m-other");
+    myMimeTypeIcons.insert("audio/mp4",                               "image://theme/icon-m-music");
+    myMimeTypeIcons.insert("audio/mpeg",                              "image://theme/icon-m-music");
+    myMimeTypeIcons.insert("image/jpeg",                              "image://theme/icon-m-image");
+    myMimeTypeIcons.insert("image/png",                               "image://theme/icon-m-image");
+    myMimeTypeIcons.insert("image/rle",                               "image://theme/icon-m-image");
+    myMimeTypeIcons.insert("inode/directory",                         "image://theme/icon-m-folder");
+    myMimeTypeIcons.insert("text/html",                               "image://theme/icon-m-region");
+    myMimeTypeIcons.insert("text/plain",                              "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("text/vcard",                              "image://theme/icon-m-people");
+    myMimeTypeIcons.insert("text/x-c++src",                           "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("text/x-qml",                              "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("video/mp4",                               "image://theme/icon-m-video");
+    myMimeTypeIcons.insert("video/x-flv",                             "image://theme/icon-m-video");
+}
+
+void FolderBase::setUid(const QString& uid)
+{
+    myUid = uid;
+    init();
+    setPath(configValue("path").toString());
 }
 
 void FolderBase::setPath(const QString& path)
@@ -142,7 +184,7 @@ void FolderBase::linkSelected(FolderBase* dest)
         const QString endpoint = joinPath(QStringList() << myPath << itemName(idx));
         const QString destPath = dest->joinPath(QStringList() << dest->path() << itemName(idx));
 
-        if (! linkFile(destPath, endpoint))
+        if (! dest->linkFile(destPath, endpoint))
         {
             emit error("Could not link to destination.");
         }
@@ -250,6 +292,11 @@ bool FolderBase::isSelected(int idx) const
     return mySelection.contains(idx);
 }
 
+QString FolderBase::mimeTypeIcon(const QString& mimeType) const
+{
+    return myMimeTypeIcons.value(mimeType, "image://theme/icon-m-other");
+}
+
 QStringList FolderBase::list(const QString&) const
 {
     return QStringList();
@@ -285,14 +332,30 @@ void FolderBase::runFile(const QString& path)
 
 }
 
-void FolderBase::setConfigValue(const QString& key, const QVariant& value)
+void FolderBase::setConfigValue(const QString& key,
+                                const QVariant& value)
 {
-    QSettings settings("harbour-cargodock", "CargoDock");
-    settings.setValue(key, value);
+    setConfigValue(myUid, key, value);
 }
 
 QVariant FolderBase::configValue(const QString& key) const
 {
+    return configValue(myUid, key);
+}
+
+void FolderBase::setConfigValue(const QString& uid,
+                                const QString& key,
+                                const QVariant& value)
+{
     QSettings settings("harbour-cargodock", "CargoDock");
+    settings.beginGroup(uid);
+    settings.setValue(key, value);
+}
+
+QVariant FolderBase::configValue(const QString& uid,
+                                 const QString& key) const
+{
+    QSettings settings("harbour-cargodock", "CargoDock");
+    settings.beginGroup(uid);
     return settings.value(key);
 }

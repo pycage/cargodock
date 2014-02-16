@@ -7,59 +7,56 @@ Page {
 
     property bool isSecondPane
 
-    property variant _modelStack: []
-
-    property variant _breadcrumbs: []
+    property var _modelStack: []
+    property variant sourceModel
+    property variant destinationModel
 
     property bool _selectionMode: false
 
-    signal copyCommand(variant sourceModel)
+    property int _capabilities: sourceModel ? sourceModel.capabilities : 0
+    property int _destinationCapabilities: destinationModel ? destinationModel.capabilities : 0
+
+    signal modelChanged
+
+    signal copyCommand(variant sourceModel, variant destModel)
     signal deleteCommand(variant sourceModel, variant items)
-    signal linkCommand(variant sourceModel)
+    signal linkCommand(variant sourceModel, variant destModel)
     signal finished()
     signal error(string details)
 
-    function currentContentModel()
-    {
-        return _modelStack[_modelStack.length - 1];
-    }
 
-    function pushModel(name, path)
+    function pushModel(typeName, uid)
     {
         var props = {
-            "path": path
+            "uid": uid
         };
         var model;
-        if (name === "places")
-        {
-            model = placesModelComponent.createObject(page, props);
-        }
-        else if (name === "dropbox")
-        {
-            model = dropboxModelComponent.createObject(page, props);
-        }
-        else
-        {
-            model = folderModelComponent.createObject(page, props);
-        }
+        console.log("create model " + typeName + " " + uid);
+        model = serviceObject(typeName).createModel(uid);
+        model.finished.connect(page.finished);
+        model.error.connect(page.error);
 
-        var stack = _modelStack;
-        stack.push(model);
-        _modelStack = stack;
-        contentlist.model = model;
-        sharedState.currentContentModel = model;
+        _modelStack.push(model);
+        sourceModel = model;
+        sharedState.currentContentModel = sourceModel;
+        page.modelChanged();
     }
 
     function popModels(model)
     {
-        var stack = _modelStack;
-        while (stack.length > 0 && stack[stack.length - 1] !== model)
+        while (_modelStack.length > 0 && _modelStack[_modelStack.length - 1] !== model)
         {
-            stack.pop();
+            _modelStack.pop();
         }
-        _modelStack = stack;
-        contentlist.model = _modelStack[_modelStack.length - 1];
-        sharedState.currentContentModel = contentlist.model;
+        sourceModel = _modelStack[_modelStack.length - 1];
+        sharedState.currentContentModel = sourceModel;
+
+        // special treatment for the places model
+        if (_modelStack.length === 1)
+        {
+            sourceModel.refresh();
+        }
+        page.modelChanged();
     }
 
     function collectBreadcrumbs(currentBreadcrumbs)
@@ -87,83 +84,91 @@ Page {
         return crumbs;
     }
 
+    function availableActions(sourceCapabilities, destCapabilities)
+    {
+        var actions = [];
+        if (copyAction.enabled) actions.push(copyAction);
+        if (bookmarkAction.enabled) actions.push(bookmarkAction);
+        if (linkAction.enabled) actions.push(linkAction);
+        if (deleteAction.enabled) actions.push(deleteAction);
+
+        return actions;
+    }
+
     onStatusChanged: {
         if (status === PageStatus.Active)
         {
-            sharedState.currentContentModel = currentContentModel();
+            sharedState.currentContentModel = sourceModel;
             sharedState.isSecondPane = isSecondPane;
         }
     }
 
-    Component {
-        id: folderModelComponent
-        FolderModel {
-
-            onFinished: {
-                page.finished();
-            }
-            onError: {
-                page.error(details);
-            }
-        }
-    }
-
-    Component {
-        id: placesModelComponent
-        PlacesModel {
-
-            onFinished: {
-                page.finished();
-            }
-            onError: {
-                page.error(details);
-            }
-        }
-    }
-
-    Component {
-        id: dropboxModelComponent
-        DropboxModel {
-            id: dropboxModel
-
-            onFinished: {
-                page.finished();
-            }
-            onError: {
-                page.error(details);
-            }
-
-            onAuthorizationRequired: {
-                var props = {
-                    "url": url,
-                    "redirectionUri": redirectionUri
-                }
-
-                console.log("URL: " + url);
-                console.log("Redirection URI: " + redirectionUri);
-
-                notification.show("Authorization required.");
-                var dlg = pageStack.push(Qt.resolvedUrl("OAuthDialog.qml"), props);
-
-                function f(model, dlg)
-                {
-                    return function()
-                    {
-                        model.authorize(dlg.url);
-                    }
-                }
-
-                dlg.accepted.connect(f(dropboxModel, dlg));
-            }
-        }
-    }
-
     Component.onCompleted: {
-        pushModel("places", "Places");
+        pushModel("places", "places");
     }
 
     RemorsePopup {
         id: remorse
+    }
+
+    QtObject {
+        id: copyAction
+        property string name: "Copy to other side"
+        property bool enabled: sourceModel.capabilities & FolderBase.CanCopy &&
+                               destinationModel.capabilities & FolderBase.AcceptCopy
+
+        function action()
+        {
+            page.copyCommand(sourceModel, destinationModel);
+        }
+    }
+
+    QtObject {
+        id: bookmarkAction
+        property string name: "Bookmark"
+        property bool enabled: sourceModel.capabilities & FolderBase.CanBookmark &&
+                               destinationModel.capabilities & FolderBase.AcceptBookmark &&
+                               sourceModel.selected === 1
+
+        function action()
+        {
+            page.linkCommand(sourceModel, destinationModel);
+        }
+    }
+
+    QtObject {
+        id: linkAction
+        property string name: "Link to other side"
+        property bool enabled: sourceModel.capabilities & FolderBase.CanLink &&
+                               destinationModel.capabilities & FolderBase.AcceptLink
+
+        function action()
+        {
+            page.linkCommand(sourceModel, destinationModel);
+        }
+    }
+
+    QtObject {
+        id: deleteAction
+        property string name: "Delete"
+        property bool enabled: sourceModel.capabilities & FolderBase.CanDelete
+
+        function action()
+        {
+            var text = qsTr("Deleting %1 items").arg(sourceModel.selected);
+
+            function closure(model, items)
+            {
+                return function() {
+                    console.log("deleting " + items.length + " items " + items);
+                    page.deleteCommand(model, items);
+                }
+            }
+
+            remorse.execute(text,
+                            closure(sourceModel,
+                                    sourceModel.selection.slice()));
+        }
     }
 
     Drawer {
@@ -179,43 +184,20 @@ Page {
             clip: true
 
             PushUpMenu {
-                enabled: ! sharedState.actionInProgress
+                visible: actionMenuRepeater.count > 0 &&
+                         ! sharedState.actionInProgress &&
+                         sourceModel.selected > 0
 
-                MenuItem {
-                    enabled: contentlist.model.selected > 0
-                    text: "Copy to other side"
+                Repeater {
+                    id: actionMenuRepeater
+                    model: availableActions(sourceModel.capabilities,
+                                            destinationModel.capabilities)
 
-                    onClicked: {
-                        page.copyCommand(contentlist.model);
-                    }
-                }
-                MenuItem {
-                    enabled: contentlist.model.selected > 0
-                    text: "Link to other side"
-
-                    onClicked: {
-                        page.linkCommand(contentlist.model);
-                    }
-                }
-                MenuItem {
-                    enabled: contentlist.model.selected > 0
-                    text: "Delete"
-
-                    onClicked: {
-                        var text = qsTr("Deleting %1 items")
-                        .arg(contentlist.model.selected);
-
-                        function closure(model, items)
-                        {
-                            return function() {
-                                console.log("deleting " + items.length + " items " + items);
-                                page.deleteCommand(model, items);
-                            }
+                    MenuItem {
+                        text: modelData.name
+                        onClicked: {
+                            modelData.action();
                         }
-
-                        remorse.execute(text,
-                                        closure(contentlist.model,
-                                                contentlist.model.selection.slice()));
                     }
                 }
             }
@@ -236,7 +218,7 @@ Page {
                     icon.source: "image://theme/icon-m-close"
 
                     onClicked: {
-                        contentlist.model.unselectAll();
+                        sourceModel.unselectAll();
                         _selectionMode = false;
                     }
                 }
@@ -248,12 +230,13 @@ Page {
                     color: Theme.highlightColor
                     horizontalAlignment: Text.AlignHCenter
                     font.pixelSize: Theme.fontSizeExtraLarge
-                    text: qsTr("%1 selected").arg(contentlist.model.selected)
+                    text: qsTr("%1 selected").arg(sourceModel ? sourceModel.selected : 0) +
+                          " " + _capabilities + " - " + _destinationCapabilities
                 }
 
                 Label {
                     anchors.top: selectedLabel.bottom
-                    visible: selectedLabel.visible
+                    visible: selectedLabel.visible && actionMenuRepeater.count > 0
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeSmall
@@ -298,7 +281,7 @@ Page {
                         text: "All"
 
                         onClicked: {
-                            contentlist.model.selectAll();
+                            sourceModel.selectAll();
                         }
                     }
 
@@ -306,7 +289,7 @@ Page {
                         text: "None"
 
                         onClicked: {
-                            contentlist.model.unselectAll();
+                            sourceModel.unselectAll();
                         }
                     }
                 }
@@ -317,16 +300,17 @@ Page {
             id: contentlist
 
             anchors.fill: parent
+            model: sourceModel
 
             header: Column {
                 width: contentlist.width
 
                 PageHeader {
-                    title: contentlist.model.name
+                    title: sourceModel ? sourceModel.name : ""
                 }
 
                 ListItem {
-                    visible: contentlist.model.isWritable
+                    visible: sourceModel ? sourceModel.isWritable : false
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     Image {
@@ -356,12 +340,12 @@ Page {
                             }
                         }
 
-                        dlg.accepted.connect(closure(contentlist.model, dlg));
+                        dlg.accepted.connect(closure(sourceModel, dlg));
                     }
                 }
 
                 Separator {
-                    visible: contentlist.model.isWritable
+                    visible: sourceModel ? sourceModel.isWritable : false
                     width: parent.width
                     horizontalAlignment: Qt.AlignHCenter
                     color: Theme.highlightColor
@@ -382,6 +366,19 @@ Page {
 
                 MenuItem {
                     visible: breadcrumbRepeater.count === 0
+                    text: "Settings"
+
+                    onClicked: {
+                        var props = {
+                            "placesModel": _modelStack[0]
+                        }
+
+                        pageStack.push(Qt.resolvedUrl("SettingsPage.qml"), props);
+                    }
+                }
+
+                MenuItem {
+                    visible: breadcrumbRepeater.count === 0
                     text: "Help"
 
                     onClicked: {
@@ -392,13 +389,13 @@ Page {
                 // Menu of breadcrumbs
                 Repeater {
                     id: breadcrumbRepeater
-                    model: collectBreadcrumbs(contentlist.model.breadcrumbs)
+                    model: sourceModel ? collectBreadcrumbs(sourceModel.breadcrumbs) : null
 
                     MenuItem {
                         text: modelData.name
 
                         onClicked: {
-                            if (modelData.model !== contentlist.model)
+                            if (modelData.model !== sourceModel)
                             {
                                 popModels(modelData.model);
                             }
@@ -411,11 +408,17 @@ Page {
                 }
             }
 
+            section.property: "section"
+            section.delegate: SectionHeader {
+                text: section
+            }
+
+
             delegate: FileDelegate {
 
                 fileInfo: FileInfo {
                     source: model
-                    sourceModel: contentlist.model
+                    sourceModel: page.sourceModel
                 }
 
                 selected: model.selected
@@ -444,38 +447,38 @@ Page {
                                 }
                             }
 
-                            dlg.accepted.connect(closure(contentlist.model, model.name));
+                            dlg.accepted.connect(closure(sourceModel, model.name));
                         } else {
-                            contentlist.model.open(model.name);
+                            sourceModel.open(model.name);
                         }
                     }
                     else
                     {
-                        contentlist.model.setSelected(index, ! selected);
+                        sourceModel.setSelected(index, ! selected);
                     }
                 }
 
                 onPressAndHold: {
                     if (! page._selectionMode)
                     {
-                        contentlist.model.setSelected(index, true);
+                        sourceModel.setSelected(index, true);
                         page._selectionMode = true;
                     }
                     else
                     {
                         page._selectionMode = false;
-                        contentlist.model.unselectAll();
+                        sourceModel.unselectAll();
                     }
                 }
             }
 
             ViewPlaceholder {
-                enabled: ! contentlist.model.isReadable
+                enabled: sourceModel ? ! sourceModel.isReadable : false
                 text: "You have no permission for this folder"
             }
 
             ViewPlaceholder {
-                enabled: contentlist.model.count === 0 && contentlist.model.isReadable
+                enabled: sourceModel ? (sourceModel.count === 0 && sourceModel.isReadable) : false
                 text: "No files"
             }
 
@@ -487,5 +490,11 @@ Page {
             flickable: contentlist
         }
     }//Drawer
+
+    BusyIndicator {
+        running: sourceModel ? sourceModel.loading : true
+        anchors.centerIn: parent
+        size: BusyIndicatorSize.Large
+    }
 }
 

@@ -2,7 +2,7 @@
 #include <QGuiApplication>
 #include <QQmlContext>
 #include <QQuickView>
-#include <QScopedPointer>
+#include <QSharedPointer>
 #include <QtQml>
 
 #include "developermode.h"
@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
     //
     // To display the view, call "show()" (will show fullscreen on device).
 
-    QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
-    QScopedPointer<QQuickView> view(SailfishApp::createView());
+    QSharedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
+    QSharedPointer<QQuickView> view(SailfishApp::createView());
 
     qmlRegisterType<DeveloperMode>("harbour.cargodock", 1, 0, "DeveloperMode");
     qmlRegisterUncreatableType<FolderBase>("harbour.cargodock", 1, 0, "FolderBase", "abstract");
@@ -35,8 +35,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<FolderModel>("harbour.cargodock", 1, 0, "FolderModel");
     qmlRegisterType<PlacesModel>("harbour.cargodock", 1, 0, "PlacesModel");
 
-    QScopedPointer<DropboxThumbProvider> dropBoxThumbProvider(new DropboxThumbProvider);
-    view->engine()->addImageProvider("dropbox", dropBoxThumbProvider.data());
+    DropboxThumbProvider* dropBoxThumbProvider = new DropboxThumbProvider(view->engine()->networkAccessManager());
+    view->engine()->addImageProvider("dropbox", dropBoxThumbProvider);
 
     view->setSource(SailfishApp::pathTo("qml/harbour-cargodock.qml"));
     view->show();

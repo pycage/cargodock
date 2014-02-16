@@ -11,6 +11,7 @@ QtObject {
     property int type: source.type ? source.type : 0
     property string mimeType: source.mimeType ? source.mimeType : "application/x-octet-stream"
     property string icon: source.icon !== undefined ? source.icon : "image://theme/icon-m-other"
+    property string preview: source.preview !== undefined ? source.preview : "image://theme/icon-m-other"
     property int size: source.size ? source.size : 0
     property date mtime: source.mtime
     property string owner: source.owner ? source.owner : "?"

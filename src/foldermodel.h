@@ -21,6 +21,7 @@ public:
 
     virtual bool isReadable() const { return myIsReadable; }
     virtual bool isWritable() const { return myIsWritable; }
+    virtual int capabilities() const;
 
     Q_INVOKABLE virtual void setPermissions(const QString& name, int permissions);
     Q_INVOKABLE virtual void rename(const QString& name, const QString& newName);
@@ -44,6 +45,8 @@ protected:
     virtual void loadDirectory(const QString& path);
     virtual QString itemName(int idx) const;
 
+    virtual QString mimeTypeIcon(const QString& mimeType) const;
+
 private:
     struct Item
     {
@@ -65,7 +68,7 @@ private:
     };
 
 private:
-    QMap<QString, QString> myIcons;
+    QMap<QString, QString> myMimeTypeIcons;
     QList<Item::Ptr> myItems;
     bool myIsReadable;
     bool myIsWritable;

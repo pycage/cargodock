@@ -15,10 +15,13 @@ class DropboxModel : public FolderBase
 public:
     DropboxModel(QObject* parent = 0);
 
+    virtual void init();
+
     virtual int rowCount(const QModelIndex&) const;
     virtual QVariant data(const QModelIndex&, int) const;
 
     virtual bool isWritable() const { return true; }
+    virtual int capabilities() const { return CanCopy | AcceptCopy | CanDelete; }
 
     Q_INVOKABLE virtual void rename(const QString& name, const QString& newName);
 
@@ -40,12 +43,13 @@ signals:
     void authorizationRequired(const QUrl& url, const QUrl& redirectionUri);
 
 protected:
+    virtual bool loading() const { return myIsLoading; }
+
     virtual void loadDirectory(const QString& path);
     virtual QString itemName(int idx) const;
 
 private slots:
-    void slotInit();
-
+    void slotAccountInfoReceived(const DropboxApi::AccountInfo& info);
     void slotMetaDataReceived(const DropboxApi::Metadata& metadata);
     void slotFolderCreated(const QString& path);
     void slotFileMoved(const QString& path);
@@ -68,19 +72,21 @@ private:
         QString icon;
         qint64 size;
         QDateTime mtime;
-        QString owner;
-        QString group;
         int permissions;
         QString linkTarget;
     };
 
     QSharedPointer<DropboxApi> myDropboxApi;
-    QMap<QString, QString> myIcons;
+    QMap<QString, QString> myMimeTypeIcons;
     QList<Item::Ptr> myItems;
+
+    QString myUserName;
 
     QString myNewFolderPath;
     QString myRenamedPath;
     QString myDeletedPath;
+
+    bool myIsLoading;
 };
 
 #endif // DROPBOXMODEL_H

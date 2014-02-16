@@ -19,13 +19,17 @@ class FolderBase : public QAbstractListModel
     Q_OBJECT
     Q_ENUMS(ItemType)
     Q_ENUMS(Permissions)
+    Q_ENUMS(Capabilities)
+    Q_PROPERTY(QString uid WRITE setUid CONSTANT)
     Q_PROPERTY(QString name READ name NOTIFY pathChanged)
     Q_PROPERTY(bool isReadable READ isReadable NOTIFY pathChanged)
     Q_PROPERTY(bool isWritable READ isWritable NOTIFY pathChanged)
+    Q_PROPERTY(int capabilities READ capabilities NOTIFY pathChanged)
     Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QStringList breadcrumbs READ breadcrumbs NOTIFY pathChanged)
     Q_PROPERTY(int selected READ selected NOTIFY selectionChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
+    Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 public:
     enum ItemType
     {
@@ -50,6 +54,18 @@ public:
         ExecOther = 0x1
     };
 
+    enum Capabilities
+    {
+        NoCapabilities = 0,
+        CanCopy = 1,
+        AcceptCopy = 2,
+        CanLink = 4,
+        AcceptLink = 8,
+        CanBookmark = 16,
+        AcceptBookmark = 32,
+        CanDelete = 64
+    };
+
     FolderBase(QObject* parent = 0);
 
     virtual QHash<int, QByteArray> roleNames() const { return myRolenames; }
@@ -59,6 +75,7 @@ public:
     virtual QString name() const { return userBasename(myPath); }
     virtual bool isReadable() const { return true; }
     virtual bool isWritable() const { return false; }
+    virtual int capabilities() const { return NoCapabilities; }
 
     QString path() const { return myPath; }
     void setPath(const QString& path);
@@ -151,13 +168,16 @@ signals:
     void selectionChanged();
     void finished();
     void error(const QString& details);
+    void loadingChanged();
 
 protected:
     enum
     {
         NameRole,
+        SectionRole,
         PathRole,
         UriRole,
+        PreviewRole,
         TypeRole,
         MimeTypeRole,
         IconRole,
@@ -171,17 +191,36 @@ protected:
         SelectedRole
     };
 
-    void setConfigValue(const QString& key, const QVariant& value);
+    virtual void init() { }
+
+    QString uid() const { return myUid; }
+
+    void setConfigValue(const QString& key,
+                        const QVariant& value);
     QVariant configValue(const QString& key) const;
 
+    void setConfigValue(const QString& uid,
+                        const QString& key,
+                        const QVariant& value);
+    QVariant configValue(const QString& uid,
+                         const QString& key) const;
+
+    virtual bool loading() const { return false; }
 
     virtual void loadDirectory(const QString& path) = 0;
     virtual QString itemName(int idx) const = 0;
     virtual bool isSelected(int idx) const;
 
+    virtual QString mimeTypeIcon(const QString& mimeType) const;
+
+private:
+    void setUid(const QString& uid);
+
 private:
     QHash<int, QByteArray> myRolenames;
+    QMap<QString, QString> myMimeTypeIcons;
 
+    QString myUid;
     QString myPath;
     int myMinDepth;
     QSet<int> mySelection;

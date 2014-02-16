@@ -104,7 +104,7 @@ void CopyJob::run()
     qDebug() << Q_FUNC_INFO;
     while (now.elapsed() < 5)
     {
-        qint64 bytes = myDestination->write(mySource->read(4096));
+        qint64 bytes = myDestination->write(mySource->read(1024 * 1024));
         if (bytes == 0)
         {
             // done
@@ -177,7 +177,10 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
                                                   QIODevice::ReadOnly);
             QIODevice* destFd = myDestination->openFile(destFile,
                                                         QIODevice::WriteOnly);
-            if (srcFd && destFd)
+
+            // TODO: check if source and dest are the same to improve copy
+
+            if (srcFd && destFd && srcFd->isOpen() && destFd->isOpen())
             {
                 myCopyJob = new CopyJob(srcFd, destFd);
                 connect(myCopyJob, SIGNAL(finished()),

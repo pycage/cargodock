@@ -6,36 +6,58 @@ import "pages"
 
 ApplicationWindow
 {    
+    id: win
+
     // array of the folder panes
-    property variant _panes: []
+    property var _panes: []
+
+    // dictionary of services
+    property var _serviceObjects: ({ })
+    property var serviceNames: []
+
+    /* Registers the given service object.
+     */
+    function registerServiceObject(serviceObject)
+    {
+        console.log("registering service " + serviceObject.serviceName);
+        _serviceObjects[serviceObject.serviceName] = serviceObject;
+        serviceNames.push(serviceObject.serviceName);
+    }
+
+    /* Returns the service object registered for the given name, or undefined
+     * if the service is not registered.
+     */
+    function serviceObject(serviceName)
+    {
+        return _serviceObjects[serviceName];
+    }
 
     /* Registers the given page as a content pane.
      */
     function registerContentPane(page)
     {
-        var p = _panes;
-        p.push(page);
-        _panes = p;
+        _panes.push(page);
     }
 
-    /* Returns the destination model for the given source model, i.e. the
-     * current model of the other pane.
-     * Returns null in case there is no destination model, which e.g. is the
-     * case if the other pane is showing the places list.
-     */
-    function destinationContentModel(sourceModel)
+    function updateDestinationContentModels()
     {
-        var destModel = null;
+        if (_panes.length === 2)
+        {
+            _panes[0].destinationModel = _panes[1].sourceModel;
+            _panes[1].destinationModel = _panes[0].sourceModel;
+        }
+    }
+
+
+    /* Refreshes the panes.
+     */
+    function refreshPanes()
+    {
+        console.log("refreshing panes");
         for (var i = 0; i < _panes.length; ++i)
         {
-            var model = _panes[i].currentContentModel();
-            if (model !== sourceModel)
-            {
-                destModel = model;
-                break;
-            }
+            _panes[i].sourceModel.refresh();
         }
-        return destModel;
     }
 
     initialPage: folderPage
@@ -47,6 +69,7 @@ ApplicationWindow
         };
 
         pageStack.pushExtra(folderPage, props);
+        updateDestinationContentModels();
     }
 
     QtObject {
@@ -57,6 +80,12 @@ ApplicationWindow
         property bool isSecondPane
     }
 
+    // services
+    PlacesService { }
+    LocalService { }
+    DropboxService { }
+    WebDavService { }
+
     DeveloperMode {
         id: developerMode
     }
@@ -65,18 +94,28 @@ ApplicationWindow
         id: notification
     }
 
-    Label {
+    Rectangle {
         width: parent.width
+        height: childrenRect.height + 2 * Theme.paddingLarge
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Theme.paddingLarge
-        horizontalAlignment: Text.AlignHCenter
-        wrapMode: Text.Wrap
-        font.pixelSize: Theme.fontSizeExtraLarge
-        color: Theme.secondaryColor
-        text: "Pull down for help"
+
+        gradient: Gradient {
+            GradientStop { position: 0; color: "transparent" }
+            GradientStop { position: 1; color: "black" }
+        }
 
         Behavior on opacity {
             NumberAnimation { duration: 1500; easing.type: Easing.OutCurve }
+        }
+
+        Label {
+            y: Theme.paddingLarge
+            width: parent.width
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
+            font.pixelSize: Theme.fontSizeExtraLarge
+            color: Theme.secondaryColor
+            text: "Pull down for help"
         }
 
         Timer {
@@ -90,6 +129,7 @@ ApplicationWindow
         }
     }
 
+
     Component {
         id: folderPage
 
@@ -100,14 +140,14 @@ ApplicationWindow
                 registerContentPane(page);
             }
 
+            onModelChanged: {
+                updateDestinationContentModels();
+            }
+
             onCopyCommand: {
-                var destModel = destinationContentModel(sourceModel);
-                if (destModel)
-                {
-                    sharedState.actionName = "copying";
-                    sharedState.actionInProgress = true;
-                    sourceModel.copySelected(destModel);
-                }
+                sharedState.actionName = "copying";
+                sharedState.actionInProgress = true;
+                sourceModel.copySelected(destModel);
             }
 
             onDeleteCommand: {
@@ -117,13 +157,9 @@ ApplicationWindow
             }
 
             onLinkCommand: {
-                var destModel = destinationContentModel(sourceModel);
-                if (destModel)
-                {
-                    sharedState.actionName = "linking";
-                    sharedState.actionInProgress = true;
-                    sourceModel.linkSelected(destModel);
-                }
+                sharedState.actionName = "linking";
+                sharedState.actionInProgress = true;
+                sourceModel.linkSelected(destModel);
             }
 
             onError: {
@@ -133,13 +169,7 @@ ApplicationWindow
 
             onFinished: {
                 sharedState.actionInProgress = false;
-
-                console.log("Finished action. Refreshing panes.");
-
-                for (var i = 0; i < _panes.length; ++i)
-                {
-                    _panes[i].currentContentModel().refresh();
-                }
+                refreshPanes();
             }
         }
     }

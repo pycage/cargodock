@@ -1,5 +1,5 @@
 #include "foldermodel.h"
-#include "copyaction.h"
+#include "localfile.h"
 
 #include <QDesktopServices>
 #include <QDir>
@@ -13,30 +13,8 @@ FolderModel::FolderModel(QObject* parent)
     , myIsReadable(true)
     , myIsWritable(false)
 {
-    myIcons.insert("application/octet-stream",                "image://theme/icon-m-other");
-    myIcons.insert("application/pdf",                         "image://theme/icon-m-document");
-    myIcons.insert("application/vnd.android.package-archive", "image://theme/icon-m-device");
-    myIcons.insert("application/xml",                         "image://theme/icon-m-document");
-    myIcons.insert("application/x-core",                      "image://theme/icon-m-crash-reporter");
-    myIcons.insert("application/x-executable",                "image://theme/icon-m-play");
-    myIcons.insert("application/x-gzip",                      "image://theme/icon-m-other");
-    myIcons.insert("application/x-rpm",                       "image://theme/icon-lock-system-update");
-    myIcons.insert("application/x-sharedlib",                 "image://theme/icon-m-share");
-    myIcons.insert("application/x-shellscript",               "image://theme/icon-m-document");
-    myIcons.insert("application/x-sqlite3",                   "image://theme/icon-m-levels");
-    myIcons.insert("application/x-x509-ca-cert",              "image://theme/icon-m-certificates");
-    myIcons.insert("audio/mp4",                               "image://theme/icon-m-music");
-    myIcons.insert("audio/mpeg",                              "image://theme/icon-m-music");
-    myIcons.insert("image/jpeg",                              "");
-    myIcons.insert("image/png",                               "");
-    myIcons.insert("inode/directory",                         "image://theme/icon-m-folder");
-    myIcons.insert("text/html",                               "image://theme/icon-m-region");
-    myIcons.insert("text/plain",                              "image://theme/icon-m-document");
-    myIcons.insert("text/vcard",                              "image://theme/icon-m-people");
-    myIcons.insert("text/x-c++src",                           "image://theme/icon-m-document");
-    myIcons.insert("text/x-qml",                              "image://theme/icon-m-document");
-    myIcons.insert("video/mp4",                               "image://theme/icon-m-video");
-    myIcons.insert("video/x-flv",                             "image://theme/icon-m-video");
+    myMimeTypeIcons.insert("image/jpeg",                              "");
+    myMimeTypeIcons.insert("image/png",                               "");
 }
 
 int FolderModel::rowCount(const QModelIndex&) const
@@ -61,6 +39,8 @@ QVariant FolderModel::data(const QModelIndex& index, int role) const
         return item->path;
     case UriRole:
         return item->uri;
+    case PreviewRole:
+        return item->uri;
     case TypeRole:
         return item->type;
     case MimeTypeRole:
@@ -84,6 +64,16 @@ QVariant FolderModel::data(const QModelIndex& index, int role) const
     default:
         return QVariant();
     }
+}
+
+int FolderModel::capabilities() const
+{
+    return CanBookmark |
+           (isWritable() ? CanDelete : NoCapabilities) |
+           (isReadable() ? CanCopy : NoCapabilities) |
+           (isWritable() ? AcceptCopy : NoCapabilities) |
+           CanLink |
+           (isWritable() ? AcceptLink : NoCapabilities);
 }
 
 void FolderModel::setPermissions(const QString& name, int permissions)
@@ -250,7 +240,7 @@ FolderModel::ItemType FolderModel::type(const QString& path) const
 QIODevice* FolderModel::openFile(const QString& path,
                                  QIODevice::OpenModeFlag mode)
 {
-    QFile* fd = new QFile(path);
+    LocalFile* fd = new LocalFile(path);
     fd->open(mode);
     return fd;
 }
@@ -272,15 +262,17 @@ void FolderModel::loadDirectory(const QString& path)
 
     QMimeDatabase mimeDb;
 
+    bool showHidden = configValue("showHidden").toBool();
+    QDir::Filters filter = showHidden ? QDir::AllEntries |
+                                        QDir::NoDotAndDotDot |
+                                        QDir::Hidden
+                                      : QDir::AllEntries |
+                                        QDir::NoDotAndDotDot;
+
     if (dir.isReadable())
     {
-        foreach (const QFileInfo& finfo, dir.entryInfoList())
+        foreach (const QFileInfo& finfo, dir.entryInfoList(filter))
         {
-            if (finfo.baseName().isEmpty())
-            {
-                continue;
-            }
-
             Item::Ptr item(new Item);
             item->name = finfo.fileName();
             item->path = path;
@@ -298,7 +290,7 @@ void FolderModel::loadDirectory(const QString& path)
                 item->group = QString::number(finfo.groupId());
             }
             item->permissions = finfo.permissions();
-            item->icon = myIcons.value(item->mimeType, "image://theme/icon-m-other");
+            item->icon = mimeTypeIcon(item->mimeType);
             item->size = finfo.size();
             item->mtime = finfo.lastModified();
 
@@ -334,6 +326,18 @@ QString FolderModel::itemName(int idx) const
     else
     {
         return QString();
+    }
+}
+
+QString FolderModel::mimeTypeIcon(const QString& mimeType) const
+{
+    if (myMimeTypeIcons.contains(mimeType))
+    {
+        return myMimeTypeIcons[mimeType];
+    }
+    else
+    {
+        return FolderBase::mimeTypeIcon(mimeType);
     }
 }
 

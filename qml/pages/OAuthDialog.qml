@@ -20,6 +20,8 @@ Page {
         anchors.fill: parent
         opacity: loading ? 0.5 : 1
 
+        experimental.userAgent: "Mozilla/5.0 (Maemo; Linux; Jolla; Sailfish; Mobile) AppleWebKit/534.13 (KHTML, like Gecko) NokiaBrowser/8.5.0 Mobile Safari/534.13"
+
         onUrlChanged: {
             console.log("URL: " + url);
             console.log("Redirection URI: " + redirectionUri);

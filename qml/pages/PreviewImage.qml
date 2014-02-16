@@ -11,7 +11,7 @@ PreviewItem {
         visible: source !== ""
         sourceSize.width: width
         sourceSize.height: height
-        source: fileInfo.uri
+        source: fileInfo.preview
     }
 
 }

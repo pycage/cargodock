@@ -21,22 +21,26 @@ class DropboxThumbProvider : public QObject, public QQuickImageProvider
 {
     Q_OBJECT
 public:
-    DropboxThumbProvider();
+    DropboxThumbProvider(QNetworkAccessManager* nam);
 
     virtual QImage requestImage(const QString& id,
                                 QSize* size,
                                 const QSize& requestedSize);
 
 signals:
-    void loadImage(const QString& accessToken, const QString& path);
+    void loadImage(const QString& accessToken,
+                   const QString& path,
+                   const QSize& requestedSize);
 
 private slots:
-    void slotLoadImage(const QString& accessToken, const QString& path);
+    void slotLoadImage(const QString& accessToken,
+                       const QString& path,
+                       const QSize& requestedSize);
     void slotImageLoaded(QNetworkReply* reply);
 
 private:
     QMutex myMutex;
-    QSharedPointer<QNetworkAccessManager> myNetworkAccessManager;
+    QNetworkAccessManager* myNetworkAccessManager;
     QMap<QString, QByteArray> myImages;
 };
 

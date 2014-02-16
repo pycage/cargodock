@@ -99,9 +99,32 @@ public:
      */
     void moveFile(const QString& oldPath, const QString& newPath);
 
+
     /* Deletes a file.
      */
     void deleteFile(const QString& path);
+
+    /* Creates a new upload. Emits uploadCreated when the upload ID is
+     * available.
+     */
+    void createUpload(const QString& identifier);
+
+    /* Uploads a chunk of data.
+     */
+    void upload(const QString& uploadId,
+                qint64 offset,
+                const QByteArray& chunk);
+
+    /* Commits the given upload and creates the file at the given path.
+     * Every successful upload must be committed this way.
+     */
+    void commitUpload(const QString& uploadId, const QString& path);
+
+    /* Downloads a file portition. Emits downloaded.
+     */
+    void download(const QString& path,
+                  qint64 rangeBegin = -1,
+                  qint64 rangeEnd = -1);
 
 signals:
     void authorizationRequest(const QUrl& url, const QUrl& redirectUri);
@@ -116,6 +139,13 @@ signals:
     void fileMoved(const QString& newPath);
     void fileDeleted(const QString& path);
 
+    void uploadCreated(const QString& identifier, const QString& uploadId);
+    void uploaded(const QString& uploadId, bool ok);
+    void uploadCommitted(const QString& uploadId, bool ok);
+
+    void downloaded(const QString& path, const QByteArray& data,
+                    qint64 totalSize, bool ok);
+
     void error(DropboxApi::ErrorCode error);
 
 private:
@@ -129,8 +159,10 @@ private:
 
     QNetworkReply* sendRequest(RequestMethod method,
                                const QUrl& url,
-                               const QByteArray& payload = QByteArray());
+                               const QByteArray& payload = QByteArray(),
+                               const QVariantMap& headers = QVariantMap());
     QVariantMap getReplyMap(QObject* sender);
+    int getReplyStatus(QObject* sender) const;
     Metadata parseMetadata(const QVariantMap& map) const;
 
 private slots:
@@ -141,6 +173,12 @@ private slots:
     void slotFolderCreated();
     void slotFileMoved();
     void slotFileDeleted();
+
+    void slotUploadCreated();
+    void slotUploadedChunk();
+    void slotUploadCommitted();
+
+    void slotDownloaded();
 
 private:
     QString myAppKey;
