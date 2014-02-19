@@ -11,6 +11,10 @@ TARGET = harbour-cargodock
 CONFIG += sailfishapp
 QT += network xml
 
+exists(../productkey.h) {
+  DEFINES += HAVE_DROPBOX_PRODUCT_KEY
+}
+
 SOURCES += src/harbour-cargodock.cpp \
     src/foldermodel.cpp \
     src/copyaction.cpp \
@@ -70,7 +74,7 @@ HEADERS += \
     src/dropboxmodel.h \
     src/dropboxapi/dropboxapi.h \
     src/dropboxthumbprovider.h \
-    src/dropboxapi/product.h \
     src/dropboxapi/dropboxfile.h \
-    src/localfile.h
+    src/localfile.h \
+    src/dropboxapi/productkey.h
 

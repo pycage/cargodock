@@ -1,5 +1,9 @@
 #include "dropboxapi.h"
-#include "../../../product.h"
+#ifdef HAVE_DROPBOX_PRODUCT_KEY
+#include "../../../productkey.h"
+#else
+#include "productkey.h"
+#endif
 
 #include <QJsonDocument>
 #include <QNetworkAccessManager>
