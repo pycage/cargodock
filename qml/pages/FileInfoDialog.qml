@@ -17,7 +17,8 @@ Dialog {
             height: childrenRect.height
 
             DialogHeader {
-                title: (fileInfo.mimeType.substring(0, 6) === "image/") ? "Open" : ""
+                title: fileInfo.canOpen ? "Open with default"
+                                        : "Close"
             }
 
             // preview item

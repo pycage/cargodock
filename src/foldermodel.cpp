@@ -73,7 +73,8 @@ int FolderModel::capabilities() const
            (isReadable() ? CanCopy : NoCapabilities) |
            (isWritable() ? AcceptCopy : NoCapabilities) |
            CanLink |
-           (isWritable() ? AcceptLink : NoCapabilities);
+           (isWritable() ? AcceptLink : NoCapabilities) |
+           CanOpen;
 }
 
 void FolderModel::setPermissions(const QString& name, int permissions)

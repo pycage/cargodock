@@ -359,3 +359,10 @@ QVariant FolderBase::configValue(const QString& uid,
     settings.beginGroup(uid);
     return settings.value(key);
 }
+
+void FolderBase::removeConfigValues(const QString& uid)
+{
+    QSettings settings("harbour-cargodock", "CargoDock");
+    settings.beginGroup(uid);
+    settings.remove("");
+}

@@ -8,6 +8,9 @@ Page {
     property bool isSecondPane
 
     property var _modelStack: []
+    property var _modelIconStack: []
+    property string _currentModelIcon
+
     property variant sourceModel
     property variant destinationModel
 
@@ -15,6 +18,7 @@ Page {
 
     property int _capabilities: sourceModel ? sourceModel.capabilities : 0
     property int _destinationCapabilities: destinationModel ? destinationModel.capabilities : 0
+
 
     signal modelChanged
 
@@ -25,7 +29,7 @@ Page {
     signal error(string details)
 
 
-    function pushModel(typeName, uid)
+    function pushModel(typeName, uid, icon)
     {
         var props = {
             "uid": uid
@@ -36,6 +40,8 @@ Page {
         model.finished.connect(page.finished);
         model.error.connect(page.error);
 
+        _modelIconStack.push(icon);
+        _currentModelIcon = _modelIconStack[_modelIconStack.length - 1];
         _modelStack.push(model);
         sourceModel = model;
         sharedState.currentContentModel = sourceModel;
@@ -47,6 +53,8 @@ Page {
         while (_modelStack.length > 0 && _modelStack[_modelStack.length - 1] !== model)
         {
             _modelStack.pop();
+            _modelIconStack.pop();
+            _currentModelIcon = _modelIconStack[_modelIconStack.length - 1];
         }
         sourceModel = _modelStack[_modelStack.length - 1];
         sharedState.currentContentModel = sourceModel;
@@ -104,7 +112,7 @@ Page {
     }
 
     Component.onCompleted: {
-        pushModel("places", "places");
+        pushModel("places", "places", "");
     }
 
     RemorsePopup {
@@ -120,6 +128,7 @@ Page {
         function action()
         {
             page.copyCommand(sourceModel, destinationModel);
+            _selectionMode = false;
         }
     }
 
@@ -133,6 +142,7 @@ Page {
         function action()
         {
             page.linkCommand(sourceModel, destinationModel);
+            _selectionMode = false;
         }
     }
 
@@ -145,6 +155,7 @@ Page {
         function action()
         {
             page.linkCommand(sourceModel, destinationModel);
+            _selectionMode = false;
         }
     }
 
@@ -168,6 +179,7 @@ Page {
             remorse.execute(text,
                             closure(sourceModel,
                                     sourceModel.selection.slice()));
+            _selectionMode = false;
         }
     }
 
@@ -230,8 +242,7 @@ Page {
                     color: Theme.highlightColor
                     horizontalAlignment: Text.AlignHCenter
                     font.pixelSize: Theme.fontSizeExtraLarge
-                    text: qsTr("%1 selected").arg(sourceModel ? sourceModel.selected : 0) +
-                          " " + _capabilities + " - " + _destinationCapabilities
+                    text: qsTr("%1 selected").arg(sourceModel ? sourceModel.selected : 0)
                 }
 
                 Label {
@@ -240,7 +251,8 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeSmall
-                    text: qsTr("Pull up for actions")
+                    text: (sourceModel && sourceModel.selected > 0) ? qsTr("Pull up for actions")
+                                                                    : qsTr("Select some items")
                 }
 
                 BusyIndicator {
@@ -305,8 +317,36 @@ Page {
             header: Column {
                 width: contentlist.width
 
-                PageHeader {
-                    title: sourceModel ? sourceModel.name : ""
+                Item {
+                    width: parent.width
+                    height: Theme.itemSizeLarge
+
+                    PageHeader {
+                        width: parent.width - headerIcon.width - Theme.paddingLarge
+                        title: sourceModel ? sourceModel.name : ""
+                    }
+
+                    Image {
+                        id: headerIcon
+                        visible: ! headerBusyIndicator.running
+                        width: height
+                        height: Theme.fontSizeLarge
+                        anchors.right: parent.right
+                        anchors.rightMargin: Theme.paddingLarge
+                        anchors.verticalCenter: parent.verticalCenter
+                        fillMode: Image.PreserveAspectFit
+                        source: _currentModelIcon !== "" ? _currentModelIcon
+                                                         : "image://theme/icon-m-folder"
+                    }
+
+                    BusyIndicator {
+                        id: headerBusyIndicator
+                        anchors.right: parent.right
+                        anchors.rightMargin: Theme.paddingLarge
+                        anchors.verticalCenter: parent.verticalCenter
+                        running: sharedState.actionInProgress
+                        size: BusyIndicatorSize.Small
+                    }
                 }
 
                 ListItem {
@@ -421,7 +461,7 @@ Page {
                     sourceModel: page.sourceModel
                 }
 
-                selected: model.selected
+                selected: page._selectionMode && model.selected
                 height: Theme.itemSizeSmall
 
                 onClicked: {
@@ -429,7 +469,8 @@ Page {
                     {
                         if (model.modelTarget)
                         {
-                            pushModel(model.modelTarget, model.linkTarget);
+                            pushModel(model.modelTarget, model.linkTarget,
+                                      fileInfo.icon);
                         }
                         else if (model.type === FolderBase.File || model.type === FolderBase.FileLink)
                         {
@@ -439,20 +480,22 @@ Page {
                             var dlg = pageStack.push(Qt.resolvedUrl("FileInfoDialog.qml"),
                                                      props);
 
-                            function closure(model, name)
+                            if (fileInfo.canOpen)
                             {
-                                return function()
+                                function closure(model, name)
                                 {
-                                    model.open(name);
+                                    return function()
+                                    {
+                                        model.open(name);
+                                    }
                                 }
+                                dlg.accepted.connect(closure(sourceModel, model.name));
                             }
-
-                            dlg.accepted.connect(closure(sourceModel, model.name));
                         } else {
                             sourceModel.open(model.name);
                         }
                     }
-                    else
+                    else if (! sharedState.actionInProgress)
                     {
                         sourceModel.setSelected(index, ! selected);
                     }

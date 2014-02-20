@@ -27,6 +27,12 @@ ListItem {
         smooth: fileInfo.icon !== "" ? false : true
         source: fileInfo.icon !== "" ? fileInfo.icon : fileInfo.uri
         clip: true
+
+        BusyIndicator {
+            running: parent.status === Image.Loading
+            anchors.centerIn: parent
+            size: BusyIndicatorSize.Small
+        }
     }
 
     Label {

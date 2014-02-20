@@ -84,7 +84,7 @@ ApplicationWindow
     PlacesService { }
     LocalService { }
     DropboxService { }
-    WebDavService { }
+    //WebDavService { }
 
     DeveloperMode {
         id: developerMode

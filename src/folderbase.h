@@ -63,7 +63,8 @@ public:
         AcceptLink = 8,
         CanBookmark = 16,
         AcceptBookmark = 32,
-        CanDelete = 64
+        CanDelete = 64,
+        CanOpen = 128
     };
 
     FolderBase(QObject* parent = 0);
@@ -204,6 +205,7 @@ protected:
                         const QVariant& value);
     QVariant configValue(const QString& uid,
                          const QString& key) const;
+    void removeConfigValues(const QString& uid);
 
     virtual bool loading() const { return false; }
 

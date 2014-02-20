@@ -1,8 +1,11 @@
 import QtQuick 2.0
+import harbour.cargodock 1.0
 
 QtObject {
     property variant source
     property variant sourceModel
+
+    property bool canOpen: sourceModel.capabilities & FolderBase.CanOpen
 
     property string name: source.name ? source.name : ""
     property string path: source.path ? source.path : ""

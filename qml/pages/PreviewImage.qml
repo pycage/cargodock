@@ -12,6 +12,12 @@ PreviewItem {
         sourceSize.width: width
         sourceSize.height: height
         source: fileInfo.preview
+
+        BusyIndicator {
+            running: parent.status === Image.Loading
+            anchors.centerIn: parent
+            size: BusyIndicatorSize.Large
+        }
     }
 
 }

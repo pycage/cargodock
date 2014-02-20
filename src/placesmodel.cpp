@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QStandardPaths>
+#include <QUuid>
 
 #include <QDebug>
 
@@ -13,6 +14,12 @@ namespace
 {
 const QString SD_CARD("/run/user/100000/media/sdcard");
 const QString ANDROID_STORAGE("/data/sdcard");
+
+QString makeUid()
+{
+    return QUuid::createUuid().toString();
+}
+
 }
 
 PlacesModel::PlacesModel(QObject* parent)
@@ -88,7 +95,7 @@ void PlacesModel::addService(const QString& serviceName,
                              const QVariantMap& properties)
 {
     QStringList services = configValue("user-services").toStringList();
-    const QString uid = QString("user%1").arg(services.size());
+    const QString uid = makeUid();
 
     services << uid;
     setConfigValue("user-services", services);
@@ -111,6 +118,7 @@ void PlacesModel::removeService(const QString& uid)
     QStringList services = configValue("user-services").toStringList();
     services.removeOne(uid);
     setConfigValue("user-services", services);
+    removeConfigValues(uid);
     emit servicesChanged();
 }
 
@@ -176,12 +184,12 @@ bool PlacesModel::linkFile(const QString& path, const QString& source)
     qDebug() << Q_FUNC_INFO << path << source;
 
     QStringList localServices = configValue("bookmark-services").toStringList();
-    const QString uid = QString("bookmark%1").arg(localServices.size());
+    const QString uid = makeUid();
 
     localServices << uid;
     setConfigValue("bookmark-services", localServices);
 
-    setConfigValue(uid, "type", "local");
+    setConfigValue(uid, "type", "local"); // FIXME: should be service type
     setConfigValue(uid, "name", source);
     setConfigValue(uid, "icon", "image://theme/icon-m-folder");
     setConfigValue(uid, "path", source);
