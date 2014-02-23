@@ -40,7 +40,8 @@ QDateTime fromTimeString(const QString& s)
     setlocale(LC_TIME, "C");
     strptime(s.toLatin1().constData(), "%a, %d %b %Y %H:%M:%S %z" , &tm);
     setlocale(LC_TIME, "");
-    return QDateTime::fromTime_t(mktime(&tm));
+    qDebug() << "time" << s << "->" << QDateTime::fromTime_t(timegm(&tm));
+    return QDateTime::fromTime_t(timegm(&tm));
 }
 
 QString toTimeString(const QDateTime& d)

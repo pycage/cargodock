@@ -1,11 +1,13 @@
 #include <sailfishapp.h>
 #include <QGuiApplication>
+#include <QLatin1String>
 #include <QQmlContext>
 #include <QQuickView>
 #include <QSharedPointer>
 #include <QtQml>
 
 #include "developermode.h"
+#include "filereader.h"
 #include "folderbase.h"
 
 #include "dropboxmodel.h"
@@ -13,6 +15,11 @@
 #include "foldermodel.h"
 
 #include "dropboxthumbprovider.h"
+
+namespace
+{
+const char* URI("harbour.cargodock");
+}
 
 int main(int argc, char *argv[])
 {
@@ -28,12 +35,14 @@ int main(int argc, char *argv[])
     QSharedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QSharedPointer<QQuickView> view(SailfishApp::createView());
 
-    qmlRegisterType<DeveloperMode>("harbour.cargodock", 1, 0, "DeveloperMode");
-    qmlRegisterUncreatableType<FolderBase>("harbour.cargodock", 1, 0, "FolderBase", "abstract");
+    //@uri harbour.cargodock
+    qmlRegisterType<DeveloperMode>(URI, 1, 0, "DeveloperMode");
+    qmlRegisterType<FileReader>(URI, 1, 0, "FileReader");
+    qmlRegisterUncreatableType<FolderBase>(URI, 1, 0, "FolderBase", "abstract");
 
-    qmlRegisterType<DropboxModel>("harbour.cargodock", 1, 0, "DropboxModel");
-    qmlRegisterType<FolderModel>("harbour.cargodock", 1, 0, "FolderModel");
-    qmlRegisterType<PlacesModel>("harbour.cargodock", 1, 0, "PlacesModel");
+    qmlRegisterType<DropboxModel>(URI, 1, 0, "DropboxModel");
+    qmlRegisterType<FolderModel>(URI, 1, 0, "FolderModel");
+    qmlRegisterType<PlacesModel>(URI, 1, 0, "PlacesModel");
 
     DropboxThumbProvider* dropBoxThumbProvider = new DropboxThumbProvider(view->engine()->networkAccessManager());
     view->engine()->addImageProvider("dropbox", dropBoxThumbProvider);

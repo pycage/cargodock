@@ -5,8 +5,8 @@ import harbour.cargodock 1.0
 ServiceObject {
 
     icon: Qt.resolvedUrl("../dropbox.png")
-    name: "Dropbox"
     serviceName: "dropbox"
+    name: "Dropbox"
 
     serviceModel: DropboxModel {
         id: dropboxModel
@@ -37,7 +37,84 @@ ServiceObject {
 
     serviceDelegate: ServiceDelegate {
         iconSource: icon
-        title: name
+        title: "Dropbox"
         subtitle: "Login to a Dropbox account"
     }
+
+    serviceConfigurator: Component {
+        Dialog {
+            signal serviceConfigured(string serviceName,
+                                     string icon,
+                                     string name,
+                                     variant properties)
+
+            property alias name: textEntry.text
+
+            canAccept: textEntry.text !== ""
+
+            SilicaFlickable {
+                anchors.fill: parent
+
+                Column {
+                    width: parent.width
+
+                    DialogHeader {
+                        title: "Configure Dropbox"
+                    }
+
+                    Item {
+                        width: 1
+                        height: Theme.paddingLarge
+                    }
+
+                    TextField {
+                        id: textEntry
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.leftMargin: Theme.paddingLarge
+                        anchors.rightMargin: Theme.paddingLarge
+
+                        placeholderText: "Name"
+                        focus: true
+                    }
+
+                    Item {
+                        width: parent.width
+                        height: childrenRect.height
+
+                        Image {
+                            id: dropboxIcon
+                            x: Theme.paddingLarge
+                            source: Qt.resolvedUrl("../dropbox.png")
+                        }
+
+                        Label {
+                            anchors.left: dropboxIcon.right
+                            anchors.right: parent.right
+                            anchors.leftMargin: Theme.paddingLarge
+                            anchors.rightMargin: Theme.paddingLarge
+                            wrapMode: Text.Wrap
+                            font.pixelSize: Theme.fontSizeSmall
+                            color: Theme.secondaryColor
+                            text: "Enter the name under which you want to " +
+                                  "access your Dropbox folder in " +
+                                  "Cargo Dock.\n" +
+                                  "You may add several Dropbox services " +
+                                  "connected to different Dropbox accounts. " +
+                                  "The name will help you distinguish them."
+                        }
+                    }
+                }
+            }
+
+            onAccepted: {
+                serviceConfigured(service.serviceName,
+                                  service.icon,
+                                  textEntry.text,
+                                  { });
+            }
+        }
+
+    }//Dialog
 }

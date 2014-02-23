@@ -21,7 +21,7 @@ public:
     virtual QVariant data(const QModelIndex&, int) const;
 
     virtual bool isWritable() const { return true; }
-    virtual int capabilities() const { return CanCopy | AcceptCopy | CanDelete; }
+    virtual int capabilities() const;
 
     Q_INVOKABLE virtual void rename(const QString& name, const QString& newName);
 

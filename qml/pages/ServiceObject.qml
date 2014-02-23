@@ -23,8 +23,8 @@ QtObject {
      */
     property Component serviceModel
 
-    /* A list delegate for representing the service in list views. Leave null
-     * if the service is not to be appear in lists.
+    /* A list delegate for representing the service in list views.
+     * Leave undefined if the service is not to appear in lists.
      */
     property Component serviceDelegate: null
 

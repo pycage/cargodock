@@ -34,13 +34,17 @@ public:
 
     virtual QString parentPath(const QString& path) const { return path; }
     virtual QString basename(const QString& path) const { return path; }
-    virtual QString joinPath(const QStringList& parts) const { return QString(); }
+    virtual QString joinPath(const QStringList& parts) const { return parts.last(); }
 
     int capabilities() const;
 
     virtual ItemType type(const QString&) const { return Folder; }
 
-    virtual bool linkFile(const QString& path, const QString& source);
+    virtual bool linkFile(const QString& path,
+                          const QString& source,
+                          const FolderBase* sourceModel);
+
+    virtual bool deleteFile(const QString& path);
 
 signals:
     void servicesChanged();
@@ -64,12 +68,14 @@ private:
              const QString& n,
              const QString& s,
              const QString& i,
-             const QString& t)
+             const QString& t,
+             bool sel)
             : uid(u)
             , name(n)
             , section(s)
             , icon(i)
             , type(t)
+            , selectable(sel)
         { }
 
         QString uid;
@@ -77,6 +83,7 @@ private:
         QString section;
         QString icon;
         QString type;
+        bool selectable;
     };
 
     QList<Item::Ptr> myPlaces;

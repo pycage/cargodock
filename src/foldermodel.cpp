@@ -59,22 +59,34 @@ QVariant FolderModel::data(const QModelIndex& index, int role) const
         return item->permissions;
     case LinkTargetRole:
         return item->linkTarget;
-    case SelectedRole:
-        return isSelected(index.row());
     default:
-        return QVariant();
+        return FolderBase::data(index, role);
     }
 }
 
 int FolderModel::capabilities() const
 {
-    return CanBookmark |
-           (isWritable() ? CanDelete : NoCapabilities) |
-           (isReadable() ? CanCopy : NoCapabilities) |
-           (isWritable() ? AcceptCopy : NoCapabilities) |
-           CanLink |
-           (isWritable() ? AcceptLink : NoCapabilities) |
-           CanOpen;
+    int caps = (isWritable() ? AcceptCopy : NoCapabilities) |
+               (isWritable() ? AcceptLink : NoCapabilities) |
+               CanOpen;
+
+    if (selected() > 0)
+    {
+        bool canBookmark = true;
+        foreach (const QString& path, selection())
+        {
+            if (type(path) != Folder && type(path) != FolderLink)
+            {
+                canBookmark = false;
+            }
+        }
+        caps |= (canBookmark ? CanBookmark : NoCapabilities) |
+                (isReadable() ? CanCopy : NoCapabilities) |
+                (isWritable() ? CanDelete : NoCapabilities) |
+                CanLink;
+    }
+
+    return caps;
 }
 
 void FolderModel::setPermissions(const QString& name, int permissions)
@@ -279,6 +291,10 @@ void FolderModel::loadDirectory(const QString& path)
             item->path = path;
             item->uri = joinPath(QStringList() << item->path << item->name);
             item->type = type(finfo.absoluteFilePath());
+            if (item->type == Unsupported)
+            {
+                continue;
+            }
             item->mimeType = mimeDb.mimeTypeForFile(finfo).name();
             item->owner = finfo.owner();
             if (item->owner.isEmpty())
@@ -295,15 +311,11 @@ void FolderModel::loadDirectory(const QString& path)
             item->size = finfo.size();
             item->mtime = finfo.lastModified();
 
-            qDebug() << "MIME type" << item->mimeType;
-            qDebug() << "icon" << item->icon;
-
             if (item->type == FolderLink || item->type == FileLink)
             {
                 item->linkTarget = finfo.symLinkTarget();
             }
 
-            qDebug() << "name" << item->name << item->type;
             myItems << item;
         }
         myIsReadable = true;
@@ -342,7 +354,9 @@ QString FolderModel::mimeTypeIcon(const QString& mimeType) const
     }
 }
 
-bool FolderModel::linkFile(const QString& path, const QString& source)
+bool FolderModel::linkFile(const QString& path,
+                           const QString& source,
+                           const FolderBase*)
 {
     qDebug() << "link file" << path << "to" << source;
     return QFile::link(source, path);

@@ -3,7 +3,6 @@ import harbour.cargodock 1.0
 
 ServiceObject {
 
-    name: "Local"
     serviceName: "local"
 
     serviceModel: FolderModel { }

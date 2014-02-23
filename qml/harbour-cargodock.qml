@@ -72,6 +72,14 @@ ApplicationWindow
         updateDestinationContentModels();
     }
 
+    /******************************************
+     * Register the filesystem services here. *
+     ******************************************/
+    PlacesService { }
+    LocalService { }
+    DropboxService { }
+    //WebDavService { }
+
     QtObject {
         id: sharedState
         property bool actionInProgress
@@ -79,12 +87,6 @@ ApplicationWindow
         property variant currentContentModel
         property bool isSecondPane
     }
-
-    // services
-    PlacesService { }
-    LocalService { }
-    DropboxService { }
-    //WebDavService { }
 
     DeveloperMode {
         id: developerMode
@@ -114,7 +116,7 @@ ApplicationWindow
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
             font.pixelSize: Theme.fontSizeExtraLarge
-            color: Theme.secondaryColor
+            color: Theme.highlightColor
             text: "Pull down for help"
         }
 

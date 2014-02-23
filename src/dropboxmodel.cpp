@@ -84,12 +84,31 @@ QVariant DropboxModel::data(const QModelIndex& index, int role) const
         return FolderBase::ReadOwner | FolderBase::WriteOwner;
     case LinkTargetRole:
         return item->linkTarget;
-    case SelectedRole:
-        return isSelected(index.row());
     default:
-        return QVariant();
+        return FolderBase::data(index, role);
     }
-    return QVariant();
+}
+
+int DropboxModel::capabilities() const
+{
+    int caps = AcceptCopy;
+    if (selected() > 0)
+    {
+        bool canBookmark = true;
+        foreach (const QString& path, selection())
+        {
+            if (type(path) != Folder)
+            {
+                canBookmark = false;
+            }
+        }
+
+        caps |= (canBookmark ? CanBookmark : NoCapabilities) |
+                CanCopy |
+                AcceptCopy |
+                CanDelete;
+    }
+    return caps;
 }
 
 void DropboxModel::rename(const QString& name, const QString& newName)

@@ -136,8 +136,7 @@ Page {
         id: bookmarkAction
         property string name: "Bookmark"
         property bool enabled: sourceModel.capabilities & FolderBase.CanBookmark &&
-                               destinationModel.capabilities & FolderBase.AcceptBookmark &&
-                               sourceModel.selected === 1
+                               destinationModel.capabilities & FolderBase.AcceptBookmark
 
         function action()
         {
@@ -183,22 +182,52 @@ Page {
         }
     }
 
+    Rectangle {
+        visible: developerMode.isRoot
+        anchors.fill: parent
+        color: Qt.rgba(1, 0, 0, 0.4)
+
+        Label {
+            anchors.centerIn: parent
+            rotation: -66
+            color: Qt.rgba(0.3, 0, 0, 0.2)
+            font.pixelSize: Theme.fontSizeExtraLarge * 4
+            font.weight: Font.Bold
+            text: "ROOT"
+        }
+    }
+
+    Column {
+        x: isSecondPane ? 0
+                        : parent.width - childrenRect.width
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: Theme.paddingMedium
+
+        Repeater {
+            model: Math.ceil(page.height / (Theme.paddingMedium + 10))
+
+            Image {
+                source: isSecondPane ? Qt.resolvedUrl("../left-indicator.png")
+                                     : Qt.resolvedUrl("../right-indicator.png")
+            }
+        }
+    }
+
     Drawer {
         anchors.fill: parent
         dock: Dock.Bottom
-        open: _selectionMode
-        backgroundSize: 340
+        open: _selectionMode || sharedState.actionInProgress
+        backgroundSize: drawerView.contentHeight
 
         background: SilicaFlickable {
             id: drawerView
             anchors.fill: parent
-            contentHeight: 340
+            contentHeight: _selectionMode ? 340 : Theme.itemSizeSmall
             clip: true
 
             PushUpMenu {
                 visible: actionMenuRepeater.count > 0 &&
-                         ! sharedState.actionInProgress &&
-                         sourceModel.selected > 0
+                         ! sharedState.actionInProgress
 
                 Repeater {
                     id: actionMenuRepeater
@@ -215,6 +244,7 @@ Page {
             }
 
             Item {
+                visible: _selectionMode
                 width: parent.width
                 height: parent.height - Theme.itemSizeSmall
 
@@ -247,7 +277,7 @@ Page {
 
                 Label {
                     anchors.top: selectedLabel.bottom
-                    visible: selectedLabel.visible && actionMenuRepeater.count > 0
+                    visible: selectedLabel.visible
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeSmall
@@ -275,7 +305,7 @@ Page {
             }
 
             Item {
-                visible: ! sharedState.actionInProgress
+                visible: ! sharedState.actionInProgress && _selectionMode
                 anchors.bottom: parent.bottom
                 width: parent.width
                 height: Theme.itemSizeSmall
@@ -306,6 +336,12 @@ Page {
                     }
                 }
             }
+
+            BusyIndicator {
+                running: sharedState.actionInProgress && ! _selectionMode
+                anchors.centerIn: parent
+                size: BusyIndicatorSize.Medium
+            }
         }
 
         SilicaListView {
@@ -328,7 +364,6 @@ Page {
 
                     Image {
                         id: headerIcon
-                        visible: ! headerBusyIndicator.running
                         width: height
                         height: Theme.fontSizeLarge
                         anchors.right: parent.right
@@ -337,15 +372,6 @@ Page {
                         fillMode: Image.PreserveAspectFit
                         source: _currentModelIcon !== "" ? _currentModelIcon
                                                          : "image://theme/icon-m-folder"
-                    }
-
-                    BusyIndicator {
-                        id: headerBusyIndicator
-                        anchors.right: parent.right
-                        anchors.rightMargin: Theme.paddingLarge
-                        anchors.verticalCenter: parent.verticalCenter
-                        running: sharedState.actionInProgress
-                        size: BusyIndicatorSize.Small
                     }
                 }
 
@@ -463,6 +489,7 @@ Page {
 
                 selected: page._selectionMode && model.selected
                 height: Theme.itemSizeSmall
+                opacity: (_selectionMode && ! selectable) ? 0.3 : 1
 
                 onClicked: {
                     if (! page._selectionMode)
@@ -495,7 +522,7 @@ Page {
                             sourceModel.open(model.name);
                         }
                     }
-                    else if (! sharedState.actionInProgress)
+                    else if (! sharedState.actionInProgress && selectable)
                     {
                         sourceModel.setSelected(index, ! selected);
                     }
@@ -504,7 +531,10 @@ Page {
                 onPressAndHold: {
                     if (! page._selectionMode)
                     {
-                        sourceModel.setSelected(index, true);
+                        if (selectable)
+                        {
+                            sourceModel.setSelected(index, true);
+                        }
                         page._selectionMode = true;
                     }
                     else
@@ -530,6 +560,7 @@ Page {
         }//SilicaListView
 
         FancyScroller {
+            visible: ! _selectionMode
             flickable: contentlist
         }
     }//Drawer

@@ -62,7 +62,9 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/pages/PlacesService.qml \
     qml/pages/ServiceDelegate.qml \
     qml/pages/WebDavService.qml \
-    qml/works-with-dropbox.png
+    qml/works-with-dropbox.png \
+    qml/help.html \
+    qml/help.md
 
 HEADERS += \
     src/foldermodel.h \
@@ -76,5 +78,6 @@ HEADERS += \
     src/dropboxthumbprovider.h \
     src/dropboxapi/dropboxfile.h \
     src/localfile.h \
-    src/dropboxapi/productkey.h
+    src/dropboxapi/productkey.h \
+    src/filereader.h
 

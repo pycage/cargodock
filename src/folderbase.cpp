@@ -24,6 +24,7 @@ FolderBase::FolderBase(QObject* parent)
     myRolenames.insert(PermissionsRole, "permissions");
     myRolenames.insert(LinkTargetRole, "linkTarget");
     myRolenames.insert(ModelTargetRole, "modelTarget");
+    myRolenames.insert(SelectableRole, "selectable");
     myRolenames.insert(SelectedRole, "selected");
 
     myMimeTypeIcons.insert("application/epub-zip",                    "image://theme/icon-m-document");
@@ -44,12 +45,14 @@ FolderBase::FolderBase(QObject* parent)
     myMimeTypeIcons.insert("application/x-sqlite3",                   "image://theme/icon-m-levels");
     myMimeTypeIcons.insert("application/x-trash",                     "image://theme/icon-m-dismiss");
     myMimeTypeIcons.insert("application/x-x509-ca-cert",              "image://theme/icon-m-certificates");
+    myMimeTypeIcons.insert("application/x-xcf",                       "image://theme/icon-m-image");
     myMimeTypeIcons.insert("application/zip",                         "image://theme/icon-m-other");
     myMimeTypeIcons.insert("audio/mp4",                               "image://theme/icon-m-music");
     myMimeTypeIcons.insert("audio/mpeg",                              "image://theme/icon-m-music");
     myMimeTypeIcons.insert("image/jpeg",                              "image://theme/icon-m-image");
     myMimeTypeIcons.insert("image/png",                               "image://theme/icon-m-image");
     myMimeTypeIcons.insert("image/rle",                               "image://theme/icon-m-image");
+    myMimeTypeIcons.insert("image/svg+xml",                           "image://theme/icon-m-image");
     myMimeTypeIcons.insert("inode/directory",                         "image://theme/icon-m-folder");
     myMimeTypeIcons.insert("text/html",                               "image://theme/icon-m-region");
     myMimeTypeIcons.insert("text/plain",                              "image://theme/icon-m-document");
@@ -65,6 +68,26 @@ void FolderBase::setUid(const QString& uid)
     myUid = uid;
     init();
     setPath(configValue("path").toString());
+}
+
+QVariant FolderBase::data(const QModelIndex& index, int role) const
+{
+    if (! index.isValid() || index.row() >= rowCount(QModelIndex()))
+    {
+        return QVariant();
+    }
+
+    switch (role)
+    {
+    case NameRole:
+        return itemName(index.row());
+    case SelectableRole:
+        return true;
+    case SelectedRole:
+        return isSelected(index.row());
+    default:
+        return QVariant();
+    }
 }
 
 void FolderBase::setPath(const QString& path)
@@ -148,20 +171,7 @@ void FolderBase::copySelected(FolderBase* dest)
     connect(action, SIGNAL(error(QString)),
             this, SIGNAL(error(QString)));
     action->start();
-}
-
-void FolderBase::deleteSelected()
-{
-    foreach (int idx, mySelection)
-    {
-        QString path = joinPath(QStringList() << myPath << itemName(idx));
-        if (! deleteFile(path))
-        {
-            emit error(QString("Could not delete file: %1").arg(itemName(idx)));
-        }
-    }
     unselectAll();
-    emit finished();
 }
 
 void FolderBase::deleteItems(const QStringList& items)
@@ -184,11 +194,12 @@ void FolderBase::linkSelected(FolderBase* dest)
         const QString endpoint = joinPath(QStringList() << myPath << itemName(idx));
         const QString destPath = dest->joinPath(QStringList() << dest->path() << itemName(idx));
 
-        if (! dest->linkFile(destPath, endpoint))
+        if (! dest->linkFile(destPath, endpoint, this))
         {
             emit error("Could not link to destination.");
         }
     }
+    unselectAll();
     emit finished();
 }
 
@@ -317,7 +328,7 @@ bool FolderBase::makeDirectory(const QString&)
     return false;
 }
 
-bool FolderBase::linkFile(const QString&, const QString&)
+bool FolderBase::linkFile(const QString&, const QString&, const FolderBase*)
 {
     return false;
 }
@@ -365,4 +376,22 @@ void FolderBase::removeConfigValues(const QString& uid)
     QSettings settings("harbour-cargodock", "CargoDock");
     settings.beginGroup(uid);
     settings.remove("");
+}
+
+void FolderBase::cloneConfigValues(const QString& uid, const QString& cloneUid)
+{
+    QMap<QString, QVariant> values;
+    QSettings settings("harbour-cargodock", "CargoDock");
+    settings.beginGroup(uid);
+    foreach (const QString& key, settings.childKeys())
+    {
+        values[key] = settings.value(key);
+    }
+    settings.endGroup();
+
+    settings.beginGroup(cloneUid);
+    foreach (const QString& key, values.keys())
+    {
+        settings.setValue(key, values[key]);
+    }
 }

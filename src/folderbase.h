@@ -24,7 +24,7 @@ class FolderBase : public QAbstractListModel
     Q_PROPERTY(QString name READ name NOTIFY pathChanged)
     Q_PROPERTY(bool isReadable READ isReadable NOTIFY pathChanged)
     Q_PROPERTY(bool isWritable READ isWritable NOTIFY pathChanged)
-    Q_PROPERTY(int capabilities READ capabilities NOTIFY pathChanged)
+    Q_PROPERTY(int capabilities READ capabilities NOTIFY selectionChanged)
     Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QStringList breadcrumbs READ breadcrumbs NOTIFY pathChanged)
     Q_PROPERTY(int selected READ selected NOTIFY selectionChanged)
@@ -69,13 +69,19 @@ public:
 
     FolderBase(QObject* parent = 0);
 
+    QString uid() const { return myUid; }
+
     virtual QHash<int, QByteArray> roleNames() const { return myRolenames; }
     virtual int rowCount(const QModelIndex&) const { return 0; }
-    virtual QVariant data(const QModelIndex&, int) const { return QVariant(); }
+    virtual QVariant data(const QModelIndex& index, int role) const;
 
     virtual QString name() const { return userBasename(myPath); }
     virtual bool isReadable() const { return true; }
     virtual bool isWritable() const { return false; }
+
+    /* Returns the capabilities that are currently available.
+     * Capabilities targetting selected items may depend on the selection.
+     */
     virtual int capabilities() const { return NoCapabilities; }
 
     QString path() const { return myPath; }
@@ -88,7 +94,6 @@ public:
 
     Q_INVOKABLE void open(const QString& name);
     Q_INVOKABLE void copySelected(FolderBase* dest);
-    Q_INVOKABLE void deleteSelected();
     Q_INVOKABLE void deleteItems(const QStringList& items);
     Q_INVOKABLE void linkSelected(FolderBase* dest);
     Q_INVOKABLE void newFolder(const QString& name);
@@ -118,7 +123,7 @@ public:
      */
     virtual QString parentPath(const QString& path) const = 0;
 
-    /* Return the basename of the file specified by path.
+    /* Returns the basename of the file specified by path.
      */
     virtual QString basename(const QString& path) const = 0;
 
@@ -154,7 +159,9 @@ public:
 
     /* Creates a link pointing to the given source. Returns true if successful.
      */
-    virtual bool linkFile(const QString& path, const QString& source);
+    virtual bool linkFile(const QString& path,
+                          const QString& source,
+                          const FolderBase* sourceModel);
 
     /* Deletes the given file or directory. Returns true if successful.
      */
@@ -189,12 +196,11 @@ protected:
         PermissionsRole,
         LinkTargetRole,
         ModelTargetRole,
+        SelectableRole,
         SelectedRole
     };
 
     virtual void init() { }
-
-    QString uid() const { return myUid; }
 
     void setConfigValue(const QString& key,
                         const QVariant& value);
@@ -206,6 +212,7 @@ protected:
     QVariant configValue(const QString& uid,
                          const QString& key) const;
     void removeConfigValues(const QString& uid);
+    void cloneConfigValues(const QString& uid, const QString& cloneUid);
 
     virtual bool loading() const { return false; }
 

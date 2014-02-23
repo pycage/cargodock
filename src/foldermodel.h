@@ -37,7 +37,9 @@ public:
     virtual QIODevice* openFile(const QString& path,
                                 QIODevice::OpenModeFlag mode);
     virtual bool makeDirectory(const QString& path);
-    virtual bool linkFile(const QString& path, const QString& source);
+    virtual bool linkFile(const QString& path,
+                          const QString& source,
+                          const FolderBase* sourceModel);
     virtual bool deleteFile(const QString& path);
     virtual void runFile(const QString& path);
 
