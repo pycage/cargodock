@@ -26,6 +26,7 @@ FolderBase::FolderBase(QObject* parent)
     myRolenames.insert(ModelTargetRole, "modelTarget");
     myRolenames.insert(SelectableRole, "selectable");
     myRolenames.insert(SelectedRole, "selected");
+    myRolenames.insert(CapabilitiesRole, "capabilities");
 
     myMimeTypeIcons.insert("application/epub-zip",                    "image://theme/icon-m-document");
     myMimeTypeIcons.insert("application/octet-stream",                "image://theme/icon-m-other");
@@ -85,6 +86,8 @@ QVariant FolderBase::data(const QModelIndex& index, int role) const
         return true;
     case SelectedRole:
         return isSelected(index.row());
+    case CapabilitiesRole:
+        return NoCapabilities;
     default:
         return QVariant();
     }

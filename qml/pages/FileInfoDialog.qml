@@ -5,6 +5,8 @@ import harbour.cargodock 1.0
 Dialog {
     id: dialog
 
+    allowedOrientations: Orientation.Landscape | Orientation.Portrait
+
     property FileInfo fileInfo
 
     SilicaFlickable {
@@ -17,42 +19,32 @@ Dialog {
             height: childrenRect.height
 
             DialogHeader {
-                title: fileInfo.canOpen ? "Open with default"
+                title: fileInfo.canOpen ? "Open"
                                         : "Close"
             }
 
             // preview item
             Loader {
-
-                function componentFor(mimeType)
+                function previewComponent(s)
                 {
-                    if (mimeType.substring(0, 6) === "image/")
+                    var idx = s.indexOf('#');
+                    if (idx > 0)
                     {
-                        return "PreviewImage.qml";
-                    }
-                    else if (mimeType.substring(0, 6) === "audio/")
-                    {
-                        return "PreviewAudio.qml";
-                    }
-                    else if (mimeType === "text/plain" ||
-                             mimeType === "text/x-qml" ||
-                             mimeType === "application/x-shellscript" ||
-                             mimeType === "application/xml")
-                    {
-                        return "PreviewText.qml";
+                        return s.substring(0, idx);
                     }
                     else
                     {
-                        return "PreviewFile.qml";
+                        return s;
                     }
                 }
 
+                visible: fileInfo.preview !== ""
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.leftMargin: Theme.paddingLarge
                 anchors.rightMargin: Theme.paddingLarge
                 height: 240
-                source: Qt.resolvedUrl(componentFor(fileInfo.mimeType))
+                source: Qt.resolvedUrl(previewComponent(fileInfo.preview) + ".qml")
 
                 onStatusChanged: {
                     if (status === Loader.Ready)
@@ -125,7 +117,8 @@ Dialog {
             }
 
             Column {
-                visible: developerMode.enabled
+                visible: developerMode.enabled &&
+                         fileInfo.capabilities & FolderBase.HasPermissions
                 width: parent.width
 
                 SectionHeader {
@@ -181,7 +174,7 @@ Dialog {
                 }
 
                 Repeater {
-                    model: [
+                    model:  [
                         ["Readable", FolderBase.ReadOther],
                         ["Writable", FolderBase.WriteOther],
                         ["Executable", FolderBase.ExecOther]

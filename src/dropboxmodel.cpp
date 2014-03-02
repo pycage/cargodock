@@ -65,7 +65,9 @@ QVariant DropboxModel::data(const QModelIndex& index, int role) const
     case UriRole:
         return item->uri;
     case PreviewRole:
-        return item->icon + "?large";
+        return item->mimeType.startsWith("image/")
+                ? "PreviewImage#" + item->icon + "?large"
+                : QVariant();
     case TypeRole:
         return item->type;
     case MimeTypeRole:

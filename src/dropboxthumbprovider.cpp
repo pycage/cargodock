@@ -44,7 +44,15 @@ QImage DropboxThumbProvider::requestImage(const QString& id,
     const QString accessToken = id.left(idx);
     const QString path = id.mid(idx);
 
-    emit loadImage(accessToken, path, requestedSize);
+    if (! myLoadingImages.contains(path))
+    {
+        myLoadingImages << path;
+        emit loadImage(accessToken, path, requestedSize);
+    }
+    else
+    {
+        return img;
+    }
 
     QTime timer;
     timer.start();
@@ -60,6 +68,7 @@ QImage DropboxThumbProvider::requestImage(const QString& id,
         myMutex.unlock();
     }
 
+    myLoadingImages.remove(path);
     return img;
 }
 

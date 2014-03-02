@@ -64,7 +64,8 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/pages/WebDavService.qml \
     qml/works-with-dropbox.png \
     qml/help.html \
-    qml/help.md
+    qml/help.md \
+    qml/pages/PreviewGeneric.qml
 
 HEADERS += \
     src/foldermodel.h \

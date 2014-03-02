@@ -14,7 +14,7 @@ Page {
         model: serviceNames
 
         header: PageHeader {
-            title: "Add Cloud Service"
+            title: "Add service"
         }
 
         delegate: ListItem {

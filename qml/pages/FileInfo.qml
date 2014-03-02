@@ -5,7 +5,7 @@ QtObject {
     property variant source
     property variant sourceModel
 
-    property bool canOpen: sourceModel.capabilities & FolderBase.CanOpen
+    property bool canOpen: source.capabilities & FolderBase.CanOpen
 
     property string name: source.name ? source.name : ""
     property string path: source.path ? source.path : ""
@@ -14,12 +14,13 @@ QtObject {
     property int type: source.type ? source.type : 0
     property string mimeType: source.mimeType ? source.mimeType : "application/x-octet-stream"
     property string icon: source.icon !== undefined ? source.icon : "image://theme/icon-m-other"
-    property string preview: source.preview !== undefined ? source.preview : "image://theme/icon-m-other"
+    property string preview: source.preview !== undefined ? source.preview : "PreviewGeneric"
     property int size: source.size ? source.size : 0
     property date mtime: source.mtime
     property string owner: source.owner ? source.owner : "?"
     property string group: source.group ? source.group : "?"
     property int permissions: source.permissions ? source.permissions : 0
+    property int capabilities: source.capabilities
 
     function setPermissions(value)
     {

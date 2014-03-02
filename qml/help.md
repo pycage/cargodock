@@ -13,9 +13,9 @@ It is a two-paned filemanager for your phone and the cloud.
 * open files with default handler
 * bookmark locations
 * preview for images and audio
-* cloud and network services
+* integrated cloud and network services:
   * Dropbox
-* extended functionality in **Developer Mode**
+* extended functionality in **Developer Mode**:
   * see hidden files
   * navigate the whole filesystem
   * modify file permissions
@@ -26,7 +26,7 @@ When you first open **Cargo Dock**, you will see a collection of places on your 
 
 Places contain files and folders, and folders in turn may contain more files and folders. By tapping on a folder, you can look into it.
 
-No matter how many folders deep you dived down, you can always dive up by dragging down the pulley menu. There you will find a trail of **breadcrumbs** to find your way up again.
+No matter how many folders deep you dived down, you can always dive up by dragging down the **pulley menu**. There you will find a trail of **breadcrumbs** to find your way up again.
 
 **Hint:** When scrolling fast through a long list of files, a **Up** or **Down** button will appear, depending on your direction of movement. Touch it to quickly jump to the beginning or end of the list.
 
@@ -38,7 +38,7 @@ Anywhere where you have permission to create new folders, you will see the **New
 
 **Cargo Dock** comes with an **other half** as it is a two-paned filemanager. Drag the screen horizontally to the left to go to the **right half**. Drag the screen to the right to go back to the **left half.**
 
-The glow indicators in the top left corner show you on which of the two halves you currently are.
+The glow indicators in the top left corner show you on which of the two halves you currently are. There is also a perforation shown at the edge to the other half.
 
 You can, for instance, copy files and folders between the two halves.
 
@@ -46,13 +46,13 @@ You can, for instance, copy files and folders between the two halves.
 
 In order to perform actions on files or folders, you have to select them. Tap and hold on a file or folder to select it.
 
-Notice the drawer that opened on the bottom of the screen. You are now in **Selection Mode** and can or unselect a number of files and folders by tapping on them. Inside the drawer, you will see the amount of items selected.
+Notice the **drawer** that opened at the bottom of the screen. You are now in **selection mode** and can select or unselect a number of files and folders by tapping on them. On the drawer, you will see the amount of items selected.
 
-In order to cancel your selection and leave **Selection Mode**, tap on the **close button (X)** in the drawer, or, alternatively, tap and hold on any file.
+In order to cancel your selection and leave **selection mode**, tap on the **close button (X)** of the drawer, or, alternatively, tap and hold on any file.
 
 ### File actions
 
-When you have selected files in **Selection Mode**, you can open a **pulley menu** on the bottom of the **drawer.**
+When you have selected files in **selection mode**, a **pulley menu** appears on the bottom of the **drawer.**
 
 In this menu you will find several actions that you can perform on the items selected.
 
@@ -63,17 +63,17 @@ In this menu you will find several actions that you can perform on the items sel
 * **Link to other side**  
   ... links the selected items to the location you have currently open on the other side. This will place symbolic links on the other side to your selected items. Not all filesystems support symbolic links.
 * **Delete**  
-  ... deletes the selected items. A **remorse timer** of some seconds will appear and give you a chance to revide your decision. Once deleted, files and folders cannot be brought back, so be careful with this action.
+  ... deletes the selected items. A **remorse timer** of some seconds will appear to give you a chance to revide your decision. Once deleted, files and folders cannot be brought back, so be careful with this action.
   
 ### File properties
 
-Tap on any file, while not in selection mode, to see its properties. You can also rename the file here.
+Tap on any file, while **not** in **selection mode**, to see its properties. You can also rename the file here.
 
-This view is a dialog with an **Open** action to open the file in the associated app. Note that not all filetypes have an app associated to open with, though.
+This view is a dialog with an **Open** action to open the file in the associated default app. Note that not all filetypes have an app associated to open with, though.
 
 ### Managing bookmarks
 
-You can place bookmarks on the **Places** location. To do so, select the folders you want to bookmark (you can only bookmark folders) and select **Bookmark** from the **actions menu.**
+You can place bookmarks on the **Places** location. To do so, select the folders you want to bookmark (you can only bookmark folders) and select **Bookmark** from the **actions menu.** The other side must have the **Places** location open.
 
 To remove a bookmark, select it on the **Places** location, and select **Delete** from the **actions menu.**
 
@@ -81,14 +81,28 @@ To remove a bookmark, select it on the **Places** location, and select **Delete*
 
 Open **Settings** from the **pulley menu** on **Places** and drag down to select **Add Cloud Service**.
 
-Tap on a service and follow the directions.
+Tap on a service and follow the instructions.
 
 The new service will appear in the **Places** location. You may create more than one instance of a service, for instance, to have access to several **Dropbox** accounts.
 
 To delete a service instance, tap and hold on the service in **Settings** and select **Remove** from the context menu.
 
-### Safety first
+### Safety or Developer Mode
 
 **Cargo Dock** takes precautions that you cannot accidentally break your phone by deleting files, so you are on the safe side.
 
 Still, **Cargo Dock** is a full filemanager. If you need access beyond what's safe, you have to accept the terms and conditions of **Developer Mode** on your device and enable it. Only then **Cargo Dock** will unlock the dangerous areas.
+
+**Developer Mode** adds a new section **Developer Mode** to **Places**, giving you:
+
+* Access to the full filesystem.
+* Access to hidden files.
+* Extended view of file permissions with editing.
+
+### Root
+
+**Cargo Dock** runs as the default Sailfish user.
+
+If **Cargo Dock** detects that it was started as **root**, it will show a **reddish background** to remind you of your **devastating powers**.
+
+**Hint:** A way to run **Cargo Dock** as the super user can be found [here](https://openrepos.net/content/schturman/startasroot-cargodock). **Use at your own risk!** It is a 3rd party extension not affiliated with **Cargo Dock** in any way.

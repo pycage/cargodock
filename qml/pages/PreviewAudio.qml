@@ -6,7 +6,7 @@ PreviewItem {
 
     Audio {
         id: audio
-        source: fileInfo.uri
+        source: previewUri(fileInfo.preview)
 
         onPositionChanged: {
             if (! slider.down)

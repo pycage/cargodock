@@ -5,6 +5,8 @@ import harbour.cargodock 1.0
 Page {
     id: page
 
+    allowedOrientations: Orientation.Landscape | Orientation.Portrait
+
     property bool isSecondPane
 
     property var _modelStack: []

@@ -3,6 +3,7 @@ import Sailfish.Silica 1.0
 import harbour.cargodock 1.0
 
 ServiceObject {
+    id: service
 
     icon: Qt.resolvedUrl("../dropbox.png")
     serviceName: "dropbox"
@@ -38,7 +39,7 @@ ServiceObject {
     serviceDelegate: ServiceDelegate {
         iconSource: icon
         title: "Dropbox"
-        subtitle: "Login to a Dropbox account"
+        subtitle: "Login to a Dropbox account."
     }
 
     serviceConfigurator: Component {
@@ -114,7 +115,7 @@ ServiceObject {
                                   textEntry.text,
                                   { });
             }
-        }
+        }//Dialog
 
-    }//Dialog
+    }//Component
 }

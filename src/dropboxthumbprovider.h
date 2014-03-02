@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QMutex>
 #include <QQuickImageProvider>
+#include <QSet>
 #include <QSharedPointer>
 #include <QSize>
 #include <QString>
@@ -42,6 +43,7 @@ private:
     QMutex myMutex;
     QNetworkAccessManager* myNetworkAccessManager;
     QMap<QString, QByteArray> myImages;
+    QSet<QString> myLoadingImages;
 };
 
 #endif // DROPBOXTHUMBPROVIDER_H

@@ -57,6 +57,8 @@ public:
     enum Capabilities
     {
         NoCapabilities = 0,
+
+        // folder capabilities
         CanCopy = 1,
         AcceptCopy = 2,
         CanLink = 4,
@@ -64,7 +66,10 @@ public:
         CanBookmark = 16,
         AcceptBookmark = 32,
         CanDelete = 64,
-        CanOpen = 128
+
+        // file capabilities
+        CanOpen = 128,
+        HasPermissions = 256
     };
 
     FolderBase(QObject* parent = 0);
@@ -197,7 +202,8 @@ protected:
         LinkTargetRole,
         ModelTargetRole,
         SelectableRole,
-        SelectedRole
+        SelectedRole,
+        CapabilitiesRole
     };
 
     virtual void init() { }

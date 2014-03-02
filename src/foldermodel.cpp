@@ -5,8 +5,23 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QMimeDatabase>
+#include <QStringList>
 #include <QUrl>
 #include <QDebug>
+
+namespace
+{
+const QStringList OPENABLE_TYPES = QStringList()
+        << "application/pdf"
+        << "application/vnd.android.package-archive"
+        << "application/x-rpm"
+        << "audio/mp4"
+        << "audio/mpeg"
+        << "image/jpeg"
+        << "image/png"
+        << "text/html"
+        << "video/mp4";
+}
 
 FolderModel::FolderModel(QObject* parent)
     : FolderBase(parent)
@@ -15,6 +30,12 @@ FolderModel::FolderModel(QObject* parent)
 {
     myMimeTypeIcons.insert("image/jpeg",                              "");
     myMimeTypeIcons.insert("image/png",                               "");
+
+    myPreviewComponents.insert("audio/mp4",               "PreviewAudio");
+    myPreviewComponents.insert("audio/mpeg",              "PreviewAudio");
+    myPreviewComponents.insert("image/jpeg",              "PreviewImage");
+    myPreviewComponents.insert("image/png",               "PreviewImage");
+    myPreviewComponents.insert("text/plain",              "PreviewText");
 }
 
 int FolderModel::rowCount(const QModelIndex&) const
@@ -40,7 +61,9 @@ QVariant FolderModel::data(const QModelIndex& index, int role) const
     case UriRole:
         return item->uri;
     case PreviewRole:
-        return item->uri;
+        return myPreviewComponents.contains(item->mimeType)
+                ? myPreviewComponents[item->mimeType] + "#" + item->uri
+                : QVariant();
     case TypeRole:
         return item->type;
     case MimeTypeRole:
@@ -59,6 +82,10 @@ QVariant FolderModel::data(const QModelIndex& index, int role) const
         return item->permissions;
     case LinkTargetRole:
         return item->linkTarget;
+    case CapabilitiesRole:
+        return HasPermissions |
+               (OPENABLE_TYPES.contains(item->mimeType) ? CanOpen
+                                                        : NoCapabilities);
     default:
         return FolderBase::data(index, role);
     }

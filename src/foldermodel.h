@@ -71,6 +71,7 @@ private:
 
 private:
     QMap<QString, QString> myMimeTypeIcons;
+    QMap<QString, QString> myPreviewComponents;
     QList<Item::Ptr> myItems;
     bool myIsReadable;
     bool myIsWritable;

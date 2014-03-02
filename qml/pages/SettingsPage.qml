@@ -26,7 +26,7 @@ Page {
 
         PullDownMenu {
             MenuItem {
-                text: "Add Cloud Service"
+                text: "Add Service"
 
                 onClicked: {
                     var props = {
@@ -47,7 +47,7 @@ Page {
             }
 
             SectionHeader {
-                text: "Cloud Services"
+                text: "Services"
             }
 
             Repeater {
@@ -109,7 +109,7 @@ Page {
                 color: Theme.secondaryColor
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                text: "No cloud services yet.\n" +
+                text: "No services yet.\n" +
                       "Drag down to add a service."
             }
 
