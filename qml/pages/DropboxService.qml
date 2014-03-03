@@ -38,8 +38,8 @@ ServiceObject {
 
     serviceDelegate: ServiceDelegate {
         iconSource: icon
-        title: "Dropbox"
-        subtitle: "Login to a Dropbox account."
+        title: qsTr("Dropbox")
+        subtitle: qsTr("Login to a Dropbox account.")
     }
 
     serviceConfigurator: Component {
@@ -60,7 +60,7 @@ ServiceObject {
                     width: parent.width
 
                     DialogHeader {
-                        title: "Configure Dropbox"
+                        title: qsTr("Configure Dropbox")
                     }
 
                     Item {
@@ -76,7 +76,7 @@ ServiceObject {
                         anchors.leftMargin: Theme.paddingLarge
                         anchors.rightMargin: Theme.paddingLarge
 
-                        placeholderText: "Name"
+                        placeholderText: qsTr("Name")
                         focus: true
                     }
 
@@ -98,12 +98,12 @@ ServiceObject {
                             wrapMode: Text.Wrap
                             font.pixelSize: Theme.fontSizeSmall
                             color: Theme.secondaryColor
-                            text: "Enter the name under which you want to " +
-                                  "access your Dropbox folder in " +
-                                  "Cargo Dock.\n" +
-                                  "You may add several Dropbox services " +
-                                  "connected to different Dropbox accounts. " +
-                                  "The name will help you distinguish them."
+                            text: qsTr("Enter the name under which you want to ") +
+                                  qsTr("access your Dropbox folder in ") +
+                                  qsTr("Cargo Dock.\n") +
+                                  qsTr("You may add several Dropbox services ") +
+                                  qsTr("connected to different Dropbox accounts. ") +
+                                  qsTr("The name will help you distinguish them.")
                         }
                     }
                 }

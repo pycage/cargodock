@@ -82,3 +82,4 @@ HEADERS += \
     src/dropboxapi/productkey.h \
     src/filereader.h
 
+TRANSLATIONS = i18n/de_DE.ts

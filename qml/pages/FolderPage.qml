@@ -123,7 +123,7 @@ Page {
 
     QtObject {
         id: copyAction
-        property string name: "Copy to other side"
+        property string name: qsTr("Copy to other side")
         property bool enabled: sourceModel.capabilities & FolderBase.CanCopy &&
                                destinationModel.capabilities & FolderBase.AcceptCopy
 
@@ -136,7 +136,7 @@ Page {
 
     QtObject {
         id: bookmarkAction
-        property string name: "Bookmark"
+        property string name: qsTr("Bookmark")
         property bool enabled: sourceModel.capabilities & FolderBase.CanBookmark &&
                                destinationModel.capabilities & FolderBase.AcceptBookmark
 
@@ -149,7 +149,7 @@ Page {
 
     QtObject {
         id: linkAction
-        property string name: "Link to other side"
+        property string name: qsTr("Link to other side")
         property bool enabled: sourceModel.capabilities & FolderBase.CanLink &&
                                destinationModel.capabilities & FolderBase.AcceptLink
 
@@ -162,7 +162,7 @@ Page {
 
     QtObject {
         id: deleteAction
-        property string name: "Delete"
+        property string name: qsTr("Delete")
         property bool enabled: sourceModel.capabilities & FolderBase.CanDelete
 
         function action()
@@ -195,7 +195,7 @@ Page {
             color: Qt.rgba(0.3, 0, 0, 0.2)
             font.pixelSize: Theme.fontSizeExtraLarge * 4
             font.weight: Font.Bold
-            text: "ROOT"
+            text: qsTr("ROOT")
         }
     }
 
@@ -322,7 +322,7 @@ Page {
                     anchors.centerIn: parent
 
                     Button {
-                        text: "All"
+                        text: qsTr("All")
 
                         onClicked: {
                             sourceModel.selectAll();
@@ -330,7 +330,7 @@ Page {
                     }
 
                     Button {
-                        text: "None"
+                        text: qsTr("None")
 
                         onClicked: {
                             sourceModel.unselectAll();
@@ -394,7 +394,7 @@ Page {
                         anchors.left: newFolderIcon.right
                         anchors.leftMargin: Theme.paddingMedium
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "New folder ..."
+                        text: qsTr("New folder ...")
                     }
 
                     onClicked: {
@@ -425,7 +425,7 @@ Page {
 
                 MenuItem {
                     visible: breadcrumbRepeater.count === 0
-                    text: "About"
+                    text: qsTr("About")
 
                     onClicked: {
                         pageStack.push(Qt.resolvedUrl("AboutPage.qml"));
@@ -434,7 +434,7 @@ Page {
 
                 MenuItem {
                     visible: breadcrumbRepeater.count === 0
-                    text: "Settings"
+                    text: qsTr("Settings")
 
                     onClicked: {
                         var props = {
@@ -447,7 +447,7 @@ Page {
 
                 MenuItem {
                     visible: breadcrumbRepeater.count === 0
-                    text: "Help"
+                    text: qsTr("Help")
 
                     onClicked: {
                         pageStack.push(Qt.resolvedUrl("HelpPage.qml"));
@@ -549,12 +549,12 @@ Page {
 
             ViewPlaceholder {
                 enabled: sourceModel ? ! sourceModel.isReadable : false
-                text: "You have no permission for this folder"
+                text: qsTr("You have no permission for this folder")
             }
 
             ViewPlaceholder {
                 enabled: sourceModel ? (sourceModel.count === 0 && sourceModel.isReadable) : false
-                text: "No files"
+                text: qsTr("No files")
             }
 
             ScrollDecorator { }

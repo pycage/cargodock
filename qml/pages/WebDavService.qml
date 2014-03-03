@@ -7,7 +7,7 @@ ServiceObject {
     serviceModel: FolderModel { }
 
     serviceDelegate: ServiceDelegate {
-        title: "WebDAV"
-        subtitle: "Access a WebDAV share"
+        title: qsTr("WebDAV")
+        subtitle: qsTr("Access a WebDAV share")
     }
 }

@@ -70,7 +70,7 @@ QtObject {
                     width: parent.width
 
                     DialogHeader {
-                        title: "Configure service"
+                        title: qsTr("Configure service")
                     }
 
                     Item {
@@ -86,7 +86,7 @@ QtObject {
                         anchors.leftMargin: Theme.paddingLarge
                         anchors.rightMargin: Theme.paddingLarge
 
-                        placeholderText: "Name"
+                        placeholderText: qsTr("Name")
                         focus: true
                     }
 

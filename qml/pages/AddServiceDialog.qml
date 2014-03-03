@@ -14,7 +14,7 @@ Page {
         model: serviceNames
 
         header: PageHeader {
-            title: "Add service"
+            title: qsTr("Add service")
         }
 
         delegate: ListItem {

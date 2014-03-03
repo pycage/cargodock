@@ -56,7 +56,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: "Copyright © 2013, 2014 Martin Grimme"
+            text: qsTr("Copyright © 2013, 2014 Martin Grimme")
         }
 
         Label {
@@ -64,7 +64,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: "Icon by Morpog"
+            text: qsTr("Icon by Morpog")
         }
 
 

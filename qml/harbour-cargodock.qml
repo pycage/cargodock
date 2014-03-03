@@ -117,7 +117,7 @@ ApplicationWindow
             wrapMode: Text.Wrap
             font.pixelSize: Theme.fontSizeExtraLarge
             color: Theme.highlightColor
-            text: "Pull down for help"
+            text: qsTr("Pull down for help")
         }
 
         Timer {
