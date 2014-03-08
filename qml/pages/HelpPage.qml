@@ -5,9 +5,10 @@ import harbour.cargodock 1.0
 Page {
 
     property string _style: "<style>" +
+                            "a:link { color:" + Theme.highlightColor + "} " +
                             "h3 { " +
                             "  color: " + Theme.highlightColor + ";" +
-                            "}" +
+                            "} " +
                             "</style>"
 
     FileReader {
@@ -39,6 +40,10 @@ Page {
                 color: Theme.primaryColor
                 textFormat: Text.RichText
                 text: _style + docReader.data
+
+                onLinkActivated: {
+                    Qt.openUrlExternally(link);
+                }
             }
 
         }

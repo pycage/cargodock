@@ -177,7 +177,12 @@ QVariant PlacesModel::data(const QModelIndex& index, int role) const
 
 int PlacesModel::capabilities() const
 {
-    return AcceptBookmark | CanDelete;
+    int caps = AcceptBookmark;
+    if (selected() > 0)
+    {
+        caps |= CanDelete;
+    }
+    return caps;
 }
 
 bool PlacesModel::linkFile(const QString& path,

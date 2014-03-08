@@ -273,7 +273,8 @@ void FolderBase::selectAll()
     int size = rowCount(QModelIndex());
     for (int i = 0; i < size; ++i)
     {
-        if (! mySelection.contains(i))
+        bool selectable = data(index(i), SelectableRole).toBool();
+        if (! mySelection.contains(i) && selectable)
         {
             setSelected(i, true);
         }
