@@ -4,7 +4,7 @@ A cargo dock is a harbour where cargo crates are being managed and moved around.
 
 It is a two-paned filemanager for your phone and the cloud.
 
-### Features
+### Some features
 
 * two-paned UI
 * easy folder navigation with trail of breadcrumbs
@@ -13,12 +13,12 @@ It is a two-paned filemanager for your phone and the cloud.
 * open files with default handler
 * bookmark locations
 * preview for images and audio
-* integrated cloud and network services:
-  * Dropbox
-* extended functionality in **Developer Mode**:
-  * see hidden files
-  * navigate the whole filesystem
-  * modify file permissions
+* integrated cloud and network services:  
+  Dropbox
+* extended functionality in **Developer Mode**:  
+  see hidden files,  
+  navigate the whole filesystem,  
+  modify file permissions
 
 ### Navigating
 
@@ -26,7 +26,7 @@ When you first open **Cargo Dock**, you will see a collection of places on your 
 
 Places contain files and folders, and folders in turn may contain more files and folders. By tapping on a folder, you can look into it.
 
-No matter how many folders deep you dived down, you can always dive up by dragging down the **pulley menu**. There you will find a trail of **breadcrumbs** to find your way up again.
+No matter how many folders deep you dived down, you can always dive up by dragging down the **pulley menu**. There you will find a trail of **breadcrumbs** to return up again.
 
 **Hint:** When scrolling fast through a long list of files, a **Up** or **Down** button will appear, depending on your direction of movement. Touch it to quickly jump to the beginning or end of the list.
 
@@ -34,13 +34,13 @@ No matter how many folders deep you dived down, you can always dive up by draggi
 
 Anywhere where you have permission to create new folders, you will see the **New Folder ...** option shown above the folder's contents. Tap on it and you will be asked for the name of the new folder to create. Accept the dialog in order to create the folder.
 
-### The other half
+### The other side
 
-**Cargo Dock** comes with an **other half** as it is a two-paned filemanager. Drag the screen horizontally to the left to go to the **right half**. Drag the screen to the right to go back to the **left half.**
+**Cargo Dock** comes with an **other side** as it is a two-paned filemanager. Drag the screen horizontally to the left to move to the **right side**. Drag the screen to the right to move back to the **left side.**
 
-The glow indicators in the top left corner show you on which of the two halves you currently are. There is also a perforation shown at the edge to the other half.
+The glow indicators in the top left corner show you on which of the two sides you currently are. There is also a perforation shown at the edge to the other half.
 
-You can, for instance, copy files and folders between the two halves.
+You can, for instance, copy files and folders between the two sides.
 
 ### Selecting files
 
@@ -57,11 +57,11 @@ When you have selected files in **selection mode**, a **pulley menu** appears on
 In this menu you will find several actions that you can perform on the items selected.
 
 * **Bookmark**  
-  ... creates a bookmark to the selected folders. This option is only available if you have selected folders only, and the other side is the **Places** location.
+  ... creates a bookmark to the selected folders. This option is only available if you have selected **folders only**, and the other side is the **Places** location.
 * **Copy to other side**  
   ... copies the selected items to the location you have currently open on the other side.
 * **Link to other side**  
-  ... links the selected items to the location you have currently open on the other side. This will place symbolic links on the other side to your selected items. Not all filesystems support symbolic links.
+  ... links the selected items to the location you have currently open on the other side. This will place **symbolic links** on the other side to your selected items. Not all filesystems support symbolic links.
 * **Delete**  
   ... deletes the selected items. A **remorse timer** of some seconds will appear to give you a chance to revide your decision. Once deleted, files and folders cannot be brought back, so be careful with this action.
   
@@ -69,17 +69,17 @@ In this menu you will find several actions that you can perform on the items sel
 
 Tap on any file, while **not** in **selection mode**, to see its properties. You can also rename the file here.
 
-This view is a dialog with an **Open** action to open the file in the associated default app. Note that not all filetypes have an app associated to open with, though.
+The file properties dialog has an **Open** action for supported file types that can be opened with another app.
 
 ### Managing bookmarks
 
 You can place bookmarks on the **Places** location. To do so, select the folders you want to bookmark (you can only bookmark folders) and select **Bookmark** from the **actions menu.** The other side must have the **Places** location open.
 
-To remove a bookmark, select it on the **Places** location, and select **Delete** from the **actions menu.**
+To remove a bookmark, select it on the **Places** location, and choose  s **Delete** from the **actions menu.**
 
-### Managing cloud services
+### Managing services
 
-Open **Settings** from the **pulley menu** on **Places** and drag down to select **Add Cloud Service**.
+Open **Settings** from the **pulley menu** on **Places** and drag down to select **Add Service**.
 
 Tap on a service and follow the instructions.
 
@@ -87,22 +87,26 @@ The new service will appear in the **Places** location. You may create more than
 
 To delete a service instance, tap and hold on the service in **Settings** and select **Remove** from the context menu.
 
-### Safety or Developer Mode
+### Safe Mode vs. Developer Mode
 
-**Cargo Dock** takes precautions that you cannot accidentally break your phone by deleting files, so you are on the safe side.
+**Cargo Dock** takes precautions that you cannot accidentally break your phone by deleting system files, so you are on the safe side.
 
 Still, **Cargo Dock** is a full filemanager. If you need access beyond what's safe, you have to accept the terms and conditions of **Developer Mode** on your device and enable it. Only then **Cargo Dock** will unlock the dangerous areas.
 
-**Developer Mode** adds a new section **Developer Mode** to **Places**, giving you:
+**Developer Mode** adds a new section to **Places**, giving you:
 
-* Access to the full filesystem.
-* Access to hidden files.
-* Extended view of file permissions with editing.
+* access to the full filesystem
+* access to hidden files
+* extended view of file permissions with editing
 
 ### Root
 
 **Cargo Dock** runs as the default Sailfish user.
 
-If **Cargo Dock** detects that it was started as **root**, it will show a **reddish background** to remind you of your **devastating powers**.
+If **Cargo Dock** detects that it was started as super user, it will show a **reddish background** to remind you of your **devastating powers**.
 
-**Hint:** A way to run **Cargo Dock** as the super user can be found [here](https://openrepos.net/content/schturman/startasroot-cargodock). **Use at your own risk!** It is a 3rd party extension not affiliated with **Cargo Dock** in any way.
+**Hint:** A way to run **Cargo Dock** as the super user can be found at
+
+[https://openrepos.net/content/schturman/startasroot-cargodock](https://openrepos.net/content/schturman/startasroot-cargodock)
+
+**Use at your own risk!** It is a 3rd party extension not affiliated with **Cargo Dock** in any way.
