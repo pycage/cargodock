@@ -12,12 +12,47 @@
 
 namespace
 {
-const QString SD_CARD("/run/user/100000/media/sdcard");
+const QString LEGACY_SD_CARD("/run/user/100000/media/sdcard");
+const QString SD_CARD_BASE("/media/sdcard");
 const QString ANDROID_STORAGE("/data/sdcard");
 
 QString makeUid()
 {
     return QUuid::createUuid().toString();
+}
+
+QString sdPath()
+{
+    if (QDir(LEGACY_SD_CARD).exists())
+    {
+        return LEGACY_SD_CARD;
+    }
+
+    QStringList partitions;
+    QDir baseDir(SD_CARD_BASE);
+    foreach (const QString& partition,
+             baseDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
+    {
+        if (QFile(QString("/dev/disk/by-uuid/%1").arg(partition)).exists())
+        {
+            partitions << partition;
+        }
+    }
+
+    qDebug() << "PARTITIONS" << partitions;
+    if (partitions.size() == 1)
+    {
+        return SD_CARD_BASE + "/" + partitions.at(0);
+    }
+    else if (partitions.empty())
+    {
+        return QString();
+    }
+    else
+    {
+        return SD_CARD_BASE;
+    }
+
 }
 
 }
@@ -71,10 +106,11 @@ void PlacesModel::init()
     setConfigValue("storage-services", QStringList() << "storage0"
                                                      << "storage1");
 
+    // FIXME: we need proper SD card handling, probably with a new folder model
     setConfigValue("storage0", "type", "local");
     setConfigValue("storage0", "name", "SD Card");
     setConfigValue("storage0", "icon", "image://theme/icon-m-device");
-    setConfigValue("storage0", "path", SD_CARD);
+    setConfigValue("storage0", "path", sdPath());
 
     setConfigValue("storage1", "type", "local");
     setConfigValue("storage1", "name", "Android Storage");
@@ -261,7 +297,7 @@ void PlacesModel::loadDirectory(const QString&)
         const QString icon = configValue(uid, "icon").toString();
         const QString path = configValue(uid, "path").toString();
 
-        if (QDir(path).exists())
+        if (path.size() && QDir(path).exists())
         {
             myPlaces << Item::Ptr(new Item(uid, name, "Media", icon, type, false));
         }
@@ -274,7 +310,7 @@ void PlacesModel::loadDirectory(const QString&)
         const QString icon = configValue(uid, "icon").toString();
         const QString path = configValue(uid, "path").toString();
 
-        if (QDir(path).exists())
+        if (path.size() && QDir(path).exists())
         {
             myPlaces << Item::Ptr(new Item(uid, name, "Storage", icon, type, false));
         }
