@@ -78,7 +78,7 @@ ApplicationWindow
     PlacesService { }
     LocalService { }
     DropboxService { }
-    //WebDavService { }
+    WebDavService { }
 
     QtObject {
         id: sharedState

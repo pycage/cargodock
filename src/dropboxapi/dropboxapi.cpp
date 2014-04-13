@@ -1,4 +1,5 @@
 #include "dropboxapi.h"
+#include "../network.h"
 #ifdef HAVE_DROPBOX_PRODUCT_KEY
 #include "../../../productkey.h"
 #else
@@ -6,7 +7,6 @@
 #endif
 
 #include <QJsonDocument>
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QUrlQuery>
@@ -65,10 +65,8 @@ DropboxApi::DropboxApi(DropboxRoot root,
     , myAppKey(PRODUCT_KEY)
     , myAppSecret(PRODUCT_SECRET)
     , myRoot(root == Dropbox ? "dropbox" : "sandbox")
-    , myNetworkAccessManager(new QNetworkAccessManager)
 {
-    connect(myNetworkAccessManager.data(), SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(slotRequestFinished(QNetworkReply*)));
+
 }
 
 void DropboxApi::authorize(const QUrl& uri)
@@ -156,20 +154,31 @@ QNetworkReply* DropboxApi::sendRequest(RequestMethod method,
     qDebug() << Q_FUNC_INFO << myAccessToken << url;
 
     QNetworkReply* reply = 0;
-    if (method == GET)
+    QNetworkAccessManager* nam = Network::accessManager();
+    if (qobject_cast<QNetworkAccessManager*>(nam))
     {
-        reply = myNetworkAccessManager->get(req);
+        if (method == GET)
+        {
+            reply = nam->get(req);
+        }
+        else if (method == POST)
+        {
+            req.setHeader(QNetworkRequest::ContentTypeHeader,
+                          "application/x-www-form-urlencoded");
+            reply = nam->post(req, payload);
+        }
+        else if (method == PUT)
+        {
+            reply = nam->put(req, payload);
+        }
     }
-    else if (method == POST)
+
+    if (reply)
     {
-        req.setHeader(QNetworkRequest::ContentTypeHeader,
-                      "application/x-www-form-urlencoded");
-        reply = myNetworkAccessManager->post(req, payload);
+        connect(reply, SIGNAL(finished()),
+                this, SLOT(slotRequestFinished()));
     }
-    else if (method == PUT)
-    {
-        reply = myNetworkAccessManager->put(req, payload);
-    }
+
     return reply;
 }
 
@@ -408,9 +417,9 @@ void DropboxApi::download(const QString& path,
             this, SLOT(slotDownloaded()));
 }
 
-void DropboxApi::slotRequestFinished(QNetworkReply* reply)
+void DropboxApi::slotRequestFinished()
 {
-    reply->deleteLater();
+    sender()->deleteLater();
 }
 
 void DropboxApi::slotAccountInfoReceived()

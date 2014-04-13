@@ -1,7 +1,7 @@
 #include "dropboxthumbprovider.h"
+#include "network.h"
 
 #include <QEventLoop>
-#include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QTime>
@@ -16,13 +16,10 @@ namespace
 const QString API_CONTENT_DROPBOX_ENDPOINT("https://api-content.dropbox.com");
 }
 
-DropboxThumbProvider::DropboxThumbProvider(QNetworkAccessManager* nam)
+DropboxThumbProvider::DropboxThumbProvider()
     : QObject()
     , QQuickImageProvider(QQuickImageProvider::Image)
-    , myNetworkAccessManager(nam)
 {
-    connect(myNetworkAccessManager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(slotImageLoaded(QNetworkReply*)));
     connect(this, SIGNAL(loadImage(QString,QString,QSize)),
             this, SLOT(slotLoadImage(QString,QString,QSize)));
 }
@@ -56,8 +53,8 @@ QImage DropboxThumbProvider::requestImage(const QString& id,
 
     QTime timer;
     timer.start();
-    while (img.isNull() && timer.elapsed() < 30000
-           && qobject_cast<QNetworkAccessManager*>(myNetworkAccessManager))
+    while (img.isNull() && timer.elapsed() < 30000 &&
+           qobject_cast<QNetworkAccessManager*>(Network::accessManager()))
     {
         myMutex.lock();
         if (myImages.contains(path))
@@ -96,12 +93,17 @@ void DropboxThumbProvider::slotLoadImage(const QString& accessToken,
                      QString("Bearer %1")
                      .arg(accessToken)
                      .toUtf8());
-    QNetworkReply* reply = myNetworkAccessManager->get(req);
+    QNetworkReply* reply = Network::accessManager()->get(req);
     reply->setProperty("path", path);
+
+    connect(reply, SIGNAL(finished()),
+            this, SLOT(slotImageLoaded()));
 }
 
-void DropboxThumbProvider::slotImageLoaded(QNetworkReply* reply)
+void DropboxThumbProvider::slotImageLoaded()
 {
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
+
     if (reply->error() == QNetworkReply::NoError)
     {
         myMutex.lock();

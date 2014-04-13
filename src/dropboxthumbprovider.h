@@ -7,7 +7,6 @@
 #include <QMutex>
 #include <QQuickImageProvider>
 #include <QSet>
-#include <QSharedPointer>
 #include <QSize>
 #include <QString>
 
@@ -22,7 +21,7 @@ class DropboxThumbProvider : public QObject, public QQuickImageProvider
 {
     Q_OBJECT
 public:
-    DropboxThumbProvider(QNetworkAccessManager* nam);
+    DropboxThumbProvider();
 
     virtual QImage requestImage(const QString& id,
                                 QSize* size,
@@ -37,11 +36,10 @@ private slots:
     void slotLoadImage(const QString& accessToken,
                        const QString& path,
                        const QSize& requestedSize);
-    void slotImageLoaded(QNetworkReply* reply);
+    void slotImageLoaded();
 
 private:
     QMutex myMutex;
-    QNetworkAccessManager* myNetworkAccessManager;
     QMap<QString, QByteArray> myImages;
     QSet<QString> myLoadingImages;
 };

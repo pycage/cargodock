@@ -6,10 +6,13 @@
 #include <QSharedPointer>
 #include <QtQml>
 
+#include "network.h"
+
 #include "developermode.h"
 #include "filereader.h"
 #include "folderbase.h"
 
+#include "davmodel.h"
 #include "dropboxmodel.h"
 #include "placesmodel.h"
 #include "foldermodel.h"
@@ -35,16 +38,19 @@ int main(int argc, char *argv[])
     QSharedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QSharedPointer<QQuickView> view(SailfishApp::createView());
 
+    Network::setAccessManager(view->engine()->networkAccessManager());
+
     //@uri harbour.cargodock
     qmlRegisterType<DeveloperMode>(URI, 1, 0, "DeveloperMode");
     qmlRegisterType<FileReader>(URI, 1, 0, "FileReader");
     qmlRegisterUncreatableType<FolderBase>(URI, 1, 0, "FolderBase", "abstract");
 
+    qmlRegisterType<DavModel>(URI, 1, 0, "DavModel");
     qmlRegisterType<DropboxModel>(URI, 1, 0, "DropboxModel");
     qmlRegisterType<FolderModel>(URI, 1, 0, "FolderModel");
     qmlRegisterType<PlacesModel>(URI, 1, 0, "PlacesModel");
 
-    DropboxThumbProvider* dropBoxThumbProvider = new DropboxThumbProvider(view->engine()->networkAccessManager());
+    DropboxThumbProvider* dropBoxThumbProvider = new DropboxThumbProvider;
     view->engine()->addImageProvider("dropbox", dropBoxThumbProvider);
 
     view->setSource(SailfishApp::pathTo("qml/harbour-cargodock.qml"));

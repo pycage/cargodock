@@ -5,12 +5,10 @@
 #include <QList>
 #include <QMap>
 #include <QObject>
-#include <QSharedPointer>
 #include <QString>
 #include <QUrl>
 #include <QVariantMap>
 
-class QNetworkAccessManager;
 class QNetworkReply;
 
 /* Class implementing (parts of) the Dropbox Core API.
@@ -166,7 +164,7 @@ private:
     Metadata parseMetadata(const QVariantMap& map) const;
 
 private slots:
-    void slotRequestFinished(QNetworkReply* reply);
+    void slotRequestFinished();
 
     void slotAccountInfoReceived();
     void slotMetadataReceived();
@@ -189,7 +187,6 @@ private:
     QString myUserId;
 
     QString myRoot;
-    QSharedPointer<QNetworkAccessManager> myNetworkAccessManager;
 
     static QMap<QString, QString> thePathHashes;
     static QMap<QString, QByteArray> theHashCache;

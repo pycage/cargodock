@@ -24,7 +24,9 @@ SOURCES += src/harbour-cargodock.cpp \
     src/dropboxapi/dropboxapi.cpp \
     src/dropboxthumbprovider.cpp \
     src/dropboxapi/dropboxfile.cpp \
-    src/localfile.cpp
+    src/localfile.cpp \
+    src/davmodel.cpp \
+    src/network.cpp
 
 OTHER_FILES += qml/harbour-cargodock.qml \
     qml/cover/CoverPage.qml \
@@ -80,5 +82,7 @@ HEADERS += \
     src/dropboxapi/dropboxfile.h \
     src/localfile.h \
     src/dropboxapi/productkey.h \
-    src/filereader.h
+    src/filereader.h \
+    src/davmodel.h \
+    src/network.h
 
