@@ -16,7 +16,14 @@ void setAccessManager(QNetworkAccessManager* m)
 
 QNetworkAccessManager* accessManager()
 {
-    return manager;
+    if (qobject_cast<QNetworkAccessManager*>(manager))
+    {
+        return manager;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 }

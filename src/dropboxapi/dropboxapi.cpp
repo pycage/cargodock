@@ -155,7 +155,7 @@ QNetworkReply* DropboxApi::sendRequest(RequestMethod method,
 
     QNetworkReply* reply = 0;
     QNetworkAccessManager* nam = Network::accessManager();
-    if (qobject_cast<QNetworkAccessManager*>(nam))
+    if (nam)
     {
         if (method == GET)
         {
