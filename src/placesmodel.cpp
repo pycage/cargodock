@@ -140,7 +140,7 @@ void PlacesModel::addService(const QString& serviceName,
     setConfigValue(uid, "type", serviceName);
     setConfigValue(uid, "name", name);
     setConfigValue(uid, "icon", icon);
-    setConfigValue(uid, "path", "/");
+    setConfigValue(uid, "path", "/");  // FIXME: don't hardcode / for root
 
     foreach (const QString& prop, properties.keys())
     {
@@ -176,39 +176,23 @@ QVariantMap PlacesModel::service(const QString& uid) const
     return data;
 }
 
-int PlacesModel::rowCount(const QModelIndex&) const
+
+FolderBase::Item::Ptr PlacesModel::makeItem(const QString& uid,
+                                            const QString& name,
+                                            const QString& section,
+                                            const QString& icon,
+                                            const QString& type,
+                                            bool selectable)
 {
-    return myPlaces.size();
-}
-
-QVariant PlacesModel::data(const QModelIndex& index, int role) const
-{
-    if (! index.isValid() || index.row() >= myPlaces.size())
-    {
-        return QVariant();
-    }
-
-    Item::ConstPtr item = myPlaces.at(index.row());
-
-    switch (role)
-    {
-    case NameRole:
-        return item->name;
-    case SectionRole:
-        return item->section;
-    case IconRole:
-        return item->icon;
-    case LinkTargetRole:
-        return item->uid;
-    case ModelTargetRole:
-        return item->type;
-    case SelectableRole:
-        return item->selectable;
-    case MtimeRole:
-        return QDateTime();
-    default:
-        return FolderBase::data(index, role);
-    }
+    Item::Ptr item(new Item);
+    item->linkTarget = uid;
+    item->name = name;
+    item->sectionName = section;
+    item->icon = icon;
+    item->linkModel = type;
+    item->selectable = selectable;
+    item->type = Folder;
+    return item;
 }
 
 int PlacesModel::capabilities() const
@@ -244,32 +228,27 @@ bool PlacesModel::deleteFile(const QString& path)
 {
     qDebug() << Q_FUNC_INFO << path;
 
-    int idx = 0;
-    foreach (Item::ConstPtr item, myPlaces)
+    Item::ConstPtr item = itemByName(path);
+    if (! item.isNull())
     {
-        if (item->uid == path)
-        {
-            beginRemoveRows(QModelIndex(), idx, idx);
-            QStringList bookmarkServices = configValue("bookmark-services").toStringList();
-            bookmarkServices.removeAll(item->uid);
-            setConfigValue("bookmark-services", bookmarkServices);
+        QStringList bookmarkServices = configValue("bookmark-services").toStringList();
+        bookmarkServices.removeAll(item->linkTarget);
+        setConfigValue("bookmark-services", bookmarkServices);
+        removeConfigValues(item->linkTarget);
 
-            removeConfigValues(item->uid);
-            myPlaces.removeAt(idx);
-            endRemoveRows();
+        removeItem(findItem(item));
 
-            return true;
-        }
-        ++idx;
+        return true;
     }
-
-    return false;
+    else
+    {
+        return false;
+    }
 }
 
 void PlacesModel::loadDirectory(const QString&)
 {
-    beginResetModel();
-    myPlaces.clear();
+    clearItems();
 
     DeveloperMode developerMode;
 
@@ -287,7 +266,7 @@ void PlacesModel::loadDirectory(const QString&)
         const QString path = configValue(uid, "path").toString();
         qDebug() << "service" << type << name << path;
 
-        myPlaces << Item::Ptr(new Item(uid, name, "Bookmarks", icon, type, true));
+        appendItem(makeItem(uid, name, "Bookmarks", icon, type, true));
     }
 
     foreach (const QString& uid, localServices)
@@ -299,7 +278,7 @@ void PlacesModel::loadDirectory(const QString&)
 
         if (path.size() && QDir(path).exists())
         {
-            myPlaces << Item::Ptr(new Item(uid, name, "Media", icon, type, false));
+            appendItem(makeItem(uid, name, "Media", icon, type, false));
         }
     }
 
@@ -312,7 +291,7 @@ void PlacesModel::loadDirectory(const QString&)
 
         if (path.size() && QDir(path).exists())
         {
-            myPlaces << Item::Ptr(new Item(uid, name, "Storage", icon, type, false));
+            appendItem(makeItem(uid, name, "Storage", icon, type, false));
         }
     }
 
@@ -324,7 +303,7 @@ void PlacesModel::loadDirectory(const QString&)
             const QString name = configValue(uid, "name").toString();
             const QString icon = configValue(uid, "icon").toString();
 
-            myPlaces << Item::Ptr(new Item(uid, name, "Developer Mode", icon, type, false));
+            appendItem(makeItem(uid, name, "Developer Mode", icon, type, false));
         }
     }
 
@@ -334,20 +313,6 @@ void PlacesModel::loadDirectory(const QString&)
         const QString name = configValue(uid, "name").toString();
         const QString icon = configValue(uid, "icon").toString();
 
-        myPlaces << Item::Ptr(new Item(uid, name, "Cloud", icon, type, false));
-    }
-
-    endResetModel();
-}
-
-QString PlacesModel::itemName(int idx) const
-{
-    if (idx < myPlaces.size())
-    {
-        return myPlaces.at(idx)->uid;
-    }
-    else
-    {
-        return QString();
+        appendItem(makeItem(uid, name, "Cloud", icon, type, false));
     }
 }

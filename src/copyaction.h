@@ -2,7 +2,10 @@
 #define COPYACTION_H
 
 #include "folderaction.h"
+#include "folderbase.h"
+
 #include <QIODevice>
+#include <QMap>
 #include <QList>
 #include <QPair>
 #include <QString>
@@ -41,6 +44,7 @@ public:
                FolderBase* dest,
                const QList<QString>& sourcePaths,
                const QString& destPath);
+    virtual ~CopyAction();
 
     virtual void start();
 
@@ -57,6 +61,8 @@ private:
     QList<QString> mySourcePaths;
     QList<QPair<QString, QString> > myCopyPaths;
     QString myDestinationPath;
+
+    QMap<QString, FolderBase::ItemType> myTypeMap;
 
     CopyThread* myCopyThread;
     CopyJob* myCopyJob;

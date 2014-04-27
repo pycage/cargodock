@@ -42,50 +42,21 @@ DropboxModel::DropboxModel(QObject* parent)
             this, SLOT(slotFileDeleted(QString)));
 }
 
-int DropboxModel::rowCount(const QModelIndex&) const
-{
-    return myItems.size();
-}
-
 QVariant DropboxModel::data(const QModelIndex& index, int role) const
 {
-    if (! index.isValid() || index.row() >= myItems.size())
+    if (! index.isValid() || index.row() >= itemCount())
     {
         return QVariant();
     }
 
-    Item::ConstPtr item = myItems.at(index.row());
+    Item::ConstPtr item = itemAt(index.row());
 
     switch (role)
     {
-    case NameRole:
-        return item->name;
-    case PathRole:
-        return item->path;
-    case UriRole:
-        return item->uri;
     case PreviewRole:
         return item->mimeType.startsWith("image/")
                 ? "PreviewImage#" + item->icon + "?large"
                 : QVariant();
-    case TypeRole:
-        return item->type;
-    case MimeTypeRole:
-        return item->mimeType;
-    case IconRole:
-        return item->icon;
-    case SizeRole:
-        return item->size;
-    case MtimeRole:
-        return item->mtime;
-    case OwnerRole:
-        return myUserName;
-    case GroupRole:
-        return "-";
-    case PermissionsRole:
-        return FolderBase::ReadOwner | FolderBase::WriteOwner;
-    case LinkTargetRole:
-        return item->linkTarget;
     default:
         return FolderBase::data(index, role);
     }
@@ -102,12 +73,12 @@ int DropboxModel::capabilities() const
             if (type(path) != Folder)
             {
                 canBookmark = false;
+                break;
             }
         }
 
         caps |= (canBookmark ? CanBookmark : NoCapabilities) |
                 CanCopy |
-                AcceptCopy |
                 CanDelete;
     }
     return caps;
@@ -132,54 +103,20 @@ void DropboxModel::rename(const QString& name, const QString& newName)
     }
     else
     {
-        int idx = 0;
-        QVector<int> roles;
-        roles << NameRole << UriRole;
-        foreach (Item::Ptr item, myItems)
+        Item::Ptr item = itemByName(name);
+        if (! item.isNull())
         {
-            if (item->name == name)
-            {
-                item->name = newName;
-                item->uri = dest;
-                emit dataChanged(index(idx), index(idx), roles);
-                break;
-            }
-            ++idx;
+            item->name = newName;
+            item->uri = dest;
+            QVector<int> roles;
+            roles << NameRole << UriRole;
+            int idx = findItem(item);
+            emit dataChanged(index(idx), index(idx), roles);
         }
     }
 }
 
-QString DropboxModel::parentPath(const QString& path) const
-{
-    int idx = path.lastIndexOf("/");
-    if (idx == 0)
-    {
-        return "/";
-    }
-    else if (idx != -1)
-    {
-        return path.left(idx);
-    }
-    else
-    {
-        return path;
-    }
-}
-
-QString DropboxModel::basename(const QString& path) const
-{
-    int idx = path.lastIndexOf("/");
-    if (idx != -1)
-    {
-        return path.mid(idx + 1);
-    }
-    else
-    {
-        return path;
-    }
-}
-
-QString DropboxModel::userBasename(const QString& path) const
+QString DropboxModel::friendlyBasename(const QString& path) const
 {
     if (path == "/")
     {
@@ -189,39 +126,6 @@ QString DropboxModel::userBasename(const QString& path) const
     {
         return basename(path);
     }
-}
-
-QString DropboxModel::joinPath(const QStringList& parts) const
-{
-    QString path;
-    foreach (const QString part, parts)
-    {
-        if (part.startsWith("/"))
-        {
-            path += part;
-        }
-        else if (! path.endsWith("/"))
-        {
-            path += "/" + part;
-        }
-        else
-        {
-            path += part;
-        }
-    }
-    return path;
-}
-
-FolderBase::ItemType DropboxModel::type(const QString& path) const
-{
-    foreach (Item::ConstPtr item, myItems)
-    {
-        if (item->uri == path)
-        {
-            return item->type;
-        }
-    }
-    return File;
 }
 
 QIODevice* DropboxModel::openFile(const QString& path,
@@ -266,27 +170,13 @@ void DropboxModel::loadDirectory(const QString& path)
 {
     qDebug() << "loading directory" << path;
 
-    beginResetModel();
-    myItems.clear();
-    endResetModel();
+    clearItems();
 
     if (myDropboxApi->accessToken().size())
     {
         myIsLoading = true;
         emit loadingChanged();
         myDropboxApi->requestMetadata(path);
-    }
-}
-
-QString DropboxModel::itemName(int idx) const
-{
-    if (idx < myItems.size())
-    {
-        return myItems[idx]->name;
-    }
-    else
-    {
-        return QString();
     }
 }
 
@@ -340,6 +230,7 @@ void DropboxModel::slotMetaDataReceived(const DropboxApi::Metadata& metadata)
         foreach (const DropboxApi::Metadata& child, metadata.contents)
         {
             Item::Ptr item(new Item);
+            item->selectable = true;
             item->name = basename(child.path);
             item->path = parentPath(child.path);
             item->uri = child.path;
@@ -347,6 +238,8 @@ void DropboxModel::slotMetaDataReceived(const DropboxApi::Metadata& metadata)
             item->mimeType = child.mimeType;
             item->mtime = child.mtime;
             item->size = child.bytes;
+            item->owner = myUserName;
+            item->permissions = FolderBase::ReadOwner | FolderBase::WriteOwner;
 
             if (child.thumb.size())
             {
@@ -361,9 +254,7 @@ void DropboxModel::slotMetaDataReceived(const DropboxApi::Metadata& metadata)
             }
             qDebug() << "Icon" << item->name << item->icon;
 
-            beginInsertRows(QModelIndex(), myItems.size(), myItems.size());
-            myItems << item;
-            endInsertRows();
+            appendItem(item);
         }
 
         myIsLoading = false;

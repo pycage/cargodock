@@ -71,7 +71,7 @@ CoverBackground {
                 truncationMode: TruncationMode.Fade
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.secondaryColor
-                text: name
+                text: friendlyName !== "" ? friendlyName : name
             }
         }
     }

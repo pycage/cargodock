@@ -2,53 +2,49 @@
 #define DAVMODEL_H
 
 #include "folderbase.h"
+#include "davapi/davapi.h"
 
-#include <QDateTime>
+#include <QSharedPointer>
 
 class DavModel : public FolderBase
 {
     Q_OBJECT
-public:
+public:    
     DavModel(QObject* parent = 0);
+    virtual FolderBase* clone() const;
 
-    virtual int rowCount(const QModelIndex &) const { return myItems.size(); }
     virtual QVariant data(const QModelIndex& index, int role) const;
 
-    virtual QString parentPath(const QString& path) const;
-    virtual QString basename(const QString& path) const;
-    virtual QString userBasename(const QString& path) const;
-    virtual QString joinPath(const QStringList& parts) const;
+    virtual bool isWritable() const { return true; }
+    virtual int capabilities() const;
 
-    virtual ItemType type(const QString& path) const;
+    virtual QString friendlyBasename(const QString& path) const;
+
+    virtual QIODevice* openFile(const QString& path,
+                                QIODevice::OpenModeFlag mode);
+
+    virtual bool makeDirectory(const QString& path);
+    virtual bool deleteFile(const QString& path);
 
 protected:
+    DavModel(const DavModel& other);
+
+    virtual void init();
+
     virtual bool loading() const { return myIsLoading; }
 
     virtual void loadDirectory(const QString& path);
-    virtual QString itemName(int idx) const;
 
 private slots:
-    void slotMetaDataReceived();
+    void slotPropertiesReceived(const DavApi::Properties& props);
+    void slotMkColFinished(int result);
+    void slotDeleteFinished(int result);
 
 private:
-    struct Item
-    {
-        typedef QSharedPointer<Item> Ptr;
-        typedef QSharedPointer<const Item> ConstPtr;
+    QSharedPointer<DavApi> myDavApi;
 
-        QString name;
-        QString path;
-        QString uri;
-        ItemType type;
-        QString mimeType;
-        QString icon;
-        qint64 size;
-        QDateTime mtime;
-        int permissions;
-        QString linkTarget;
-    };
-
-    QList<Item::Ptr> myItems;
+    int myMkColResult;
+    int myDeleteResult;
 
     bool myIsLoading;
 };

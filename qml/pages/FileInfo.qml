@@ -7,19 +7,20 @@ QtObject {
 
     property bool canOpen: source.capabilities & FolderBase.CanOpen
 
-    property string name: source.name ? source.name : ""
-    property string path: source.path ? source.path : ""
-    property string uri: source.uri ? source.uri : ""
-    property string linkTarget: source.linkTarget ? source.linkTarget : ""
-    property int type: source.type ? source.type : 0
-    property string mimeType: source.mimeType ? source.mimeType : "application/x-octet-stream"
-    property string icon: source.icon !== undefined ? source.icon : "image://theme/icon-m-other"
+    property string name: source.name
+    property string friendlyName: source.friendlyName
+    property string path: source.path
+    property string uri: source.uri
+    property string linkTarget: source.linkTarget
+    property int type: source.type
+    property string mimeType: source.mimeType
+    property string icon: source.icon
     property string preview: source.preview !== undefined ? source.preview : "PreviewGeneric"
-    property int size: source.size ? source.size : 0
+    property int size: source.size
     property date mtime: source.mtime
-    property string owner: source.owner ? source.owner : "?"
-    property string group: source.group ? source.group : "?"
-    property int permissions: source.permissions ? source.permissions : 0
+    property string owner: source.owner
+    property string group: source.group
+    property int permissions: source.permissions
     property int capabilities: source.capabilities
 
     function setPermissions(value)

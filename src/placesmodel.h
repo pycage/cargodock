@@ -29,16 +29,11 @@ public:
      */
     Q_INVOKABLE QVariantMap service(const QString& uid) const;
 
-    virtual int rowCount(const QModelIndex&) const;
-    virtual QVariant data(const QModelIndex&, int) const;
-
     virtual QString parentPath(const QString& path) const { return path; }
     virtual QString basename(const QString& path) const { return path; }
     virtual QString joinPath(const QStringList& parts) const { return parts.last(); }
 
     int capabilities() const;
-
-    virtual ItemType type(const QString&) const { return Folder; }
 
     virtual bool linkFile(const QString& path,
                           const QString& source,
@@ -53,40 +48,15 @@ protected:
     virtual void init();
 
     virtual void loadDirectory(const QString& path);
-    virtual QString itemName(int idx) const;
 
 private:
     QStringList services() const;
-
-private:
-    struct Item
-    {
-        typedef QSharedPointer<Item> Ptr;
-        typedef QSharedPointer<const Item> ConstPtr;
-
-        Item(const QString& u,
-             const QString& n,
-             const QString& s,
-             const QString& i,
-             const QString& t,
-             bool sel)
-            : uid(u)
-            , name(n)
-            , section(s)
-            , icon(i)
-            , type(t)
-            , selectable(sel)
-        { }
-
-        QString uid;
-        QString name;
-        QString section;
-        QString icon;
-        QString type;
-        bool selectable;
-    };
-
-    QList<Item::Ptr> myPlaces;
+    Item::Ptr makeItem(const QString& uid,
+                       const QString& name,
+                       const QString& section,
+                       const QString& icon,
+                       const QString& type,
+                       bool selectable);
 };
 
 #endif // PLACESMODEL_H

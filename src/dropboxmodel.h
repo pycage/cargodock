@@ -4,10 +4,8 @@
 #include "folderbase.h"
 #include "dropboxapi/dropboxapi.h"
 
-#include <QDateTime>
 #include <QList>
 #include <QMap>
-#include <QSharedPointer>
 
 class DropboxModel : public FolderBase
 {
@@ -17,7 +15,6 @@ public:
 
     virtual void init();
 
-    virtual int rowCount(const QModelIndex&) const;
     virtual QVariant data(const QModelIndex&, int) const;
 
     virtual bool isWritable() const { return true; }
@@ -25,12 +22,7 @@ public:
 
     Q_INVOKABLE virtual void rename(const QString& name, const QString& newName);
 
-    virtual QString parentPath(const QString& path) const;
-    virtual QString basename(const QString& path) const;
-    virtual QString userBasename(const QString& path) const;
-    virtual QString joinPath(const QStringList& parts) const;
-
-    virtual ItemType type(const QString& path) const;
+    virtual QString friendlyBasename(const QString& path) const;
 
     Q_INVOKABLE void authorize(const QUrl& uri);
 
@@ -46,7 +38,6 @@ protected:
     virtual bool loading() const { return myIsLoading; }
 
     virtual void loadDirectory(const QString& path);
-    virtual QString itemName(int idx) const;
 
 private slots:
     void slotAccountInfoReceived(const DropboxApi::AccountInfo& info);
@@ -59,26 +50,8 @@ private slots:
     void slotError(DropboxApi::ErrorCode errorCode);
 
 private:
-    struct Item
-    {
-        typedef QSharedPointer<Item> Ptr;
-        typedef QSharedPointer<const Item> ConstPtr;
-
-        QString name;
-        QString path;
-        QString uri;
-        ItemType type;
-        QString mimeType;
-        QString icon;
-        qint64 size;
-        QDateTime mtime;
-        int permissions;
-        QString linkTarget;
-    };
-
     QSharedPointer<DropboxApi> myDropboxApi;
     QMap<QString, QString> myMimeTypeIcons;
-    QList<Item::Ptr> myItems;
 
     QString myUserName;
 

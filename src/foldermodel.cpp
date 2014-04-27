@@ -38,50 +38,37 @@ FolderModel::FolderModel(QObject* parent)
     myPreviewComponents.insert("text/plain",              "PreviewText");
 }
 
-int FolderModel::rowCount(const QModelIndex&) const
+FolderModel::FolderModel(const FolderModel& other)
+    : FolderBase(other)
+    , myIsReadable(other.myIsReadable)
+    , myIsWritable(other.myIsWritable)
+    , myMimeTypeIcons(other.myMimeTypeIcons)
+    , myPreviewComponents(other.myPreviewComponents)
 {
-    return myItems.size();
+
+}
+
+FolderBase* FolderModel::clone() const
+{
+    FolderModel* dolly = new FolderModel(*this);
+    return dolly;
 }
 
 QVariant FolderModel::data(const QModelIndex& index, int role) const
 {
-    if (! index.isValid() || index.row() >= myItems.size())
+    if (! index.isValid() || index.row() >= itemCount())
     {
         return QVariant();
     }
 
-    Item::ConstPtr item = myItems.at(index.row());
+    Item::ConstPtr item = itemAt(index.row());
 
     switch (role)
     {
-    case NameRole:
-        return item->name;
-    case PathRole:
-        return item->path;
-    case UriRole:
-        return item->uri;
     case PreviewRole:
         return myPreviewComponents.contains(item->mimeType)
                 ? myPreviewComponents[item->mimeType] + "#" + item->uri
                 : QVariant();
-    case TypeRole:
-        return item->type;
-    case MimeTypeRole:
-        return item->mimeType;
-    case IconRole:
-        return item->icon;
-    case SizeRole:
-        return item->size;
-    case MtimeRole:
-        return item->mtime;
-    case OwnerRole:
-        return item->owner;
-    case GroupRole:
-        return item->group;
-    case PermissionsRole:
-        return item->permissions;
-    case LinkTargetRole:
-        return item->linkTarget;
     case CapabilitiesRole:
         return HasPermissions |
                (OPENABLE_TYPES.contains(item->mimeType) ? CanOpen
@@ -121,49 +108,46 @@ void FolderModel::setPermissions(const QString& name, int permissions)
     qDebug() << "setting permissions" << QDir(path()).absoluteFilePath(name)
                 << permissions;
 
-    int idx = 0;
     QVector<int> roles;
     roles << PermissionsRole;
-    foreach (Item::Ptr item, myItems)
+
+    Item::Ptr item = itemByName(name);
+    if (! item.isNull())
     {
-        if (item->name == name)
+        // Qt behaves in a weird way here, so we need to double permissions,
+        // if we're the owner of the file
+        if (item->owner == getenv("USER"))
         {
-            // Qt behaves in a weird way here, so we need to double permissions,
-            // if we're the owner of the file
-            if (item->owner == getenv("USER"))
-            {
-                if (permissions & QFile::ReadOwner)
-                    permissions |= QFile::ReadUser;
-                else if (permissions & QFile::ReadUser)
-                    permissions ^= QFile::ReadUser;
+            if (permissions & QFile::ReadOwner)
+                permissions |= QFile::ReadUser;
+            else if (permissions & QFile::ReadUser)
+                permissions ^= QFile::ReadUser;
 
-                if (permissions & QFile::WriteOwner)
-                    permissions |= QFile::WriteUser;
-                else if (permissions & QFile::WriteUser)
-                    permissions ^= QFile::WriteUser;
+            if (permissions & QFile::WriteOwner)
+                permissions |= QFile::WriteUser;
+            else if (permissions & QFile::WriteUser)
+                permissions ^= QFile::WriteUser;
 
-                if (permissions & QFile::ExeOwner)
-                    permissions |= QFile::ExeUser;
-                else if (permissions & QFile::ExeUser)
-                    permissions ^= QFile::ExeUser;
-            }
-
-            if (QFile::setPermissions(QDir(path()).absoluteFilePath(name),
-                                      (QFile::Permission) permissions))
-            {
-                item->permissions = permissions;
-            }
-            else
-            {
-                emit error(QString("Could not change permissions: %1")
-                           .arg(item->name));
-            }
-            // emit a change even if it failed, so that the UI switch gets reset
-            // to the correct state
-            emit dataChanged(index(idx), index(idx), roles);
-            break;
+            if (permissions & QFile::ExeOwner)
+                permissions |= QFile::ExeUser;
+            else if (permissions & QFile::ExeUser)
+                permissions ^= QFile::ExeUser;
         }
-        ++idx;
+
+        if (QFile::setPermissions(QDir(path()).absoluteFilePath(name),
+                                  (QFile::Permission) permissions))
+        {
+            item->permissions = permissions;
+        }
+        else
+        {
+            emit error(QString("Could not change permissions: %1")
+                       .arg(item->name));
+        }
+        // emit a change even if it failed, so that the UI switch gets reset
+        // to the correct state
+        int idx = findItem(item);
+        emit dataChanged(index(idx), index(idx), roles);
     }
 }
 
@@ -178,19 +162,15 @@ void FolderModel::rename(const QString& name, const QString& newName)
     }
     else
     {
-        int idx = 0;
         QVector<int> roles;
         roles << NameRole << UriRole;
-        foreach (Item::Ptr item, myItems)
+        Item::Ptr item = itemByName(name);
+        if (! item.isNull())
         {
-            if (item->name == name)
-            {
-                item->name = newName;
-                item->uri = dest;
-                emit dataChanged(index(idx), index(idx), roles);
-                break;
-            }
-            ++idx;
+            item->name = newName;
+            item->uri = dest;
+            int idx = findItem(item);
+            emit dataChanged(index(idx), index(idx), roles);
         }
     }
 }
@@ -209,12 +189,7 @@ QString FolderModel::readFile(const QString& name) const
     }
 }
 
-QString FolderModel::basename(const QString& path) const
-{
-    return QFileInfo(path).fileName();
-}
-
-QString FolderModel::userBasename(const QString& path) const
+QString FolderModel::friendlyBasename(const QString& path) const
 {
     if (path == "/")
     {
@@ -226,55 +201,10 @@ QString FolderModel::userBasename(const QString& path) const
     }
 }
 
-QString FolderModel::joinPath(const QStringList& parts) const
-{
-    QString path;
-    foreach (const QString part, parts)
-    {
-        if (part.startsWith("/"))
-        {
-            path += part;
-        }
-        else if (! path.endsWith("/"))
-        {
-            path += "/" + part;
-        }
-        else
-        {
-            path += part;
-        }
-    }
-    return path;
-}
-
-QString FolderModel::parentPath(const QString& path) const
-{
-    QDir dir(path);
-    dir.cdUp();
-    return dir.path();
-}
-
 QStringList FolderModel::list(const QString& path) const
 {
     QDir dir(path);
     return dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
-}
-
-FolderModel::ItemType FolderModel::type(const QString& path) const
-{
-    QFileInfo finfo(path);
-    if (finfo.isDir())
-    {
-        return finfo.isSymLink() ? FolderLink : Folder;
-    }
-    else if (finfo.isFile())
-    {
-        return finfo.isSymLink() ? FileLink : File;
-    }
-    else
-    {
-        return Unsupported;
-    }
 }
 
 QIODevice* FolderModel::openFile(const QString& path,
@@ -297,8 +227,7 @@ void FolderModel::loadDirectory(const QString& path)
     qDebug() << Q_FUNC_INFO << path;
     QDir dir(path);
 
-    beginResetModel();
-    myItems.clear();
+    clearItems();
 
     QMimeDatabase mimeDb;
 
@@ -314,14 +243,25 @@ void FolderModel::loadDirectory(const QString& path)
         foreach (const QFileInfo& finfo, dir.entryInfoList(filter))
         {
             Item::Ptr item(new Item);
+            item->selectable = true;
             item->name = finfo.fileName();
             item->path = path;
             item->uri = joinPath(QStringList() << item->path << item->name);
-            item->type = type(finfo.absoluteFilePath());
-            if (item->type == Unsupported)
+
+            if (finfo.isDir())
             {
+                item->type = finfo.isSymLink() ? FolderLink : Folder;
+            }
+            else if (finfo.isFile())
+            {
+                item->type = finfo.isSymLink() ? FileLink : File;
+            }
+            else
+            {
+                // unsupported
                 continue;
             }
+
             item->mimeType = mimeDb.mimeTypeForFile(finfo).name();
             item->owner = finfo.owner();
             if (item->owner.isEmpty())
@@ -343,7 +283,7 @@ void FolderModel::loadDirectory(const QString& path)
                 item->linkTarget = finfo.symLinkTarget();
             }
 
-            myItems << item;
+            appendItem(item);
         }
         myIsReadable = true;
     }
@@ -353,20 +293,6 @@ void FolderModel::loadDirectory(const QString& path)
     }
 
     myIsWritable = QFileInfo(path).isWritable();
-
-    endResetModel();
-}
-
-QString FolderModel::itemName(int idx) const
-{
-    if (idx < myItems.size())
-    {
-        return myItems[idx]->name;
-    }
-    else
-    {
-        return QString();
-    }
 }
 
 QString FolderModel::mimeTypeIcon(const QString& mimeType) const

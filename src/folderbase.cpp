@@ -10,6 +10,7 @@ FolderBase::FolderBase(QObject* parent)
     , myMinDepth(INT_MAX)
 {
     myRolenames.insert(NameRole, "name");
+    myRolenames.insert(FriendlyNameRole, "friendlyName");
     myRolenames.insert(SectionRole, "section");
     myRolenames.insert(PathRole, "path");
     myRolenames.insert(UriRole, "uri");
@@ -23,7 +24,7 @@ FolderBase::FolderBase(QObject* parent)
     myRolenames.insert(GroupRole, "group");
     myRolenames.insert(PermissionsRole, "permissions");
     myRolenames.insert(LinkTargetRole, "linkTarget");
-    myRolenames.insert(ModelTargetRole, "modelTarget");
+    myRolenames.insert(LinkModelRole, "modelTarget");
     myRolenames.insert(SelectableRole, "selectable");
     myRolenames.insert(SelectedRole, "selected");
     myRolenames.insert(CapabilitiesRole, "capabilities");
@@ -64,11 +65,101 @@ FolderBase::FolderBase(QObject* parent)
     myMimeTypeIcons.insert("video/x-flv",                             "image://theme/icon-m-video");
 }
 
+FolderBase::FolderBase(const FolderBase& other)
+    : QAbstractListModel()
+    , myRolenames(other.myRolenames)
+    , myMimeTypeIcons(other.myMimeTypeIcons)
+    , myItems(other.myItems)
+    , myUid(other.myUid)
+    , myPath(other.myPath)
+    , myMinDepth(other.myMinDepth)
+    , mySelection(other.mySelection)
+{
+
+}
+
 void FolderBase::setUid(const QString& uid)
 {
     myUid = uid;
     init();
     setPath(configValue("path").toString());
+}
+
+void FolderBase::clearItems()
+{
+    if (myItems.size())
+    {
+        beginRemoveRows(QModelIndex(), 0, myItems.size() - 1);
+        myItems.clear();
+        endRemoveRows();
+    }
+}
+
+void FolderBase::appendItem(Item::Ptr item)
+{
+    beginInsertRows(QModelIndex(), myItems.size(), myItems.size());
+    myItems << item;
+    endInsertRows();
+}
+
+void FolderBase::removeItem(int idx)
+{
+    beginRemoveRows(QModelIndex(), idx, idx);
+    myItems.removeAt(idx);
+    endRemoveRows();
+}
+
+FolderBase::Item::Ptr FolderBase::itemAt(int pos)
+{
+    return myItems.value(pos);
+}
+
+FolderBase::Item::ConstPtr FolderBase::itemAt(int pos) const
+{
+    return myItems.value(pos);
+}
+
+FolderBase::Item::Ptr FolderBase::itemByName(const QString& name)
+{
+    foreach (Item::Ptr item, myItems)
+    {
+        if (item->name == name)
+        {
+            return item;
+        }
+    }
+    return Item::Ptr(0);
+}
+
+int FolderBase::findItem(Item::ConstPtr item) const
+{
+    int pos = 0;
+    foreach (Item::ConstPtr i, myItems)
+    {
+        if (item == i)
+        {
+            return pos;
+        }
+        ++pos;
+    }
+    return -1;
+}
+
+FolderBase::Item::ConstPtr FolderBase::itemByName(const QString& name) const
+{
+    foreach (Item::ConstPtr item, myItems)
+    {
+        if (item->name == name)
+        {
+            return item;
+        }
+    }
+    return Item::ConstPtr(0);
+}
+
+int FolderBase::rowCount(const QModelIndex&) const
+{
+    return myItems.size();
 }
 
 QVariant FolderBase::data(const QModelIndex& index, int role) const
@@ -78,12 +169,42 @@ QVariant FolderBase::data(const QModelIndex& index, int role) const
         return QVariant();
     }
 
+    Item::ConstPtr item = myItems.at(index.row());
+
     switch (role)
     {
     case NameRole:
-        return itemName(index.row());
+        return item->name;
+    case FriendlyNameRole:
+        return item->friendlyName;
+    case SectionRole:
+        return item->sectionName;
+    case PathRole:
+        return item->path;
+    case UriRole:
+        return item->uri;
+    case TypeRole:
+        return item->type;
+    case MimeTypeRole:
+        return item->mimeType;
+    case IconRole:
+        return item->icon;
+    case SizeRole:
+        return item->size;
+    case MtimeRole:
+        return item->mtime;
+    case OwnerRole:
+        return item->owner;
+    case GroupRole:
+        return item->group;
+    case PermissionsRole:
+        return item->permissions;
+    case LinkModelRole:
+        return item->linkModel;
+    case LinkTargetRole:
+        return item->linkTarget;
     case SelectableRole:
-        return true;
+        return item->selectable;
     case SelectedRole:
         return isSelected(index.row());
     case CapabilitiesRole:
@@ -124,12 +245,12 @@ QStringList FolderBase::breadcrumbs() const
     QString path = myPath;
     QString parent = parentPath(path);
 
-    crumbs << userBasename(path);
+    crumbs << friendlyBasename(path);
 
     while (parent != path)
     {
         path = parent;
-        crumbs.prepend(userBasename(path));
+        crumbs.prepend(friendlyBasename(path));
         parent = parentPath(path);
     }
 
@@ -141,22 +262,28 @@ QStringList FolderBase::selection() const
     QStringList items;
     foreach (int idx, mySelection)
     {
-        items << joinPath(QStringList() << myPath << itemName(idx));
+        items << joinPath(QStringList() << myPath << myItems.at(idx)->name);
     }
     return items;
 }
 
 void FolderBase::open(const QString& name)
 {
-    QString path = joinPath(QStringList() << myPath << name);
-    ItemType itemType = type(path);
-    if (itemType == Folder || itemType == FolderLink)
+    Item::ConstPtr item = itemByName(name);
+    if (! item.isNull())
     {
-        setPath(path);
-    }
-    else
-    {
-        runFile(path);
+        QString path = joinPath(QStringList() << myPath << name);
+
+        if (item->type == Folder || item->type == FolderLink)
+        {
+            qDebug() << "opening folder" << path;
+            setPath(path);
+        }
+        else
+        {
+            qDebug() << "opening file" << path;
+            runFile(path);
+        }
     }
 }
 
@@ -165,7 +292,7 @@ void FolderBase::copySelected(FolderBase* dest)
     QStringList paths;
     foreach (int idx, mySelection)
     {
-        paths << joinPath(QStringList() << myPath << itemName(idx));
+        paths << joinPath(QStringList() << myPath << myItems.at(idx)->name);
     }
 
     CopyAction* action = new CopyAction(this, dest, paths, dest->path());
@@ -194,8 +321,8 @@ void FolderBase::linkSelected(FolderBase* dest)
 {
     foreach (int idx, mySelection)
     {
-        const QString endpoint = joinPath(QStringList() << myPath << itemName(idx));
-        const QString destPath = dest->joinPath(QStringList() << dest->path() << itemName(idx));
+        const QString endpoint = joinPath(QStringList() << myPath << myItems.at(idx)->name);
+        const QString destPath = dest->joinPath(QStringList() << dest->path() << myItems.at(idx)->name);
 
         if (! dest->linkFile(destPath, endpoint, this))
         {
@@ -302,6 +429,60 @@ void FolderBase::invertSelection()
     }
 }
 
+QString FolderBase::parentPath(const QString& path,
+                               const QString& separator) const
+{
+    int idx = path.lastIndexOf(separator);
+    if (idx == 0)
+    {
+        return separator;
+    }
+    else if (idx != -1)
+    {
+        return path.left(idx);
+    }
+    else
+    {
+        return path;
+    }
+}
+
+QString FolderBase::basename(const QString& path,
+                           const QString& separator) const
+{
+    int idx = path.lastIndexOf(separator);
+    if (idx != -1)
+    {
+        return path.mid(idx + 1);
+    }
+    else
+    {
+        return path;
+    }
+}
+
+QString FolderBase::joinPath(const QStringList& parts,
+                             const QString& separator) const
+{
+    QString path;
+    foreach (const QString part, parts)
+    {
+        if (part.startsWith(separator))
+        {
+            path += part;
+        }
+        else if (! path.endsWith(separator))
+        {
+            path += separator + part;
+        }
+        else
+        {
+            path += part;
+        }
+    }
+    return path;
+}
+
 bool FolderBase::isSelected(int idx) const
 {
     return mySelection.contains(idx);
@@ -317,8 +498,15 @@ QStringList FolderBase::list(const QString&) const
     return QStringList();
 }
 
-FolderBase::ItemType FolderBase::type(const QString&) const
+FolderBase::ItemType FolderBase::type(const QString& path) const
 {
+    foreach (Item::ConstPtr item, myItems)
+    {
+        if (joinPath(QStringList() << item->path << item->name) == path)
+        {
+            return item->type;
+        }
+    }
     return Unsupported;
 }
 

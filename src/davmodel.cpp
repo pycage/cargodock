@@ -1,169 +1,94 @@
 #include "davmodel.h"
-#include "network.h"
+#include "davapi/davfile.h"
 
+#include <QEventLoop>
 #include <QList>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QDomDocument>
-
+#include <QUrl>
 #include <QDebug>
 
-namespace
-{
-
-const QString NS_DAV("DAV:");
-
-struct Resource
-{
-    QString name;
-    QString href;
-    QString resourceType;
-    QString contentType;
-    int contentLength;
-    QDateTime lastModified;
-
-};
-
-Resource parseResult(const QDomElement& elem)
-{
-    Resource resource;
-
-    QDomNodeList nodes = elem.elementsByTagNameNS(NS_DAV, "href");
-    if (nodes.length())
-    {
-        const QString href = nodes.at(0).toElement().text();
-        const QStringList parts = href.split("/");
-        resource.name = parts.size() ? parts.last() : QString();
-        resource.href = href;
-    }
-
-    nodes = elem.elementsByTagNameNS(NS_DAV, "resourcetype");
-    if (nodes.length())
-    {
-        const QDomNode typeNode = nodes.at(0).firstChild();
-        resource.resourceType = typeNode.toElement().tagName();
-    }
-
-    nodes = elem.elementsByTagNameNS(NS_DAV, "getcontenttype");
-    if (nodes.length())
-    {
-        resource.contentType = nodes.at(0).toElement().text();
-    }
-
-    nodes = elem.elementsByTagNameNS(NS_DAV, "getlastmodified");
-    if (nodes.length())
-    {
-        resource.lastModified = QDateTime::fromString(nodes.at(0).toElement().text());
-    }
-
-    nodes = elem.elementsByTagNameNS(NS_DAV, "getcontentlength");
-    if (nodes.length())
-    {
-        resource.contentLength = nodes.at(0).toElement().text().toInt();
-    }
-
-    return resource;
-}
-
-QList<Resource> parseResult(const QByteArray& data)
-{
-    QList<Resource> result;
-
-    QDomDocument doc;
-    doc.setContent(data, true);
-
-    QDomNodeList nodes = doc.elementsByTagNameNS(NS_DAV, "response");
-    for (int i = 0; i < nodes.length(); ++i)
-    {
-        QDomNode node = nodes.at(i);
-        if (node.isElement())
-        {
-            result << parseResult(node.toElement());
-        }
-    }
-
-    return result;
-}
-
-}
 
 DavModel::DavModel(QObject* parent)
     : FolderBase(parent)
+    , myDavApi(new DavApi)
+    , myMkColResult(DavApi::NoContent)
+    , myDeleteResult(DavApi::NoContent)
     , myIsLoading(false)
 {
+    connect(myDavApi.data(), SIGNAL(propertiesReceived(DavApi::Properties)),
+            this, SLOT(slotPropertiesReceived(DavApi::Properties)));
+    connect(myDavApi.data(), SIGNAL(mkColFinished(int)),
+            this, SLOT(slotMkColFinished(int)));
+    connect(myDavApi.data(), SIGNAL(deleteFinished(int)),
+            this, SLOT(slotDeleteFinished(int)));
+}
+
+DavModel::DavModel(const DavModel& other)
+    : FolderBase(other)
+    , myDavApi(new DavApi)
+    , myMkColResult(DavApi::NoContent)
+    , myDeleteResult(DavApi::NoContent)
+    , myIsLoading(false)
+{
+    connect(myDavApi.data(), SIGNAL(propertiesReceived(DavApi::Properties)),
+            this, SLOT(slotPropertiesReceived(DavApi::Properties)));
+    connect(myDavApi.data(), SIGNAL(mkColFinished(int)),
+            this, SLOT(slotMkColFinished(int)));
+    connect(myDavApi.data(), SIGNAL(deleteFinished(int)),
+            this, SLOT(slotDeleteFinished(int)));
+
+    init();
+}
+
+FolderBase* DavModel::clone() const
+{
+    DavModel* dolly = new DavModel(*this);
+    return dolly;
+}
+
+void DavModel::init()
+{
+    myDavApi->setAddress(configValue("url").toString());
 }
 
 QVariant DavModel::data(const QModelIndex& index, int role) const
 {
-    if (! index.isValid() || index.row() >= myItems.size())
+    if (! index.isValid() || index.row() >= itemCount())
     {
         return QVariant();
     }
 
-    Item::ConstPtr item = myItems.at(index.row());
-
     switch (role)
     {
-    case NameRole:
-        return item->name;
-    case PathRole:
-        return item->path;
-    case UriRole:
-        return item->uri;
-    case TypeRole:
-        return item->type;
-    case MimeTypeRole:
-        return item->mimeType;
-    case IconRole:
-        return item->icon;
-    case SizeRole:
-        return item->size;
-    case MtimeRole:
-        return item->mtime;
-    case OwnerRole:
-        return "-";
-    case GroupRole:
-        return "-";
     case PermissionsRole:
         return FolderBase::ReadOwner | FolderBase::WriteOwner;
-    case LinkTargetRole:
-        return item->linkTarget;
     default:
         return FolderBase::data(index, role);
     }
 }
 
-QString DavModel::parentPath(const QString& path) const
+int DavModel::capabilities() const
 {
-    int idx = path.lastIndexOf("/");
-    if (idx == 0)
+    int caps = AcceptCopy;
+    if (selected() > 0)
     {
-        return "/";
+        bool canBookmark = true;
+        foreach (const QString& path, selection())
+        {
+            if (type(path) != Folder)
+            {
+                canBookmark = false;
+                break;
+            }
+        }
+
+        caps |= (canBookmark ? CanBookmark : NoCapabilities) |
+                CanCopy |
+                CanDelete;
     }
-    else if (idx != -1)
-    {
-        return path.left(idx);
-    }
-    else
-    {
-        return path;
-    }
+    return caps;
 }
 
-QString DavModel::basename(const QString& path) const
-{
-    int idx = path.lastIndexOf("/");
-    if (idx != -1)
-    {
-        return path.mid(idx + 1);
-    }
-    else
-    {
-        return path;
-    }
-}
-
-QString DavModel::userBasename(const QString& path) const
+QString DavModel::friendlyBasename(const QString& path) const
 {
     if (path == "/")
     {
@@ -171,110 +96,92 @@ QString DavModel::userBasename(const QString& path) const
     }
     else
     {
-        return basename(path);
+        return basename(path).toUtf8();
     }
 }
 
-QString DavModel::joinPath(const QStringList& parts) const
+QIODevice* DavModel::openFile(const QString& path,
+                              QIODevice::OpenModeFlag mode)
 {
-    QString path;
-    foreach (const QString part, parts)
-    {
-        if (part.startsWith("/"))
-        {
-            path += part;
-        }
-        else if (! path.endsWith("/"))
-        {
-            path += "/" + part;
-        }
-        else
-        {
-            path += part;
-        }
-    }
-    return path;
+    DavFile* fd = new DavFile(path, myDavApi);
+    fd->open(mode);
+    return fd;
 }
 
-FolderBase::ItemType DavModel::type(const QString& path) const
+bool DavModel::makeDirectory(const QString& path)
 {
-    foreach (Item::ConstPtr item, myItems)
+    myMkColResult = 0;
+    myDavApi->mkcol(path);
+
+    // this action needs to be synchronous, so wait for the response
+    QEventLoop evLoop;
+    while (myMkColResult == 0)
     {
-        if (item->uri == path)
-        {
-            return item->type;
-        }
+        evLoop.processEvents();
     }
-    return File;
+    return myMkColResult == DavApi::Created;
+}
+
+bool DavModel::deleteFile(const QString& path)
+{
+    qDebug() << Q_FUNC_INFO << path;
+    myDeleteResult = 0;
+    myDavApi->deleteResource(path);
+
+    // this action needs to be synchronous, so wait for the response
+    QEventLoop evLoop;
+    while (myDeleteResult == 0)
+    {
+        evLoop.processEvents();
+    }
+    return myDeleteResult == DavApi::NoContent;
 }
 
 void DavModel::loadDirectory(const QString& path)
 {
-    qDebug() << Q_FUNC_INFO << configValue("url") << path;
+    qDebug() << Q_FUNC_INFO << path;
+    clearItems();
 
-    QUrl url(configValue("url").toString());
-    url.setPath(QUrl::toPercentEncoding(path, "/"));
+    myIsLoading = true;
+    emit loadingChanged();
+    myDavApi->propfind(path);
+}
 
-    beginResetModel();
-    myItems.clear();
-    endResetModel();
-
-    QNetworkAccessManager* nam = Network::accessManager();
-    if (nam)
+void DavModel::slotPropertiesReceived(const DavApi::Properties& props)
+{
+    if (props.href.size())
     {
-        QNetworkRequest req(url);
-        req.setHeader(QNetworkRequest::ContentLengthHeader, QVariant(0));
-        req.setRawHeader("Depth", "1");
-        QNetworkReply* reply = nam->sendCustomRequest(req, "PROPFIND");
+        Item::Ptr item(new Item);
+        item->selectable = true;
+        item->name = props.name.toUtf8();
+        item->path = parentPath(props.href);
+        item->uri = joinPath(QStringList() << path() << item->name);
+        item->type = props.resourceType == "collection" ? Folder : File;
+        item->mimeType = props.contentType.size() ? props.contentType
+                                                  : "application/x-octet-stream";
+        item->size = props.contentLength;
+        item->icon = item->type == Folder ? "image://theme/icon-m-folder"
+                                          : mimeTypeIcon(item->mimeType);
+        item->mtime = props.lastModified;
 
-        connect(reply, SIGNAL(finished()),
-                this, SLOT(slotMetaDataReceived()));
+        appendItem(item);
 
-        myIsLoading = true;
+        qDebug() << props.name << props.contentType << props.contentLength
+                    << props.resourceType << props.lastModified;
+    }
+    else
+    {
+        myIsLoading = false;
         emit loadingChanged();
     }
 }
 
-QString DavModel::itemName(int idx) const
+void DavModel::slotMkColFinished(int result)
 {
-    if (idx < myItems.size())
-    {
-        return myItems[idx]->name;
-    }
-    else
-    {
-        return QString();
-    }
+    myMkColResult = result;
 }
 
-void DavModel::slotMetaDataReceived()
+void DavModel::slotDeleteFinished(int result)
 {
-    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
-    QByteArray data = reply->readAll();
-    qDebug() << data;
-
-    QList<Resource> resources = parseResult(data);
-    foreach (const Resource& resource, resources.mid(1))
-    {
-        Item::Ptr item(new Item);
-        item->name = QUrl::fromPercentEncoding(resource.name.toUtf8());
-        item->path = parentPath(resource.href);
-        item->uri = joinPath(QStringList() << path() << item->name);
-        item->type = resource.resourceType == "collection" ? Folder : File;
-        item->mimeType = resource.contentType.size() ? resource.contentType
-                                                     : "application/x-octet-stream";
-        item->size = resource.contentLength;
-        item->icon = item->type == Folder ? "image://theme/icon-m-folder"
-                                          : mimeTypeIcon(item->mimeType);
-
-        beginInsertRows(QModelIndex(), myItems.size(), myItems.size());
-        myItems << item;
-        endInsertRows();
-
-        qDebug() << resource.name << resource.contentType << resource.contentLength
-                    << resource.resourceType << resource.lastModified;
-    }
-
-    myIsLoading = false;
-    emit loadingChanged();
+    myDeleteResult = result;
 }

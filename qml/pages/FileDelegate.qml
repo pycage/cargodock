@@ -45,7 +45,8 @@ ListItem {
         font.pixelSize: Theme.fontSizeMedium
         color: (fileInfo.type === FolderModel.FolderLink || fileInfo.type === FolderModel.FileLink) ? Theme.highlightColor
                                                                                   : Theme.primaryColor
-        text: fileInfo.name
+        text: fileInfo.friendlyName !== "" ? fileInfo.friendlyName
+                                           : fileInfo.name
     }
 
     Label {

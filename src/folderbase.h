@@ -3,9 +3,11 @@
 
 #include <QAbstractListModel>
 #include <QByteArray>
+#include <QDateTime>
 #include <QHash>
 #include <QIODevice>
 #include <QSet>
+#include <QSharedPointer>
 #include <QString>
 #include <QStringList>
 #include <QVariant>
@@ -72,15 +74,39 @@ public:
         HasPermissions = 256
     };
 
+    enum
+    {
+        NameRole,
+        FriendlyNameRole,
+        SectionRole,
+        PathRole,
+        UriRole,
+        PreviewRole,
+        TypeRole,
+        MimeTypeRole,
+        IconRole,
+        SizeRole,
+        MtimeRole,
+        OwnerRole,
+        GroupRole,
+        PermissionsRole,
+        LinkTargetRole,
+        LinkModelRole,
+        SelectableRole,
+        SelectedRole,
+        CapabilitiesRole
+    };
+
     FolderBase(QObject* parent = 0);
+    virtual FolderBase* clone() const { return 0; }
 
     QString uid() const { return myUid; }
 
     virtual QHash<int, QByteArray> roleNames() const { return myRolenames; }
-    virtual int rowCount(const QModelIndex&) const { return 0; }
+    virtual int rowCount(const QModelIndex&) const;
     virtual QVariant data(const QModelIndex& index, int role) const;
 
-    virtual QString name() const { return userBasename(myPath); }
+    virtual QString name() const { return friendlyBasename(myPath); }
     virtual bool isReadable() const { return true; }
     virtual bool isWritable() const { return false; }
 
@@ -126,22 +152,25 @@ public:
     /* Returns the parent directory of the given path. If there is no parent,
      * the path is returned.
      */
-    virtual QString parentPath(const QString& path) const = 0;
+    virtual QString parentPath(const QString& path,
+                               const QString& separator = "/") const;
 
     /* Returns the basename of the file specified by path.
      */
-    virtual QString basename(const QString& path) const = 0;
+    virtual QString basename(const QString& path,
+                             const QString& separator = "/") const;
 
     /* Returns a user-presentable basename of the file specified by path.
      */
-    virtual QString userBasename(const QString& path) const
+    virtual QString friendlyBasename(const QString& path) const
     {
         return basename(path);
     }
 
     /* Joins the given parts of a path.
      */
-    virtual QString joinPath(const QStringList& parts) const = 0;
+    virtual QString joinPath(const QStringList& parts,
+                             const QString& separator = "/") const;
 
     /* Lists the contents of the given path.
      */
@@ -184,29 +213,49 @@ signals:
     void loadingChanged();
 
 protected:
-    enum
+    struct Item
     {
-        NameRole,
-        SectionRole,
-        PathRole,
-        UriRole,
-        PreviewRole,
-        TypeRole,
-        MimeTypeRole,
-        IconRole,
-        SizeRole,
-        MtimeRole,
-        OwnerRole,
-        GroupRole,
-        PermissionsRole,
-        LinkTargetRole,
-        ModelTargetRole,
-        SelectableRole,
-        SelectedRole,
-        CapabilitiesRole
+        typedef QSharedPointer<Item> Ptr;
+        typedef QSharedPointer<const Item> ConstPtr;
+
+        Item()
+            : selectable(false)
+            , type(Unsupported)
+            , size(0)
+            , permissions(0)
+        { }
+
+        bool selectable;
+        QString name;
+        QString friendlyName;
+        QString sectionName;
+        QString path;
+        QString uri;
+        ItemType type;
+        QString mimeType;
+        QString icon;
+        qint64 size;
+        QDateTime mtime;
+        QString owner;
+        QString group;
+        int permissions;
+        QString linkTarget;
+        QString linkModel;
     };
 
+    FolderBase(const FolderBase& other);
+
     virtual void init() { }
+
+    void clearItems();
+    void appendItem(Item::Ptr item);
+    void removeItem(int idx);
+    Item::Ptr itemAt(int pos);
+    Item::ConstPtr itemAt(int pos) const;
+    Item::Ptr itemByName(const QString& name);
+    Item::ConstPtr itemByName(const QString& name) const;
+    int findItem(Item::ConstPtr item) const;
+    int itemCount() const { return myItems.size(); }
 
     void setConfigValue(const QString& key,
                         const QVariant& value);
@@ -223,7 +272,6 @@ protected:
     virtual bool loading() const { return false; }
 
     virtual void loadDirectory(const QString& path) = 0;
-    virtual QString itemName(int idx) const = 0;
     virtual bool isSelected(int idx) const;
 
     virtual QString mimeTypeIcon(const QString& mimeType) const;
@@ -234,6 +282,8 @@ private:
 private:
     QHash<int, QByteArray> myRolenames;
     QMap<QString, QString> myMimeTypeIcons;
+
+    QList<Item::Ptr> myItems;
 
     QString myUid;
     QString myPath;

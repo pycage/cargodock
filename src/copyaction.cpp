@@ -1,6 +1,7 @@
 #include "copyaction.h"
 #include "folderbase.h"
 
+#include <QEventLoop>
 #include <QFileInfo>
 #include <QThread>
 #include <QTime>
@@ -94,6 +95,8 @@ void CopyJob::close()
 {
     mySource->close();
     myDestination->close();
+    mySource->deleteLater();
+    myDestination->deleteLater();
     emit finished();
 }
 
@@ -101,21 +104,26 @@ void CopyJob::run()
 {
     QTime now;
     now.start();
-    qDebug() << Q_FUNC_INFO;
     while (now.elapsed() < 5)
     {
-        qint64 bytes = myDestination->write(mySource->read(1024 * 1024));
-        if (bytes == 0)
+        QByteArray data = mySource->read(1024 * 1024);
+        if (data.isEmpty())
         {
             // done
+            qDebug() << Q_FUNC_INFO << "end of file";
             close();
             return;
         }
-        else if (bytes < 0)
+        else
         {
-            myHasFailed = true;
-            close();
-            return;
+            qint64 bytes = myDestination->write(data);
+            qDebug() << Q_FUNC_INFO << bytes << "bytes copied";
+            if (bytes == -1)
+            {
+                myHasFailed = true;
+                close();
+                return;
+            }
         }
     }
     QTimer::singleShot(1, this, SLOT(run()));
@@ -127,7 +135,7 @@ CopyAction::CopyAction(FolderBase* source,
                        FolderBase* dest,
                        const QList<QString>& sourcePaths,
                        const QString& destPath)
-    : mySource(source)
+    : mySource(source->clone())
     , myDestination(dest)
     , mySourcePaths(sourcePaths)
     , myDestinationPath(destPath)
@@ -137,15 +145,43 @@ CopyAction::CopyAction(FolderBase* source,
 
 }
 
+CopyAction::~CopyAction()
+{
+    qDebug() << Q_FUNC_INFO;
+    mySource->deleteLater();
+}
+
 void CopyAction::start()
 {
+    if (! mySource)
+    {
+        emit error("Source does not support copying.");
+        return;
+    }
+
+    for (int i = 0; i < mySource->rowCount(QModelIndex()); ++i)
+    {
+        const QString name =
+                mySource->data(mySource->index(i), FolderBase::NameRole)
+                .toString();
+        const FolderBase::ItemType type =
+                (FolderBase::ItemType)
+                mySource->data(mySource->index(i), FolderBase::TypeRole)
+                .toInt();
+        const QString fullPath =
+                mySource->joinPath(QStringList() << mySource->path() << name);
+
+        qDebug() << "types" << fullPath << type;
+        myTypeMap.insert(fullPath, type);
+    }
     QTimer::singleShot(0, this, SLOT(slotProcessNext()));
 }
 
 void CopyAction::copy(const QString& sourcePath, const QString& destPath)
 {
     qDebug() << Q_FUNC_INFO << sourcePath << "->" << destPath;
-    if (mySource->type(sourcePath) == FolderBase::Folder)
+    qDebug() << "type of" << sourcePath << myTypeMap.value(sourcePath);
+    if (myTypeMap.value(sourcePath, FolderBase::Unsupported) /*mySource->type(sourcePath)*/ == FolderBase::Folder)
     {
         qDebug() << "folder type";
         const QString fileName = mySource->basename(sourcePath);
@@ -154,14 +190,32 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
 
         myDestination->makeDirectory(destDir);
 
-        QStringList paths = mySource->list(sourcePath);
-        qDebug() << "paths" << paths;
-        foreach (const QString& path, paths)
+        mySource->setPath(sourcePath);
+        QEventLoop loop;
+        qDebug() << "loading" << sourcePath;
+        while (mySource->property("loading").toBool())
         {
-            myCopyPaths << QPair<QString, QString>(
-                        mySource->joinPath(QStringList() << sourcePath << path),
-                        destDir);
+            loop.processEvents();
         }
+        qDebug() << "loading finished" << sourcePath;
+
+        for (int i = 0; i < mySource->rowCount(QModelIndex()); ++i)
+        {
+            const QString name =
+                    mySource->data(mySource->index(i), FolderBase::NameRole)
+                    .toString();
+            const FolderBase::ItemType type =
+                    (FolderBase::ItemType)
+                    mySource->data(mySource->index(i), FolderBase::TypeRole)
+                    .toInt();
+            const QString fullPath =
+                    mySource->joinPath(QStringList() << sourcePath << name);
+
+            qDebug() << "types" << fullPath << type;
+            myCopyPaths << QPair<QString, QString>(fullPath, destDir);
+            myTypeMap.insert(fullPath, type);
+        }
+
         QTimer::singleShot(0, this, SLOT(slotProcessNext()));
     }
     else

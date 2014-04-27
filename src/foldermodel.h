@@ -3,10 +3,8 @@
 
 #include "folderbase.h"
 
-#include <QDateTime>
 #include <QList>
 #include <QMap>
-#include <QSharedPointer>
 
 class FolderModel : public FolderBase
 {
@@ -15,8 +13,8 @@ class FolderModel : public FolderBase
 
 public:
     FolderModel(QObject* parent = 0);
+    virtual FolderBase* clone() const;
 
-    virtual int rowCount(const QModelIndex& parent) const;
     virtual QVariant data(const QModelIndex& index, int role) const;
 
     virtual bool isReadable() const { return myIsReadable; }
@@ -27,13 +25,9 @@ public:
     Q_INVOKABLE virtual void rename(const QString& name, const QString& newName);
     Q_INVOKABLE virtual QString readFile(const QString& name) const;
 
-    virtual QString basename(const QString& path) const;
-    virtual QString userBasename(const QString& path) const;
-    virtual QString joinPath(const QStringList& parts) const;
-    virtual QString parentPath(const QString& path) const;
+    virtual QString friendlyBasename(const QString& path) const;
 
     virtual QStringList list(const QString& path) const;
-    virtual ItemType type(const QString& path) const;
     virtual QIODevice* openFile(const QString& path,
                                 QIODevice::OpenModeFlag mode);
     virtual bool makeDirectory(const QString& path);
@@ -44,35 +38,16 @@ public:
     virtual void runFile(const QString& path);
 
 protected:
+    FolderModel(const FolderModel& other);
+
     virtual void loadDirectory(const QString& path);
-    virtual QString itemName(int idx) const;
 
     virtual QString mimeTypeIcon(const QString& mimeType) const;
 
 private:
-    struct Item
-    {
-        typedef QSharedPointer<Item> Ptr;
-        typedef QSharedPointer<const Item> ConstPtr;
-
-        QString name;
-        QString path;
-        QString uri;
-        ItemType type;
-        QString mimeType;
-        QString icon;
-        qint64 size;
-        QDateTime mtime;
-        QString owner;
-        QString group;
-        int permissions;
-        QString linkTarget;
-    };
-
-private:
     QMap<QString, QString> myMimeTypeIcons;
     QMap<QString, QString> myPreviewComponents;
-    QList<Item::Ptr> myItems;
+
     bool myIsReadable;
     bool myIsWritable;
 };
