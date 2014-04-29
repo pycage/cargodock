@@ -17,3 +17,4 @@ A two-paned filemanager for Sailfish devices.
 **Currently Supported Cloud Services**
 
 * Dropbox
+* WebDAV
