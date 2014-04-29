@@ -50,6 +50,33 @@ ServiceObject {
                         placeholderText: "Address"
                         focus: true
                     }
+
+                    SectionHeader {
+                        text: "Authorization"
+                    }
+
+                    TextField {
+                        id: loginEntry
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.leftMargin: Theme.paddingLarge
+                        anchors.rightMargin: Theme.paddingLarge
+
+                        placeholderText: "Login"
+                    }
+
+                    TextField {
+                        id: passwordEntry
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.leftMargin: Theme.paddingLarge
+                        anchors.rightMargin: Theme.paddingLarge
+
+                        echoMode: TextInput.Password
+                        placeholderText: "Password"
+                    }
                 }
             }
 
@@ -57,7 +84,9 @@ ServiceObject {
                 serviceConfigured(service.serviceName,
                                   "image://theme/icon-m-region",
                                   urlEntry.text,
-                                  { "url": urlEntry.text });
+                                  { "url": urlEntry.text,
+                                    "login": loginEntry.text,
+                                    "password": passwordEntry.text });
             }
 
         }//Dialog

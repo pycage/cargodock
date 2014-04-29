@@ -8,7 +8,6 @@
 #include <QIODevice>
 #include <QList>
 #include <QNetworkReply>
-#include <QNetworkRequest>
 #include <QStringList>
 #include <QUrl>
 
@@ -118,6 +117,16 @@ DavApi::DavApi(QObject* parent)
 {
 }
 
+QNetworkRequest DavApi::makeRequest(const QUrl& url) const
+{
+    QNetworkRequest req(url);
+    if (myLogin.size())
+    {
+        Network::basicAuth(req, myLogin, myPassword);
+    }
+    return req;
+}
+
 void DavApi::propfind(const QString& path)
 {
     QNetworkAccessManager* nam = Network::accessManager();
@@ -127,7 +136,7 @@ void DavApi::propfind(const QString& path)
         QUrl url(myAddress);
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
-        QNetworkRequest req(url);
+        QNetworkRequest req = makeRequest(url);
         req.setHeader(QNetworkRequest::ContentLengthHeader, QVariant(0));
         req.setRawHeader("Depth", "1");
         QNetworkReply* reply = nam->sendCustomRequest(req, "PROPFIND");
@@ -145,7 +154,7 @@ void DavApi::mkcol(const QString& path)
         QUrl url(myAddress);
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
-        QNetworkRequest req(url);
+        QNetworkRequest req = makeRequest(url);
         QNetworkReply* reply = nam->sendCustomRequest(req, "MKCOL");
 
         connect(reply, SIGNAL(finished()),
@@ -161,7 +170,7 @@ void DavApi::deleteResource(const QString& path)
         QUrl url(myAddress);
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
-        QNetworkRequest req(url);
+        QNetworkRequest req = makeRequest(url);
         QNetworkReply* reply = nam->deleteResource(req);
 
         connect(reply, SIGNAL(finished()),
@@ -177,7 +186,7 @@ void DavApi::moveResource(const QString& path, const QString& newPath)
         QUrl url(myAddress);
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
-        QNetworkRequest req(url);
+        QNetworkRequest req = makeRequest(url);
         req.setRawHeader("Destination", QUrl::toPercentEncoding(newPath, "/"));
         QNetworkReply* reply = nam->sendCustomRequest(req, "MOVE");
 
@@ -197,7 +206,7 @@ QNetworkReply* DavApi::getResource(const QString& path, qint64 offset, qint64 si
         QUrl url(myAddress);
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
-        QNetworkRequest req(url);
+        QNetworkRequest req = makeRequest(url);
         reply = nam->get(req);
         reply->setProperty("identifier", path);
 
@@ -217,7 +226,7 @@ void DavApi::putResource(const QString& path, QIODevice* buffer)
         QUrl url(myAddress);
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
-        QNetworkRequest req(url);
+        QNetworkRequest req = makeRequest(url);
         QNetworkReply* reply = nam->put(req, buffer);
         reply->setProperty("identifier", path);
 
@@ -232,6 +241,8 @@ void DavApi::slotPropfindReceived()
     int result = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     QByteArray data = reply->readAll();
     qDebug() << Q_FUNC_INFO << result << data;
+
+    qDebug() << reply->rawHeaderPairs();
 
     QList<Properties> properties = parseResult(data);
     foreach (const Properties& props, properties.mid(1))

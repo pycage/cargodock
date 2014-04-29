@@ -2,11 +2,13 @@
 #define DAVAPI_H
 
 #include <QDateTime>
+#include <QNetworkRequest>
 #include <QObject>
 #include <QString>
 
 class QIODevice;
 class QNetworkReply;
+class QUrl;
 
 class DavApi : public QObject
 {
@@ -27,6 +29,7 @@ public:
         Created = 201,
         NoContent = 204,
         MultiStatus = 207,
+        Unauthorized = 401,
         Forbidden = 403,
         NotAllowed = 405,
         Conflict = 409,
@@ -38,6 +41,11 @@ public:
     DavApi(QObject* parent = 0);
 
     void setAddress(const QString& address) { myAddress = address; }
+    void setAuthorization(const QString& login, const QString& password)
+    {
+        myLogin = login;
+        myPassword = password;
+    }
 
     void propfind(const QString& path);
     void mkcol(const QString& path);
@@ -55,6 +63,9 @@ signals:
                           int result);
     void putFinished(const QString&, int result);
 
+private:
+    QNetworkRequest makeRequest(const QUrl& url) const;
+
 private slots:
     void slotPropfindReceived();
     void slotMkColFinished();
@@ -65,6 +76,8 @@ private slots:
 
 private:
     QString myAddress;
+    QString myLogin;
+    QString myPassword;
 };
 
 #endif // DAVAPI_H

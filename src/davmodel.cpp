@@ -54,6 +54,13 @@ FolderBase* DavModel::clone() const
 void DavModel::init()
 {
     myDavApi->setAddress(configValue("url").toString());
+
+    const QString login = configValue("login").toString();
+    const QString password = configValue("password").toString();
+    if (login.size())
+    {
+        myDavApi->setAuthorization(login, password);
+    }
 }
 
 QVariant DavModel::data(const QModelIndex& index, int role) const
