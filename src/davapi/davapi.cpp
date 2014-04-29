@@ -55,7 +55,7 @@ DavApi::Properties parseResult(const QDomElement& elem)
     if (nodes.length())
     {
         const QString href = nodes.at(0).toElement().text();
-        const QStringList parts = href.split("/");
+        const QStringList parts = href.split("/", QString::SkipEmptyParts);
         props.name = QUrl::fromPercentEncoding(
                     (parts.size() ? parts.last() : QString()).toUtf8());
         props.href = href;
