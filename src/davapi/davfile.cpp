@@ -69,12 +69,14 @@ void DavFile::close()
 
 qint64 DavFile::readData(char* data, qint64 maxlen)
 {
+    qDebug() << Q_FUNC_INFO << maxlen;
     if (! myReply)
     {
         myWaitingForDownload = true;
         myReply = myDavApi->getResource(myPath, myReadOffset, maxlen);
     }
 
+    qDebug() << "here";
     if (maxlen > 0)
     {
         QEventLoop evLoop;
@@ -84,13 +86,16 @@ qint64 DavFile::readData(char* data, qint64 maxlen)
         }
     }
 
+    qDebug() << "there";
     if (myHasError)
     {
         return -1;
     }
     else
     {
+        qDebug() << "try read";
         QByteArray readData = myReply->read(maxlen);
+        qDebug() << "read";
         if (readData.size() > 0)
         {
             memcpy(data, readData.constData(), readData.size());

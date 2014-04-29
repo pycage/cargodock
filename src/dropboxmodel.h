@@ -12,6 +12,7 @@ class DropboxModel : public FolderBase
     Q_OBJECT
 public:
     DropboxModel(QObject* parent = 0);
+    virtual FolderBase* clone() const;
 
     virtual void init();
 
@@ -35,6 +36,8 @@ signals:
     void authorizationRequired(const QUrl& url, const QUrl& redirectionUri);
 
 protected:
+    DropboxModel(const DropboxModel& other);
+
     virtual bool loading() const { return myIsLoading; }
 
     virtual void loadDirectory(const QString& path);
@@ -51,7 +54,6 @@ private slots:
 
 private:
     QSharedPointer<DropboxApi> myDropboxApi;
-    QMap<QString, QString> myMimeTypeIcons;
 
     QString myUserName;
 

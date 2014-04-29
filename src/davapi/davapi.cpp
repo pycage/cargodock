@@ -169,6 +169,23 @@ void DavApi::deleteResource(const QString& path)
     }
 }
 
+void DavApi::moveResource(const QString& path, const QString& newPath)
+{
+    QNetworkAccessManager* nam = Network::accessManager();
+    if (nam)
+    {
+        QUrl url(myAddress);
+        url.setPath(QUrl::toPercentEncoding(path, "/"));
+
+        QNetworkRequest req(url);
+        req.setRawHeader("Destination", QUrl::toPercentEncoding(newPath, "/"));
+        QNetworkReply* reply = nam->sendCustomRequest(req, "MOVE");
+
+        connect(reply, SIGNAL(finished()),
+                this, SLOT(slotMoveFinished()));
+    }
+}
+
 QNetworkReply* DavApi::getResource(const QString& path, qint64 offset, qint64 size)
 {
     qDebug() << Q_FUNC_INFO << path << offset << size;
@@ -246,6 +263,16 @@ void DavApi::slotDeleteFinished()
     reply->deleteLater();
 }
 
+void DavApi::slotMoveFinished()
+{
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
+    int result = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    qDebug() << "MOVE finished" << result;
+    emit moveFinished(result);
+
+    reply->deleteLater();
+}
+
 void DavApi::slotResourceReceived()
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
@@ -254,7 +281,7 @@ void DavApi::slotResourceReceived()
     qDebug() << "GET finished" << result;
     emit resourceReceived(path, result);
 
-    reply->deleteLater();
+    // do not delete the reply object here; it was handed outside
 }
 
 void DavApi::slotPutFinished()

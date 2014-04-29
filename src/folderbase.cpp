@@ -498,18 +498,6 @@ QStringList FolderBase::list(const QString&) const
     return QStringList();
 }
 
-FolderBase::ItemType FolderBase::type(const QString& path) const
-{
-    foreach (Item::ConstPtr item, myItems)
-    {
-        if (joinPath(QStringList() << item->path << item->name) == path)
-        {
-            return item->type;
-        }
-    }
-    return Unsupported;
-}
-
 QIODevice* FolderBase::openFile(const QString&, QIODevice::OpenModeFlag)
 {
     return 0;

@@ -176,10 +176,6 @@ public:
      */
     virtual QStringList list(const QString& path) const;
 
-    /* Returns the type of the file specified by path.
-     */
-    virtual ItemType type(const QString& path) const;
-
     /* Opens the given file and returns a QIODevice* to access it. The caller
      * is obliged to check for validity of the QIODevice* and to close and
      * delete it when finished.

@@ -89,9 +89,11 @@ int FolderModel::capabilities() const
         bool canBookmark = true;
         foreach (const QString& path, selection())
         {
-            if (type(path) != Folder && type(path) != FolderLink)
+            Item::ConstPtr item = itemByName(basename(path));
+            if (item && item->type != Folder && item->type != FolderLink)
             {
                 canBookmark = false;
+                break;
             }
         }
         caps |= (canBookmark ? CanBookmark : NoCapabilities) |

@@ -42,6 +42,7 @@ public:
     void propfind(const QString& path);
     void mkcol(const QString& path);
     void deleteResource(const QString& path);
+    void moveResource(const QString& path, const QString& newPath);
     QNetworkReply* getResource(const QString& path, qint64 offset, qint64 size);
     void putResource(const QString& path, QIODevice* buffer);
 
@@ -49,6 +50,7 @@ signals:
     void propertiesReceived(const DavApi::Properties& props);
     void mkColFinished(int result);
     void deleteFinished(int result);
+    void moveFinished(int result);
     void resourceReceived(const QString& path,
                           int result);
     void putFinished(const QString&, int result);
@@ -57,6 +59,7 @@ private slots:
     void slotPropfindReceived();
     void slotMkColFinished();
     void slotDeleteFinished();
+    void slotMoveFinished();
     void slotResourceReceived();
     void slotPutFinished();
 

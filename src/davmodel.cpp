@@ -12,6 +12,7 @@ DavModel::DavModel(QObject* parent)
     , myDavApi(new DavApi)
     , myMkColResult(DavApi::NoContent)
     , myDeleteResult(DavApi::NoContent)
+    , myMoveResult(DavApi::NoContent)
     , myIsLoading(false)
 {
     connect(myDavApi.data(), SIGNAL(propertiesReceived(DavApi::Properties)),
@@ -20,6 +21,8 @@ DavModel::DavModel(QObject* parent)
             this, SLOT(slotMkColFinished(int)));
     connect(myDavApi.data(), SIGNAL(deleteFinished(int)),
             this, SLOT(slotDeleteFinished(int)));
+    connect(myDavApi.data(), SIGNAL(moveFinished(int)),
+            this, SLOT(slotMoveFinished(int)));
 }
 
 DavModel::DavModel(const DavModel& other)
@@ -27,6 +30,7 @@ DavModel::DavModel(const DavModel& other)
     , myDavApi(new DavApi)
     , myMkColResult(DavApi::NoContent)
     , myDeleteResult(DavApi::NoContent)
+    , myMoveResult(DavApi::NoContent)
     , myIsLoading(false)
 {
     connect(myDavApi.data(), SIGNAL(propertiesReceived(DavApi::Properties)),
@@ -35,6 +39,8 @@ DavModel::DavModel(const DavModel& other)
             this, SLOT(slotMkColFinished(int)));
     connect(myDavApi.data(), SIGNAL(deleteFinished(int)),
             this, SLOT(slotDeleteFinished(int)));
+    connect(myDavApi.data(), SIGNAL(moveFinished(int)),
+            this, SLOT(slotMoveFinished(int)));
 
     init();
 }
@@ -74,7 +80,8 @@ int DavModel::capabilities() const
         bool canBookmark = true;
         foreach (const QString& path, selection())
         {
-            if (type(path) != Folder)
+            Item::ConstPtr item = itemByName(basename(path));
+            if (item && item->type != Folder)
             {
                 canBookmark = false;
                 break;
@@ -86,6 +93,39 @@ int DavModel::capabilities() const
                 CanDelete;
     }
     return caps;
+}
+
+void DavModel::rename(const QString& name, const QString& newName)
+{
+    const QString source = joinPath(QStringList() << path() << name);
+    const QString dest = joinPath(QStringList() << path() << newName);
+
+    myMoveResult = 0;
+    myDavApi->moveResource(source, dest);
+
+    // this action needs to be synchronous, so wait for the response
+    QEventLoop evLoop;
+    while (myMoveResult == 0)
+    {
+        evLoop.processEvents();
+    }
+    if (myMoveResult == DavApi::Created || myMoveResult == DavApi::NoContent)
+    {
+        Item::Ptr item = itemByName(name);
+        if (! item.isNull())
+        {
+            item->name = newName;
+            item->uri = dest;
+            QVector<int> roles;
+            roles << NameRole << UriRole;
+            int idx = findItem(item);
+            emit dataChanged(index(idx), index(idx), roles);
+        }
+    }
+    else
+    {
+        emit error(QString("Could not rename file: %1").arg(name));
+    }
 }
 
 QString DavModel::friendlyBasename(const QString& path) const
@@ -184,4 +224,9 @@ void DavModel::slotMkColFinished(int result)
 void DavModel::slotDeleteFinished(int result)
 {
     myDeleteResult = result;
+}
+
+void DavModel::slotMoveFinished(int result)
+{
+    myMoveResult = result;
 }

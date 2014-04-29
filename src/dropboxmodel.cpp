@@ -42,6 +42,39 @@ DropboxModel::DropboxModel(QObject* parent)
             this, SLOT(slotFileDeleted(QString)));
 }
 
+DropboxModel::DropboxModel(const DropboxModel& other)
+    : FolderBase(other)
+    , myDropboxApi(new DropboxApi)
+    , myUserName(other.myUserName)
+    , myIsLoading(false)
+{
+    connect(myDropboxApi.data(), SIGNAL(authorizationRequest(QUrl,QUrl)),
+            this, SIGNAL(authorizationRequired(QUrl,QUrl)));
+    connect(myDropboxApi.data(), SIGNAL(authorized()),
+            this, SLOT(slotAuthorized()));
+    connect(myDropboxApi.data(), SIGNAL(error(DropboxApi::ErrorCode)),
+            this, SLOT(slotError(DropboxApi::ErrorCode)));
+
+    connect(myDropboxApi.data(), SIGNAL(accountInfoReceived(DropboxApi::AccountInfo)),
+            this, SLOT(slotAccountInfoReceived(DropboxApi::AccountInfo)));
+    connect(myDropboxApi.data(), SIGNAL(metadataReceived(DropboxApi::Metadata)),
+            this, SLOT(slotMetaDataReceived(DropboxApi::Metadata)));
+    connect(myDropboxApi.data(), SIGNAL(folderCreated(QString)),
+            this, SLOT(slotFolderCreated(QString)));
+    connect(myDropboxApi.data(), SIGNAL(fileMoved(QString)),
+            this, SLOT(slotFileMoved(QString)));
+    connect(myDropboxApi.data(), SIGNAL(fileDeleted(QString)),
+            this, SLOT(slotFileDeleted(QString)));
+
+    init();
+}
+
+FolderBase* DropboxModel::clone() const
+{
+    DropboxModel* dolly = new DropboxModel(*this);
+    return dolly;
+}
+
 QVariant DropboxModel::data(const QModelIndex& index, int role) const
 {
     if (! index.isValid() || index.row() >= itemCount())
@@ -70,7 +103,8 @@ int DropboxModel::capabilities() const
         bool canBookmark = true;
         foreach (const QString& path, selection())
         {
-            if (type(path) != Folder)
+            Item::ConstPtr item = itemByName(basename(path));
+            if (item && item->type != Folder)
             {
                 canBookmark = false;
                 break;

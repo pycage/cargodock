@@ -18,6 +18,8 @@ public:
     virtual bool isWritable() const { return true; }
     virtual int capabilities() const;
 
+    Q_INVOKABLE virtual void rename(const QString& name, const QString& newName);
+
     virtual QString friendlyBasename(const QString& path) const;
 
     virtual QIODevice* openFile(const QString& path,
@@ -39,12 +41,14 @@ private slots:
     void slotPropertiesReceived(const DavApi::Properties& props);
     void slotMkColFinished(int result);
     void slotDeleteFinished(int result);
+    void slotMoveFinished(int result);
 
 private:
     QSharedPointer<DavApi> myDavApi;
 
     int myMkColResult;
     int myDeleteResult;
+    int myMoveResult;
 
     bool myIsLoading;
 };
