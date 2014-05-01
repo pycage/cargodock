@@ -154,7 +154,7 @@ QString DropboxModel::friendlyBasename(const QString& path) const
 {
     if (path == "/")
     {
-        return "Dropbox";
+        return configValue("name").toString();
     }
     else
     {

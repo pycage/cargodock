@@ -3,6 +3,7 @@ import Sailfish.Silica 1.0
 import harbour.cargodock 1.0
 import "cover"
 import "pages"
+import "services"
 
 ApplicationWindow
 {    
@@ -79,6 +80,7 @@ ApplicationWindow
     LocalService { }
     DropboxService { }
     WebDavService { }
+    TelekomMediencenter { }
 
     QtObject {
         id: sharedState

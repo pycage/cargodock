@@ -87,6 +87,24 @@ Page {
                         highlighted: serviceItem.highlighted
                     }
 
+                    onClicked: {
+                        function closure(placesModel, uid, refreshPanes)
+                        {
+                            return function(serviceName, icon, properties)
+                            {
+                                placesModel.updateService(uid, properties);
+                                refreshPanes();
+                            }
+                        }
+
+                        var props = placesModel.serviceProperties(modelData.uid);
+                        var dlg = pageStack.push(serviceObj.serviceConfigurator,
+                                                 { "properties": props });
+                        dlg.serviceConfigured.connect(closure(placesModel,
+                                                              modelData.uid,
+                                                              refreshPanes));
+                    }
+
                     Component {
                         id: contextMenu
                         ContextMenu {

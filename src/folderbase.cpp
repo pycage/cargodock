@@ -575,3 +575,10 @@ void FolderBase::cloneConfigValues(const QString& uid, const QString& cloneUid)
         settings.setValue(key, values[key]);
     }
 }
+
+QStringList FolderBase::configKeys(const QString& uid) const
+{
+    QSettings settings("harbour-cargodock", "CargoDock");
+    settings.beginGroup(uid);
+    return settings.childKeys();
+}

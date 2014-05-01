@@ -262,8 +262,10 @@ protected:
                         const QVariant& value);
     QVariant configValue(const QString& uid,
                          const QString& key) const;
+
     void removeConfigValues(const QString& uid);
     void cloneConfigValues(const QString& uid, const QString& cloneUid);
+    QStringList configKeys(const QString& uid) const;
 
     virtual bool loading() const { return false; }
 

@@ -61,16 +61,17 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/pages/OAuthDialog.qml \
     qml/dropbox.png \
     qml/pages/AddServiceDialog.qml \
-    qml/pages/ServiceObject.qml \
-    qml/pages/DropboxService.qml \
-    qml/pages/LocalService.qml \
-    qml/pages/PlacesService.qml \
-    qml/pages/ServiceDelegate.qml \
-    qml/pages/WebDavService.qml \
+    qml/services/ServiceObject.qml \
+    qml/services/DropboxService.qml \
+    qml/services/LocalService.qml \
+    qml/services/PlacesService.qml \
+    qml/services/ServiceDelegate.qml \
+    qml/services/WebDavService.qml \
     qml/works-with-dropbox.png \
     qml/help.html \
     qml/help.md \
-    qml/pages/PreviewGeneric.qml
+    qml/pages/PreviewGeneric.qml \
+    qml/services/TelekomMediencenter.qml
 
 HEADERS += \
     src/foldermodel.h \

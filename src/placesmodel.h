@@ -18,8 +18,17 @@ public:
      */
     Q_INVOKABLE void addService(const QString& serviceName,
                                 const QString& icon,
-                                const QString& name,
                                 const QVariantMap& properties);
+
+    /* Updates the properties of the given service instance.
+     */
+    Q_INVOKABLE void updateService(const QString& uid,
+                                   const QVariantMap& properties);
+
+    /* Returns the properties of the given service instance.
+     */
+    Q_INVOKABLE QVariantMap serviceProperties(const QString& uid) const;
+
 
     /* Removes the given service instance.
      */

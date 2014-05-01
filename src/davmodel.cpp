@@ -53,7 +53,14 @@ FolderBase* DavModel::clone() const
 
 void DavModel::init()
 {
-    myDavApi->setAddress(configValue("url").toString());
+    const QString securityMethod = configValue("securityMethod").toString();
+    const QString serverAddress = configValue("address").toString();
+
+    const QString address = QString("%1://%2")
+            .arg(securityMethod == "ssl" ? "https" : "http")
+            .arg(serverAddress);
+
+    myDavApi->setAddress(address);
 
     const QString login = configValue("login").toString();
     const QString password = configValue("password").toString();
@@ -137,9 +144,9 @@ void DavModel::rename(const QString& name, const QString& newName)
 
 QString DavModel::friendlyBasename(const QString& path) const
 {
-    if (path == "/")
+    if (path == configValue("path").toString())
     {
-        return "DAV";
+        return configValue("name").toString();
     }
     else
     {

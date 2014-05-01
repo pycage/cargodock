@@ -56,10 +56,10 @@ QtObject {
         Dialog {
             signal serviceConfigured(string serviceName,
                                      string icon,
-                                     string name,
                                      variant properties)
 
             property alias name: textEntry.text
+            property var properties
 
             canAccept: textEntry.text !== ""
 

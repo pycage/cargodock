@@ -39,9 +39,9 @@ Page {
             onClicked: {
                 function closure(placesModel, refreshPanes)
                 {
-                    return function(serviceName, icon, name, properties)
+                    return function(serviceName, icon, properties)
                     {
-                        placesModel.addService(serviceName, icon, name, properties);
+                        placesModel.addService(serviceName, icon, properties);
                         refreshPanes();
                     }
                 }

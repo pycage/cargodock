@@ -46,10 +46,14 @@ ServiceObject {
         Dialog {
             signal serviceConfigured(string serviceName,
                                      string icon,
-                                     string name,
                                      variant properties)
 
             property alias name: textEntry.text
+            property var properties
+
+            onPropertiesChanged: {
+                textEntry.text = properties["name"];
+            }
 
             canAccept: textEntry.text !== ""
 
@@ -76,7 +80,8 @@ ServiceObject {
                         anchors.leftMargin: Theme.paddingLarge
                         anchors.rightMargin: Theme.paddingLarge
 
-                        placeholderText: "Name"
+                        placeholderText: "Enter name"
+                        label: "Name"
                         focus: true
                     }
 
@@ -112,8 +117,8 @@ ServiceObject {
             onAccepted: {
                 serviceConfigured(service.serviceName,
                                   service.icon,
-                                  textEntry.text,
-                                  { });
+                                  { "name": textEntry.text,
+                                    "path": "/" });
             }
         }//Dialog
 

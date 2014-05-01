@@ -128,7 +128,6 @@ void PlacesModel::init()
 
 void PlacesModel::addService(const QString& serviceName,
                              const QString& icon,
-                             const QString& name,
                              const QVariantMap& properties)
 {
     QStringList services = configValue("user-services").toStringList();
@@ -138,16 +137,30 @@ void PlacesModel::addService(const QString& serviceName,
     setConfigValue("user-services", services);
 
     setConfigValue(uid, "type", serviceName);
-    setConfigValue(uid, "name", name);
     setConfigValue(uid, "icon", icon);
-    setConfigValue(uid, "path", "/");  // FIXME: don't hardcode / for root
 
+    updateService(uid, properties);
+}
+
+void PlacesModel::updateService(const QString &uid,
+                                const QVariantMap& properties)
+{
     foreach (const QString& prop, properties.keys())
     {
         setConfigValue(uid, prop, properties.value(prop));
     }
 
     emit servicesChanged();
+}
+
+QVariantMap PlacesModel::serviceProperties(const QString& uid) const
+{
+    QVariantMap properties;
+    foreach (const QString& key, configKeys(uid))
+    {
+        properties.insert(key, configValue(uid, key));
+    }
+    return properties;
 }
 
 void PlacesModel::removeService(const QString& uid)
