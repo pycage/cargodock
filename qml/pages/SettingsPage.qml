@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 
+import "../services"
+
 Page {
 
     property variant placesModel

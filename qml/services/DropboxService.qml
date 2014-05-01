@@ -22,7 +22,7 @@ ServiceObject {
             console.log("Redirection URI: " + redirectionUri);
 
             notification.show("Authorization required.");
-            var dlg = pageStack.push(Qt.resolvedUrl("OAuthDialog.qml"), props);
+            var dlg = pageStack.push(Qt.resolvedUrl("../pages/OAuthDialog.qml"), props);
 
             function f(model, dlg)
             {
