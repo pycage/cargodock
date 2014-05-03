@@ -1,8 +1,10 @@
 #ifndef SSLHANDLER_H
 #define SSLHANDLER_H
 
+#include <QByteArray>
 #include <QList>
 #include <QObject>
+#include <QSet>
 #include <QSslError>
 
 class QNetworkAccessManager;
@@ -18,7 +20,7 @@ public:
     Q_INVOKABLE void decline();
 
 signals:
-    void error();
+    void error(const QString& message, const QString& details);
 
 private:
     enum Choice
@@ -34,6 +36,7 @@ private slots:
 
 private:
     Choice myChoice;
+    QSet<QByteArray> myAcceptedCerts;
 
 };
 

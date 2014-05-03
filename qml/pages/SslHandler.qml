@@ -6,7 +6,12 @@ Item {
     Connections {
         target: sslHandler
         onError: {
-            pageStack.push(sslErrorDialog);
+            var props = {
+                "message": message,
+                "details": details
+            };
+
+            pageStack.push(sslErrorDialog, props);
         }
     }
 
@@ -15,19 +20,60 @@ Item {
 
         Dialog {
 
-            DialogHeader {
-                title: "Accept"
+            property string message
+            property string details
+
+            SilicaFlickable {
+                anchors.fill: parent
+                contentHeight: column.height
+
+                Column {
+                    id: column
+                    width: parent.width
+
+                    DialogHeader {
+                        title: "Accept certificate"
+                    }
+
+                    Item {
+                        width: 1
+                        height: Theme.paddingLarge
+                    }
+
+                    Label {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width - 2 * Theme.paddingLarge
+                        font.pixelSize: Theme.fontSizeMedium
+                        color: Theme.secondaryColor
+                        wrapMode: Text.Wrap
+
+                        text: message
+                    }
+
+                    Item {
+                        width: 1
+                        height: Theme.paddingLarge
+                    }
+
+                    SectionHeader {
+                        text: "Certificate"
+                    }
+
+                    Label {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width - 2 * Theme.paddingLarge
+                        font.pixelSize: Theme.fontSizeExtraSmall
+                        color: Theme.secondaryColor
+                        wrapMode: Text.Wrap
+                        textFormat: Text.RichText
+
+                        text: details
+                    }
+                }
+
+                ScrollDecorator { }
             }
 
-            Label {
-                anchors.centerIn: parent
-                width: parent.width - 2 * Theme.paddingLarge
-                font.pixelSize: Theme.fontSizeLarge
-                color: Theme.secondaryColor
-                horizontalAlignment: Text.AlignHCenter
-
-                text: "Accept this SSL certificate?"
-            }
 
             onAccepted: {
                 sslHandler.accept();
