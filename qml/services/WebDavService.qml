@@ -154,6 +154,7 @@ ServiceObject {
                 var props = {
                     "name": nameEntry.text,
                     "address": addressEntry.text,
+                    "path": pathEntry.text,
                     "login": loginEntry.text,
                     "password": passwordEntry.text,
                     "securityMethod": _securityMethods[securityCombo.currentIndex]
