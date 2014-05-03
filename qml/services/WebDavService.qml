@@ -30,6 +30,7 @@ ServiceObject {
             onPropertiesChanged: {
                 nameEntry.text = properties["name"];
                 addressEntry.text = properties["address"];
+                pathEntry.text = properties["path"];
                 loginEntry.text = properties["login"];
                 passwordEntry.text = properties["password"];
 

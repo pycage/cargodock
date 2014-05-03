@@ -7,6 +7,7 @@
 #include <QtQml>
 
 #include "network.h"
+#include "sslhandler.h"
 
 #include "developermode.h"
 #include "filereader.h"
@@ -39,6 +40,10 @@ int main(int argc, char *argv[])
     QSharedPointer<QQuickView> view(SailfishApp::createView());
 
     Network::setAccessManager(view->engine()->networkAccessManager());
+
+    SslHandler sslHandler(*Network::accessManager());
+    view->engine()->rootContext()->setContextProperty("sslHandler",
+                                                      &sslHandler);
 
     //@uri harbour.cargodock
     qmlRegisterType<DeveloperMode>(URI, 1, 0, "DeveloperMode");

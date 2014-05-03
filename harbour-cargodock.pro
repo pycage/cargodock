@@ -29,7 +29,8 @@ SOURCES += src/harbour-cargodock.cpp \
     src/network.cpp \
     src/davapi/davfile.cpp \
     src/davapi/davapi.cpp \
-    src/pipedevice.cpp
+    src/pipedevice.cpp \
+    src/sslhandler.cpp
 
 OTHER_FILES += qml/harbour-cargodock.qml \
     qml/cover/CoverPage.qml \
@@ -71,7 +72,8 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/help.html \
     qml/help.md \
     qml/pages/PreviewGeneric.qml \
-    qml/services/TelekomMediencenter.qml
+    qml/services/TelekomMediencenter.qml \
+    qml/pages/SslHandler.qml
 
 HEADERS += \
     src/foldermodel.h \
@@ -91,5 +93,6 @@ HEADERS += \
     src/network.h \
     src/davapi/davfile.h \
     src/davapi/davapi.h \
-    src/pipedevice.h
+    src/pipedevice.h \
+    src/sslhandler.h
 

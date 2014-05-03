@@ -132,9 +132,15 @@ void DavApi::propfind(const QString& path)
     QNetworkAccessManager* nam = Network::accessManager();
     if (nam)
     {
-        qDebug() << Q_FUNC_INFO << path;
+        QByteArray encodedPath = QUrl::toPercentEncoding(path, "/");
+        if (encodedPath.right(1) != "/")
+        {
+            // some WebDAV servers don't like it if the trailing / is missing
+            encodedPath += "/";
+        }
         QUrl url(myAddress);
-        url.setPath(QUrl::toPercentEncoding(path, "/"));
+        url.setPath(encodedPath);
+        qDebug() << Q_FUNC_INFO << url;
 
         QNetworkRequest req = makeRequest(url);
         req.setHeader(QNetworkRequest::ContentLengthHeader, QVariant(0));

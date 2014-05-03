@@ -98,6 +98,8 @@ ApplicationWindow
         id: notification
     }
 
+    SslHandler { }
+
     Rectangle {
         width: parent.width
         height: childrenRect.height + 2 * Theme.paddingLarge
