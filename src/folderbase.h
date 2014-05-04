@@ -26,6 +26,7 @@ class FolderBase : public QAbstractListModel
     Q_PROPERTY(QString name READ name NOTIFY pathChanged)
     Q_PROPERTY(bool isReadable READ isReadable NOTIFY pathChanged)
     Q_PROPERTY(bool isWritable READ isWritable NOTIFY pathChanged)
+    Q_PROPERTY(bool isValid READ isValid NOTIFY validChanged)
     Q_PROPERTY(int capabilities READ capabilities NOTIFY selectionChanged)
     Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QStringList breadcrumbs READ breadcrumbs NOTIFY pathChanged)
@@ -207,6 +208,7 @@ signals:
     void finished();
     void error(const QString& details);
     void loadingChanged();
+    void validChanged();
 
 protected:
     struct Item
@@ -274,6 +276,11 @@ protected:
 
     virtual QString mimeTypeIcon(const QString& mimeType) const;
 
+    /* Invalidates the current folder so that the user cannot interact with it.
+     */
+    void invalidateFolder();
+    bool isValid() const { return myIsValid; }
+
 private:
     void setUid(const QString& uid);
 
@@ -287,6 +294,7 @@ private:
     QString myPath;
     int myMinDepth;
     QSet<int> mySelection;
+    bool myIsValid;
 };
 
 #endif // FOLDERBASE_H

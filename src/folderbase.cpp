@@ -8,6 +8,7 @@
 FolderBase::FolderBase(QObject* parent)
     : QAbstractListModel(parent)
     , myMinDepth(INT_MAX)
+    , myIsValid(true)
 {
     myRolenames.insert(NameRole, "name");
     myRolenames.insert(FriendlyNameRole, "friendlyName");
@@ -234,8 +235,17 @@ void FolderBase::setPath(const QString& path)
         myMinDepth = depth;
     }
 
+    myIsValid = true;
+    emit validChanged();
+
     myPath = path;
     emit pathChanged();
+}
+
+void FolderBase::invalidateFolder()
+{
+    myIsValid = false;
+    emit validChanged();
 }
 
 QStringList FolderBase::breadcrumbs() const
@@ -432,18 +442,23 @@ void FolderBase::invertSelection()
 QString FolderBase::parentPath(const QString& path,
                                const QString& separator) const
 {
-    int idx = path.lastIndexOf(separator);
+    QString p = path;
+    if (p.size() > 1 && p.endsWith(separator)){
+        p = p.left(p.size() - separator.size());
+    }
+
+    int idx = p.lastIndexOf(separator);
     if (idx == 0)
     {
         return separator;
     }
     else if (idx != -1)
     {
-        return path.left(idx);
+        return p.left(idx);
     }
     else
     {
-        return path;
+        return p;
     }
 }
 

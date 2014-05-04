@@ -15,7 +15,7 @@ public:
 
     virtual QVariant data(const QModelIndex& index, int role) const;
 
-    virtual bool isWritable() const { return true; }
+    virtual bool isWritable() const { return isValid(); }
     virtual int capabilities() const;
 
     Q_INVOKABLE virtual void rename(const QString& name, const QString& newName);
@@ -37,8 +37,11 @@ protected:
 
     virtual void loadDirectory(const QString& path);
 
+private:
+    void handleResult(int result);
+
 private slots:
-    void slotPropertiesReceived(const DavApi::Properties& props);
+    void slotPropertiesReceived(int result, const DavApi::Properties& props);
     void slotMkColFinished(int result);
     void slotDeleteFinished(int result);
     void slotMoveFinished(int result);

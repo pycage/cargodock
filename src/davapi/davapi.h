@@ -26,15 +26,22 @@ public:
 
     enum
     {
+        ServerUnreachable = 0,
         Created = 201,
         NoContent = 204,
         MultiStatus = 207,
+        MovedPermanently = 301,
+        Found = 302,
+        SeeOther = 303,
         Unauthorized = 401,
         Forbidden = 403,
+        NotFound = 404,
+        Gone = 410,
         NotAllowed = 405,
         Conflict = 409,
         UnsupportedMediaType = 415,
         FailedDependency = 424,
+        ServerError = 500,
         InsufficientStorage = 507
     };
 
@@ -55,7 +62,7 @@ public:
     void putResource(const QString& path, QIODevice* buffer);
 
 signals:
-    void propertiesReceived(const DavApi::Properties& props);
+    void propertiesReceived(int result, const DavApi::Properties& props);
     void mkColFinished(int result);
     void deleteFinished(int result);
     void moveFinished(int result);

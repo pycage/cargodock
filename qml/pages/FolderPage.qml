@@ -350,7 +350,7 @@ Page {
             id: contentlist
 
             anchors.fill: parent
-            model: sourceModel
+            model: sourceModel.isValid ? sourceModel : null
 
             header: Column {
                 width: contentlist.width
@@ -378,7 +378,8 @@ Page {
                 }
 
                 ListItem {
-                    visible: sourceModel ? sourceModel.isWritable : false
+                    visible: sourceModel ? (sourceModel.isValid && sourceModel.isWritable)
+                                         : false
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     Image {
@@ -545,6 +546,11 @@ Page {
                         sourceModel.unselectAll();
                     }
                 }
+            }
+
+            ViewPlaceholder {
+                enabled: sourceModel ? ! sourceModel.isValid : true
+                text: "Not available"
             }
 
             ViewPlaceholder {

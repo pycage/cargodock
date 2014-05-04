@@ -254,10 +254,10 @@ void DavApi::slotPropfindReceived()
     foreach (const Properties& props, properties.mid(1))
     {
         qDebug() << props.href;
-        emit propertiesReceived(props);
+        emit propertiesReceived(result, props);
     }
     Properties nullProps;
-    emit propertiesReceived(nullProps);
+    emit propertiesReceived(result, nullProps);
 }
 
 void DavApi::slotMkColFinished()

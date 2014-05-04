@@ -6,6 +6,22 @@
 #include <QUrl>
 #include <QDebug>
 
+namespace
+{
+
+QString normalizePath(const QString& path)
+{
+    if (path.size() > 1 && path.endsWith("/"))
+    {
+        return path.left(path.size() - 1);
+    }
+    else
+    {
+        return path;
+    }
+}
+
+}
 
 DavModel::DavModel(QObject* parent)
     : FolderBase(parent)
@@ -15,8 +31,8 @@ DavModel::DavModel(QObject* parent)
     , myMoveResult(DavApi::NoContent)
     , myIsLoading(false)
 {
-    connect(myDavApi.data(), SIGNAL(propertiesReceived(DavApi::Properties)),
-            this, SLOT(slotPropertiesReceived(DavApi::Properties)));
+    connect(myDavApi.data(), SIGNAL(propertiesReceived(int,DavApi::Properties)),
+            this, SLOT(slotPropertiesReceived(int,DavApi::Properties)));
     connect(myDavApi.data(), SIGNAL(mkColFinished(int)),
             this, SLOT(slotMkColFinished(int)));
     connect(myDavApi.data(), SIGNAL(deleteFinished(int)),
@@ -144,7 +160,7 @@ void DavModel::rename(const QString& name, const QString& newName)
 
 QString DavModel::friendlyBasename(const QString& path) const
 {
-    if (path == configValue("path").toString())
+    if (normalizePath(path) == normalizePath(configValue("path").toString()))
     {
         return configValue("name").toString();
     }
@@ -201,8 +217,54 @@ void DavModel::loadDirectory(const QString& path)
     myDavApi->propfind(path);
 }
 
-void DavModel::slotPropertiesReceived(const DavApi::Properties& props)
+void DavModel::handleResult(int result)
 {
+    switch (result)
+    {
+    case DavApi::ServerUnreachable:
+        emit error("The server did not respond.");
+        break;
+    case DavApi::Unauthorized:
+        emit error("You are not authorized.");
+        break;
+    case DavApi::Forbidden:
+        emit error("Access denied.");
+        break;
+    case DavApi::NotFound:
+        emit error("Resource is not available.");
+        break;
+    case DavApi::Gone:
+        emit error("Resource is no longer available.");
+        break;
+    case DavApi::NotAllowed:
+        emit error("This action is not allowed.");
+        break;
+    case DavApi::Conflict:
+        emit error("Conflict detected.");
+        break;
+    case DavApi::UnsupportedMediaType:
+        emit error("Media type not supported.");
+        break;
+    case DavApi::ServerError:
+        emit error("Server error.");
+        break;
+    case DavApi::InsufficientStorage:
+        emit error("The remote storage is full.");
+        break;
+    default:
+        break;
+    }
+}
+
+void DavModel::slotPropertiesReceived(int result, const DavApi::Properties& props)
+{
+    handleResult(result);
+
+    if (result != DavApi::MultiStatus)
+    {
+        invalidateFolder();
+    }
+
     if (props.href.size())
     {
         Item::Ptr item(new Item);
