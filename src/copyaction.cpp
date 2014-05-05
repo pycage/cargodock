@@ -65,10 +65,16 @@ private:
 
 
 
-CopyJob::CopyJob(QIODevice* source, QIODevice* dest)
+CopyJob::CopyJob(QIODevice* source,
+                 QIODevice* dest,
+                 const QString& name,
+                 qint64 size)
     : QObject()
     , mySource(source)
     , myDestination(dest)
+    , myName(name)
+    , mySize(size)
+    , myBytesWritten(0)
     , myHasFailed(false)
 {
 
@@ -76,6 +82,8 @@ CopyJob::CopyJob(QIODevice* source, QIODevice* dest)
 
 void CopyJob::start()
 {
+    emit progress(myName, 0);
+
     if (mySource &&
             mySource->isOpen() &&
             mySource->isReadable() &&
@@ -135,6 +143,9 @@ void CopyJob::run()
                 close();
                 return;
             }
+
+            myBytesWritten += bytes;
+            emit progress(myName, myBytesWritten / (double) mySize);
         }
     }
     QTimer::singleShot(1, this, SLOT(run()));
@@ -258,7 +269,12 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
 
             if (srcFd && destFd && srcFd->isOpen() && destFd->isOpen())
             {
-                myCopyJob = new CopyJob(srcFd, destFd);
+                myCopyJob = new CopyJob(srcFd,
+                                        destFd,
+                                        mySource->basename(sourcePath),
+                                        size);
+                connect(myCopyJob, SIGNAL(progress(QString,double)),
+                        this, SIGNAL(progress(QString,double)));
                 connect(myCopyJob, SIGNAL(finished()),
                         this, SLOT(slotCopyThreadFinished()));
                 myCopyJob->start();

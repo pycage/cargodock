@@ -306,6 +306,8 @@ void FolderBase::copySelected(FolderBase* dest)
     }
 
     CopyAction* action = new CopyAction(this, dest, paths, dest->path());
+    connect(action, SIGNAL(progress(QString,double)),
+            this, SIGNAL(progress(QString,double)));
     connect(action, SIGNAL(finished()),
             this, SIGNAL(finished()));
     connect(action, SIGNAL(error(QString)),

@@ -17,12 +17,16 @@ class CopyJob : public QObject
 {
     Q_OBJECT
 public:
-    CopyJob(QIODevice* source, QIODevice* dest);
+    CopyJob(QIODevice* source,
+            QIODevice* dest,
+            const QString& name,
+            qint64 size);
     bool hasFailed() const { return myHasFailed; }
     QString error() const { return myError; }
     void start();
 
 signals:
+    void progress(const QString& name, double amount);
     void finished();
 
 private:
@@ -34,6 +38,9 @@ private slots:
 private:
     QIODevice* mySource;
     QIODevice* myDestination;
+    QString myName;
+    qint64 mySize;
+    qint64 myBytesWritten;
     bool myHasFailed;
     QString myError;
 };

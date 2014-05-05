@@ -11,6 +11,7 @@ public:
     virtual void start() = 0;
 
 signals:
+    void progress(const QString& name, double amount);
     void finished();
     void error(const QString& details);
 };

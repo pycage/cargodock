@@ -210,6 +210,7 @@ signals:
     void error(const QString& details);
     void loadingChanged();
     void validChanged();
+    void progress(const QString& name, double amount);
 
 protected:
     struct Item

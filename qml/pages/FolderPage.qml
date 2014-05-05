@@ -21,7 +21,6 @@ Page {
     property int _capabilities: sourceModel ? sourceModel.capabilities : 0
     property int _destinationCapabilities: destinationModel ? destinationModel.capabilities : 0
 
-
     signal modelChanged
 
     signal copyCommand(variant sourceModel, variant destModel)
@@ -29,7 +28,6 @@ Page {
     signal linkCommand(variant sourceModel, variant destModel)
     signal finished()
     signal error(string details)
-
 
     function pushModel(typeName, uid, icon)
     {
@@ -39,6 +37,7 @@ Page {
         var model;
         console.log("create model " + typeName + " " + uid);
         model = serviceObject(typeName).createModel(uid);
+        model.progress.connect(function(n, p) { sharedState.actionProgress = p; sharedState.actionTarget = n; });
         model.finished.connect(page.finished);
         model.error.connect(page.error);
 
@@ -286,24 +285,6 @@ Page {
                     text: (sourceModel && sourceModel.selected > 0) ? qsTr("Pull up for actions")
                                                                     : qsTr("Select some items")
                 }
-
-                BusyIndicator {
-                    id: busyIndicator
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.bottom
-                    running: sharedState.actionInProgress
-                    size: BusyIndicatorSize.Large
-
-                }
-
-                Label {
-                    visible: busyIndicator.running
-                    anchors.centerIn: busyIndicator
-                    color: Theme.secondaryColor
-                    font.pixelSize: Theme.fontSizeSmall
-                    text: sharedState.actionName
-                }
-
             }
 
             Item {
@@ -339,10 +320,30 @@ Page {
                 }
             }
 
-            BusyIndicator {
-                running: sharedState.actionInProgress && ! _selectionMode
-                anchors.centerIn: parent
-                size: BusyIndicatorSize.Medium
+            Label {
+                visible: sharedState.actionInProgress
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: progressBar.top
+                anchors.topMargin: -2
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeExtraSmall
+                text: sharedState.actionName
+            }
+
+            ProgressBar {
+                id: progressBar
+                visible: sharedState.actionInProgress
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.leftMargin: Theme.paddingSmall
+                anchors.rightMargin: Theme.paddingSmall
+                anchors.bottomMargin: 2
+
+                minimumValue: 0
+                maximumValue: 1000
+                value: Math.floor(sharedState.actionProgress * 1000)
+                label: sharedState.actionTarget
             }
         }
 

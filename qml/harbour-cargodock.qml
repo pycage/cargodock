@@ -86,6 +86,8 @@ ApplicationWindow
         id: sharedState
         property bool actionInProgress
         property string actionName
+        property string actionTarget
+        property double actionProgress
         property variant currentContentModel
         property bool isSecondPane
     }
