@@ -513,7 +513,9 @@ QStringList FolderBase::list(const QString&) const
     return QStringList();
 }
 
-QIODevice* FolderBase::openFile(const QString&, QIODevice::OpenModeFlag)
+QIODevice* FolderBase::openFile(const QString&,
+                                qint64,
+                                QIODevice::OpenModeFlag)
 {
     return 0;
 }

@@ -19,6 +19,7 @@ class CopyJob : public QObject
 public:
     CopyJob(QIODevice* source, QIODevice* dest);
     bool hasFailed() const { return myHasFailed; }
+    QString error() const { return myError; }
     void start();
 
 signals:
@@ -34,6 +35,7 @@ private:
     QIODevice* mySource;
     QIODevice* myDestination;
     bool myHasFailed;
+    QString myError;
 };
 
 class CopyAction : public FolderAction
@@ -63,6 +65,7 @@ private:
     QString myDestinationPath;
 
     QMap<QString, FolderBase::ItemType> myTypeMap;
+    QMap<QString, qint64> mySizeMap;
 
     CopyThread* myCopyThread;
     CopyJob* myCopyJob;

@@ -207,8 +207,8 @@ void Authenticator::authenticate(QNetworkRequest& request,
         }
 
         request.setRawHeader("Authorization", header);
-        qDebug() << "Authorization" << request.rawHeader("Authorization");
     }
+    qDebug() << "Authorization" << request.rawHeader("Authorization");
 }
 
 }

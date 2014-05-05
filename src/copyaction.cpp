@@ -106,8 +106,17 @@ void CopyJob::run()
     now.start();
     while (now.elapsed() < 5)
     {
+        QString noError = mySource->errorString();
         QByteArray data = mySource->read(1024 * 1024);
-        if (data.isEmpty())
+        if (mySource->errorString() != noError)
+        {
+            qDebug() << "error reading data";
+            myHasFailed = true;
+            myError = mySource->errorString();
+            close();
+            return;
+        }
+        else if (data.isEmpty())
         {
             // done
             qDebug() << Q_FUNC_INFO << "end of file";
@@ -120,7 +129,9 @@ void CopyJob::run()
             qDebug() << Q_FUNC_INFO << bytes << "bytes copied";
             if (bytes == -1)
             {
+                qDebug() << "error writing data";
                 myHasFailed = true;
+                myError = myDestination->errorString();
                 close();
                 return;
             }
@@ -164,15 +175,18 @@ void CopyAction::start()
         const QString name =
                 mySource->data(mySource->index(i), FolderBase::NameRole)
                 .toString();
-        const FolderBase::ItemType type =
+        FolderBase::ItemType type =
                 (FolderBase::ItemType)
                 mySource->data(mySource->index(i), FolderBase::TypeRole)
                 .toInt();
+        qint64 size = mySource->data(mySource->index(i), FolderBase::SizeRole)
+                .toLongLong();
         const QString fullPath =
                 mySource->joinPath(QStringList() << mySource->path() << name);
 
         qDebug() << "types" << fullPath << type;
         myTypeMap.insert(fullPath, type);
+        mySizeMap.insert(fullPath, size);
     }
     QTimer::singleShot(0, this, SLOT(slotProcessNext()));
 }
@@ -204,16 +218,19 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
             const QString name =
                     mySource->data(mySource->index(i), FolderBase::NameRole)
                     .toString();
-            const FolderBase::ItemType type =
+            FolderBase::ItemType type =
                     (FolderBase::ItemType)
                     mySource->data(mySource->index(i), FolderBase::TypeRole)
                     .toInt();
+            qint64 size = mySource->data(mySource->index(i), FolderBase::SizeRole)
+                    .toLongLong();
             const QString fullPath =
                     mySource->joinPath(QStringList() << sourcePath << name);
 
             qDebug() << "types" << fullPath << type;
             myCopyPaths << QPair<QString, QString>(fullPath, destDir);
             myTypeMap.insert(fullPath, type);
+            mySizeMap.insert(fullPath, size);
         }
 
         QTimer::singleShot(0, this, SLOT(slotProcessNext()));
@@ -223,13 +240,18 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
         qDebug() << "file type";
         if (! myCopyJob)
         {
+            qint64 size = mySizeMap.value(sourcePath, 0);
+            qDebug() << "size" << size;
+
             const QString& destFile =
                     myDestination->joinPath(QStringList()
                                             << destPath
                                             << mySource->basename(sourcePath));
             QIODevice* srcFd = mySource->openFile(sourcePath,
+                                                  size,
                                                   QIODevice::ReadOnly);
             QIODevice* destFd = myDestination->openFile(destFile,
+                                                        size,
                                                         QIODevice::WriteOnly);
 
             // TODO: check if source and dest are the same to improve copy
@@ -273,12 +295,11 @@ void CopyAction::slotCopyThreadFinished()
     {
         if (! myCopyJob->hasFailed())
         {
-            qDebug() << "copying succeeded";
             QTimer::singleShot(0, this, SLOT(slotProcessNext()));
         }
         else
         {
-            qDebug() << "copying failed";
+            emit error(myCopyJob->error());
             emit finished();
         }
         delete myCopyJob;

@@ -47,7 +47,7 @@ void PipeDevice::close()
 qint64 PipeDevice::bytesAvailable() const
 {
     qint64 bytes =  (myBuffer.size() - myOffset) + QIODevice::bytesAvailable();
-    qDebug() << Q_FUNC_INFO << bytes;
+    //qDebug() << Q_FUNC_INFO << bytes;
     return bytes;
 }
 
@@ -70,7 +70,7 @@ qint64 PipeDevice::readData(char* data, qint64 maxlen)
         int size = newData.size();
         myOffset += size;
         memcpy(data, newData.constData(), size);
-        qDebug() << "pipe read data" << size << "maxlen" << maxlen;
+        //qDebug() << "pipe read data" << size << "maxlen" << maxlen;
         //qDebug() << "data:" << newData.toHex();
 
         if (myOffset >= myBuffer.size())

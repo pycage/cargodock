@@ -23,6 +23,7 @@ public:
     virtual QString friendlyBasename(const QString& path) const;
 
     virtual QIODevice* openFile(const QString& path,
+                                qint64 size,
                                 QIODevice::OpenModeFlag mode);
 
     virtual bool makeDirectory(const QString& path);

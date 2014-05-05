@@ -6,10 +6,12 @@
 #include <QDebug>
 
 DavFile::DavFile(const QString& path,
+                 qint64 size,
                  QSharedPointer<DavApi> api,
                  QObject* parent)
     : QIODevice(parent)
     , myDavApi(api)
+    , mySize(size)
     , myPath(path)
     , myWaitingForDownload(false)
     , myWaitingForUpload(false)
@@ -46,7 +48,7 @@ bool DavFile::open(OpenMode mode)
     {
         success = true;
         myWaitingForUpload = true;
-        myDavApi->putResource(myPath, &myWriteBuffer);
+        myDavApi->putResource(myPath, mySize, &myWriteBuffer);
     }
 
     return success && QIODevice::open(mode);
@@ -76,7 +78,6 @@ qint64 DavFile::readData(char* data, qint64 maxlen)
         myReply = myDavApi->getResource(myPath, myReadOffset, maxlen);
     }
 
-    qDebug() << "here";
     if (maxlen > 0)
     {
         QEventLoop evLoop;
@@ -86,21 +87,18 @@ qint64 DavFile::readData(char* data, qint64 maxlen)
         }
     }
 
-    qDebug() << "there";
     if (myHasError)
     {
         return -1;
     }
     else
     {
-        qDebug() << "try read";
         QByteArray readData = myReply->read(maxlen);
-        qDebug() << "read";
         if (readData.size() > 0)
         {
             memcpy(data, readData.constData(), readData.size());
             myReadOffset += readData.size();
-            qDebug() << "read" << readData.size() << "bytes";
+            //qDebug() << "read" << readData.size() << "bytes";
         }
 
         return readData.size() > 0 ? readData.size()
@@ -110,7 +108,7 @@ qint64 DavFile::readData(char* data, qint64 maxlen)
 
 qint64 DavFile::writeData(const char* data, qint64 len)
 {
-    qDebug() << Q_FUNC_INFO << len;
+    //qDebug() << Q_FUNC_INFO << len;
     return myWriteBuffer.write(data, len);
 }
 
@@ -126,6 +124,7 @@ void DavFile::slotResourceReceived(const QString& path,
         else
         {
             myHasError = true;
+            setErrorString(QString("Server error: %1").arg(result));
         }
         myWaitingForDownload = false;
     }
@@ -136,13 +135,23 @@ void DavFile::slotPutFinished(const QString& path,
 {
     if (path == myPath)
     {
-        if (result >= 200 && result < 300)
+        if (result == DavApi::ServerUnreachable)
+        {
+            // Wow, the connection died. Probably the server crashed when
+            // allocating space for our file (stupid servers hold large files
+            // in RAM).
+            myWriteBuffer.close();
+            myHasError = true;
+            setErrorString("Connection to server aborted.");
+        }
+        else if (result >= 200 && result < 300)
         {
             // OK
         }
         else
         {
             myHasError = true;
+            setErrorString(QString("Server error: %1").arg(result));
         }
     }
     myWaitingForUpload = false;

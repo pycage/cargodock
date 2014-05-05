@@ -29,6 +29,7 @@ public:
 
     virtual QStringList list(const QString& path) const;
     virtual QIODevice* openFile(const QString& path,
+                                qint64 size,
                                 QIODevice::OpenModeFlag mode);
     virtual bool makeDirectory(const QString& path);
     virtual bool linkFile(const QString& path,

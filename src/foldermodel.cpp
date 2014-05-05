@@ -210,8 +210,10 @@ QStringList FolderModel::list(const QString& path) const
 }
 
 QIODevice* FolderModel::openFile(const QString& path,
+                                 qint64 size,
                                  QIODevice::OpenModeFlag mode)
 {
+    Q_UNUSED(size)
     LocalFile* fd = new LocalFile(path);
     fd->open(mode);
     return fd;

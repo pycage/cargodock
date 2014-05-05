@@ -129,6 +129,7 @@ void DavApi::setAddress(const QString& address)
 QNetworkRequest DavApi::makeRequest(const QUrl& url,
                                     const QByteArray& requestMethod)
 {
+    qDebug() << Q_FUNC_INFO << url << requestMethod << myAuthenticator;
     QNetworkRequest req(url);
     if (myAuthenticator)
     {
@@ -228,7 +229,6 @@ QNetworkReply* DavApi::getResource(const QString& path, qint64 offset, qint64 si
         reply = nam->get(req);
         reply->setProperty("identifier", path);
 
-
         connect(reply, SIGNAL(finished()),
                 this, SLOT(slotResourceReceived()));
     }
@@ -236,7 +236,7 @@ QNetworkReply* DavApi::getResource(const QString& path, qint64 offset, qint64 si
     return reply;
 }
 
-void DavApi::putResource(const QString& path, QIODevice* buffer)
+void DavApi::putResource(const QString& path, qint64 size, QIODevice* buffer)
 {
     QNetworkAccessManager* nam = Network::accessManager();
     if (nam)
@@ -245,6 +245,9 @@ void DavApi::putResource(const QString& path, QIODevice* buffer)
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
         QNetworkRequest req = makeRequest(url, "PUT");
+        req.setAttribute(QNetworkRequest::DoNotBufferUploadDataAttribute, true);
+        req.setHeader(QNetworkRequest::ContentLengthHeader, size);
+        qDebug() << "PUT" << size << "bytes";
         QNetworkReply* reply = nam->put(req, buffer);
         reply->setProperty("identifier", path);
 
@@ -345,7 +348,7 @@ void DavApi::slotPutFinished()
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     int result = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     const QString path = reply->property("identifier").toString();
-    qDebug() << "PUT finished" << result;
+    qDebug() << "PUT finished" << result << reply->error() << reply->errorString();
     emit putFinished(path, result);
 
     reply->deleteLater();

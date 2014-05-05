@@ -16,6 +16,7 @@ class DavFile : public QIODevice
     Q_OBJECT
 public:
     DavFile(const QString& path,
+            qint64 size,
             QSharedPointer<DavApi> api,
             QObject* parent = 0);
     virtual ~DavFile();
@@ -35,6 +36,7 @@ private slots:
 
 private:
     QSharedPointer<DavApi> myDavApi;
+    qint64 mySize;
     QString myPath;
     bool myWaitingForDownload;
     bool myWaitingForUpload;

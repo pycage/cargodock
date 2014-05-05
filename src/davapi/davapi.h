@@ -65,7 +65,10 @@ public:
     void deleteResource(const QString& path);
     void moveResource(const QString& path, const QString& newPath);
     QNetworkReply* getResource(const QString& path, qint64 offset, qint64 size);
-    void putResource(const QString& path, QIODevice* buffer);
+    void putResource(const QString& path, qint64 size, QIODevice* buffer);
+
+    QSharedPointer<Network::Authenticator> authenticator() { return myAuthenticator; }
+    void setAuthenticator(QSharedPointer<Network::Authenticator> authenticator) { myAuthenticator = authenticator; }
 
 signals:
     void propertiesReceived(int result, const DavApi::Properties& props);

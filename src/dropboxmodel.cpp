@@ -163,8 +163,10 @@ QString DropboxModel::friendlyBasename(const QString& path) const
 }
 
 QIODevice* DropboxModel::openFile(const QString& path,
+                                  qint64 size,
                                   QIODevice::OpenModeFlag mode)
 {
+    Q_UNUSED(size)
     DropboxFile* fd = new DropboxFile(path, myDropboxApi);
     fd->open(mode);
     return fd;

@@ -28,6 +28,7 @@ public:
     Q_INVOKABLE void authorize(const QUrl& uri);
 
     virtual QIODevice* openFile(const QString& path,
+                                qint64 size,
                                 QIODevice::OpenModeFlag mode);
     virtual bool makeDirectory(const QString& path);
     virtual bool deleteFile(const QString& path);

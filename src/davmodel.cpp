@@ -59,6 +59,8 @@ DavModel::DavModel(const DavModel& other)
             this, SLOT(slotMoveFinished(int)));
 
     init();
+
+    myDavApi->setAuthenticator(other.myDavApi->authenticator());
 }
 
 FolderBase* DavModel::clone() const
@@ -171,9 +173,10 @@ QString DavModel::friendlyBasename(const QString& path) const
 }
 
 QIODevice* DavModel::openFile(const QString& path,
+                              qint64 size,
                               QIODevice::OpenModeFlag mode)
 {
-    DavFile* fd = new DavFile(path, myDavApi);
+    DavFile* fd = new DavFile(path, size, myDavApi);
     fd->open(mode);
     return fd;
 }

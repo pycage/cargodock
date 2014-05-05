@@ -182,6 +182,7 @@ public:
      * delete it when finished.
      */
     virtual QIODevice* openFile(const QString& path,
+                                qint64 size,
                                 QIODevice::OpenModeFlag mode);
 
     /* Creates the given directory. Returns true if successful.
