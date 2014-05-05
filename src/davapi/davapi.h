@@ -4,11 +4,17 @@
 #include <QDateTime>
 #include <QNetworkRequest>
 #include <QObject>
+#include <QSharedPointer>
 #include <QString>
 
 class QIODevice;
 class QNetworkReply;
 class QUrl;
+
+namespace Network
+{
+class Authenticator;
+}
 
 class DavApi : public QObject
 {
@@ -47,7 +53,7 @@ public:
 
     DavApi(QObject* parent = 0);
 
-    void setAddress(const QString& address) { myAddress = address; }
+    void setAddress(const QString& address);
     void setAuthorization(const QString& login, const QString& password)
     {
         myLogin = login;
@@ -71,7 +77,8 @@ signals:
     void putFinished(const QString&, int result);
 
 private:
-    QNetworkRequest makeRequest(const QUrl& url) const;
+    QNetworkRequest makeRequest(const QUrl& url,
+                                const QByteArray& requestMethod);
 
 private slots:
     void slotPropfindReceived();
@@ -85,6 +92,10 @@ private:
     QString myAddress;
     QString myLogin;
     QString myPassword;
+    QString myPropfindPath;
+    bool myAuthAttempted;
+
+    QSharedPointer<Network::Authenticator> myAuthenticator;
 };
 
 #endif // DAVAPI_H

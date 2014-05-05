@@ -135,6 +135,8 @@ Page {
 
         }
 
+        ScrollDecorator { }
+
     }
 
 }

@@ -30,7 +30,8 @@ SOURCES += src/harbour-cargodock.cpp \
     src/davapi/davfile.cpp \
     src/davapi/davapi.cpp \
     src/pipedevice.cpp \
-    src/sslhandler.cpp
+    src/sslhandler.cpp \
+    src/authenticator.cpp
 
 OTHER_FILES += qml/harbour-cargodock.qml \
     qml/cover/CoverPage.qml \
@@ -94,5 +95,6 @@ HEADERS += \
     src/davapi/davfile.h \
     src/davapi/davapi.h \
     src/pipedevice.h \
-    src/sslhandler.h
+    src/sslhandler.h \
+    src/authenticator.h
 

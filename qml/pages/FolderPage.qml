@@ -378,7 +378,9 @@ Page {
                 }
 
                 ListItem {
-                    visible: sourceModel ? (sourceModel.isValid && sourceModel.isWritable)
+                    visible: sourceModel ? (sourceModel.isValid &&
+                                            sourceModel.isWritable &&
+                                            ! sourceModel.loading)
                                          : false
                     anchors.horizontalCenter: parent.horizontalCenter
 

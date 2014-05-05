@@ -1,4 +1,5 @@
 #include "davapi.h"
+#include "../authenticator.h"
 #include "../network.h"
 
 #include <QByteArray>
@@ -114,15 +115,24 @@ QList<DavApi::Properties> parseResult(const QByteArray& data)
 
 DavApi::DavApi(QObject* parent)
     : QObject(parent)
+    , myAuthAttempted(false)
 {
 }
 
-QNetworkRequest DavApi::makeRequest(const QUrl& url) const
+void DavApi::setAddress(const QString& address)
+{
+    myAddress = address;
+    myAuthenticator.clear();
+    myAuthAttempted = false;
+}
+
+QNetworkRequest DavApi::makeRequest(const QUrl& url,
+                                    const QByteArray& requestMethod)
 {
     QNetworkRequest req(url);
-    if (myLogin.size())
+    if (myAuthenticator)
     {
-        Network::basicAuth(req, myLogin, myPassword);
+        myAuthenticator->authenticate(req, requestMethod);
     }
     return req;
 }
@@ -132,6 +142,8 @@ void DavApi::propfind(const QString& path)
     QNetworkAccessManager* nam = Network::accessManager();
     if (nam)
     {
+        myPropfindPath = path;
+
         QByteArray encodedPath = QUrl::toPercentEncoding(path, "/");
         if (encodedPath.right(1) != "/")
         {
@@ -142,7 +154,7 @@ void DavApi::propfind(const QString& path)
         url.setPath(encodedPath);
         qDebug() << Q_FUNC_INFO << url;
 
-        QNetworkRequest req = makeRequest(url);
+        QNetworkRequest req = makeRequest(url, "PROPFIND");
         req.setHeader(QNetworkRequest::ContentLengthHeader, QVariant(0));
         req.setRawHeader("Depth", "1");
         QNetworkReply* reply = nam->sendCustomRequest(req, "PROPFIND");
@@ -160,7 +172,7 @@ void DavApi::mkcol(const QString& path)
         QUrl url(myAddress);
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
-        QNetworkRequest req = makeRequest(url);
+        QNetworkRequest req = makeRequest(url, "MKCOL");
         QNetworkReply* reply = nam->sendCustomRequest(req, "MKCOL");
 
         connect(reply, SIGNAL(finished()),
@@ -176,7 +188,7 @@ void DavApi::deleteResource(const QString& path)
         QUrl url(myAddress);
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
-        QNetworkRequest req = makeRequest(url);
+        QNetworkRequest req = makeRequest(url, "DELETE");
         QNetworkReply* reply = nam->deleteResource(req);
 
         connect(reply, SIGNAL(finished()),
@@ -192,7 +204,7 @@ void DavApi::moveResource(const QString& path, const QString& newPath)
         QUrl url(myAddress);
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
-        QNetworkRequest req = makeRequest(url);
+        QNetworkRequest req = makeRequest(url, "MOVE");
         req.setRawHeader("Destination", QUrl::toPercentEncoding(newPath, "/"));
         QNetworkReply* reply = nam->sendCustomRequest(req, "MOVE");
 
@@ -212,7 +224,7 @@ QNetworkReply* DavApi::getResource(const QString& path, qint64 offset, qint64 si
         QUrl url(myAddress);
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
-        QNetworkRequest req = makeRequest(url);
+        QNetworkRequest req = makeRequest(url, "GET");
         reply = nam->get(req);
         reply->setProperty("identifier", path);
 
@@ -232,7 +244,7 @@ void DavApi::putResource(const QString& path, QIODevice* buffer)
         QUrl url(myAddress);
         url.setPath(QUrl::toPercentEncoding(path, "/"));
 
-        QNetworkRequest req = makeRequest(url);
+        QNetworkRequest req = makeRequest(url, "PUT");
         QNetworkReply* reply = nam->put(req, buffer);
         reply->setProperty("identifier", path);
 
@@ -245,19 +257,46 @@ void DavApi::slotPropfindReceived()
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     int result = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    QByteArray data = reply->readAll();
-    qDebug() << Q_FUNC_INFO << result << data;
 
-    qDebug() << reply->rawHeaderPairs();
-
-    QList<Properties> properties = parseResult(data);
-    foreach (const Properties& props, properties.mid(1))
+    if (reply->hasRawHeader("WWW-Authenticate"))
     {
-        qDebug() << props.href;
-        emit propertiesReceived(result, props);
+        qDebug() << "Authentication required:" << reply->rawHeader("WWW-Authenticate");
+
+        if (! myAuthAttempted)
+        {
+            myAuthenticator =
+                    QSharedPointer<Network::Authenticator>(
+                        new Network::Authenticator(
+                            reply->rawHeader("WWW-Authenticate")));
+            myAuthenticator->setUserName(myLogin);
+            myAuthenticator->setPassword(myPassword);
+
+            // repeat
+            myAuthAttempted = true;
+            propfind(myPropfindPath);
+        }
+        else
+        {
+            Properties nullProps;
+            emit propertiesReceived(result, nullProps);
+        }
     }
-    Properties nullProps;
-    emit propertiesReceived(result, nullProps);
+    else
+    {
+        QByteArray data = reply->readAll();
+        qDebug() << Q_FUNC_INFO << result << data;
+
+        qDebug() << reply->rawHeaderPairs();
+
+        QList<Properties> properties = parseResult(data);
+        foreach (const Properties& props, properties.mid(1))
+        {
+            qDebug() << props.href;
+            emit propertiesReceived(result, props);
+        }
+        Properties nullProps;
+        emit propertiesReceived(result, nullProps);
+    }
 }
 
 void DavApi::slotMkColFinished()
