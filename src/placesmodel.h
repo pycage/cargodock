@@ -38,10 +38,6 @@ public:
      */
     Q_INVOKABLE QVariantMap service(const QString& uid) const;
 
-    virtual QString parentPath(const QString& path) const { return path; }
-    virtual QString basename(const QString& path) const { return path; }
-    virtual QString joinPath(const QStringList& parts) const { return parts.last(); }
-
     int capabilities() const;
 
     virtual bool linkFile(const QString& path,

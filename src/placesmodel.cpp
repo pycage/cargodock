@@ -199,7 +199,8 @@ FolderBase::Item::Ptr PlacesModel::makeItem(const QString& uid,
 {
     Item::Ptr item(new Item);
     item->linkTarget = uid;
-    item->name = name;
+    item->name = uid;
+    item->friendlyName = name;
     item->sectionName = section;
     item->icon = icon;
     item->linkModel = type;
@@ -241,7 +242,7 @@ bool PlacesModel::deleteFile(const QString& path)
 {
     qDebug() << Q_FUNC_INFO << path;
 
-    Item::ConstPtr item = itemByName(path);
+    Item::ConstPtr item = itemByName(basename(path));
     if (! item.isNull())
     {
         QStringList bookmarkServices = configValue("bookmark-services").toStringList();
