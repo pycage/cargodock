@@ -171,7 +171,6 @@ ApplicationWindow
             }
 
             onError: {
-                sharedState.actionInProgress = false;
                 notification.show(details);
             }
 
