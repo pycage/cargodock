@@ -181,6 +181,8 @@ void CopyAction::start()
         return;
     }
 
+    emit progress(QString(), 0);
+
     for (int i = 0; i < mySource->rowCount(QModelIndex()); ++i)
     {
         const QString name =

@@ -426,6 +426,7 @@ Page {
             }
 
             PullDownMenu {
+                id: menu
 
                 MenuItem {
                     visible: breadcrumbRepeater.count === 0
@@ -464,18 +465,34 @@ Page {
                     model: sourceModel ? collectBreadcrumbs(sourceModel.breadcrumbs) : null
 
                     MenuItem {
+                        id: pathMenuItem
+
+                        property bool _chosen
+
                         text: modelData.name
 
-                        onClicked: {
-                            if (modelData.model !== sourceModel)
-                            {
-                                popModels(modelData.model);
-                            }
+                        Connections {
+                            target: menu
+                            onActiveChanged: {
+                                // run the menu item action only once the menu
+                                // has closed to make it smooth
+                                if (! menu.active && pathMenuItem._chosen)
+                                {
+                                    pathMenuItem._chosen = false;
 
-                            console.log("up " + modelData.level);
-                            _selectionMode = false;
-                            modelData.model.cdUp(modelData.level);
+                                    if (modelData.model !== sourceModel)
+                                    {
+                                        popModels(modelData.model);
+                                    }
+
+                                    console.log("up " + modelData.level);
+                                    _selectionMode = false;
+                                    modelData.model.cdUp(modelData.level);
+                                }
+                            }
                         }
+
+                        onClicked: { _chosen = true; }
                     }
                 }
             }
@@ -566,12 +583,12 @@ Page {
                 text: "No files"
             }
 
-            ScrollDecorator { }
+            VerticalScrollDecorator { id: scrollDecorator }
 
         }//SilicaListView
 
         FancyScroller {
-            visible: ! _selectionMode
+            visible: scrollDecorator.quickScroll !== true && ! _selectionMode
             flickable: contentlist
         }
     }//Drawer

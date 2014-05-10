@@ -29,7 +29,7 @@ class FolderBase : public QAbstractListModel
     Q_PROPERTY(bool isValid READ isValid NOTIFY validChanged)
     Q_PROPERTY(int capabilities READ capabilities NOTIFY selectionChanged)
     Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
-    Q_PROPERTY(QStringList breadcrumbs READ breadcrumbs NOTIFY pathChanged)
+    Q_PROPERTY(QStringList breadcrumbs READ breadcrumbs NOTIFY breadcrumbsChanged)
     Q_PROPERTY(int selected READ selected NOTIFY selectionChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
@@ -205,6 +205,7 @@ public:
 
 signals:
     void pathChanged();
+    void breadcrumbsChanged();
     void selectionChanged();
     void finished();
     void error(const QString& details);

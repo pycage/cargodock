@@ -240,6 +240,8 @@ void FolderBase::setPath(const QString& path)
 
     myPath = path;
     emit pathChanged();
+
+    emit breadcrumbsChanged();
 }
 
 void FolderBase::invalidateFolder()
