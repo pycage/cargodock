@@ -49,8 +49,8 @@ DavModel::DavModel(const DavModel& other)
     , myMoveResult(DavApi::NoContent)
     , myIsLoading(false)
 {
-    connect(myDavApi.data(), SIGNAL(propertiesReceived(DavApi::Properties)),
-            this, SLOT(slotPropertiesReceived(DavApi::Properties)));
+    connect(myDavApi.data(), SIGNAL(propertiesReceived(int,DavApi::Properties)),
+            this, SLOT(slotPropertiesReceived(int,DavApi::Properties)));
     connect(myDavApi.data(), SIGNAL(mkColFinished(int)),
             this, SLOT(slotMkColFinished(int)));
     connect(myDavApi.data(), SIGNAL(deleteFinished(int)),
