@@ -70,6 +70,9 @@ public:
     QSharedPointer<Network::Authenticator> authenticator() { return myAuthenticator; }
     void setAuthenticator(QSharedPointer<Network::Authenticator> authenticator) { myAuthenticator = authenticator; }
 
+private slots:
+    void slotRetryPropfind();
+
 signals:
     void propertiesReceived(int result, const DavApi::Properties& props);
     void mkColFinished(int result);

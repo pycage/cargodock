@@ -10,6 +10,7 @@
 #include <QList>
 #include <QNetworkReply>
 #include <QStringList>
+#include <QTimer>
 #include <QUrl>
 
 #include <QDebug>
@@ -256,10 +257,17 @@ void DavApi::putResource(const QString& path, qint64 size, QIODevice* buffer)
     }
 }
 
+void DavApi::slotRetryPropfind()
+{
+    propfind(myPropfindPath);
+}
+
 void DavApi::slotPropfindReceived()
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     int result = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    qDebug() << Q_FUNC_INFO << result << reply->rawHeaderPairs() << reply->error() << reply->errorString();
 
     if (reply->hasRawHeader("WWW-Authenticate"))
     {
@@ -276,7 +284,7 @@ void DavApi::slotPropfindReceived()
 
             // repeat
             myAuthAttempted = true;
-            propfind(myPropfindPath);
+            QTimer::singleShot(100, this, SLOT(slotRetryPropfind()));
         }
         else
         {
@@ -300,6 +308,7 @@ void DavApi::slotPropfindReceived()
         Properties nullProps;
         emit propertiesReceived(result, nullProps);
     }
+    reply->deleteLater();
 }
 
 void DavApi::slotMkColFinished()
