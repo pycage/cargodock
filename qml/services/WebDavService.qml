@@ -7,6 +7,7 @@ ServiceObject {
 
     name: "WebDAV"
     icon: "image://theme/icon-m-region"
+    usesEncryption: true
     serviceName: "webdav"
     serviceModel: DavModel { }
 
@@ -32,7 +33,7 @@ ServiceObject {
                 addressEntry.text = properties["address"];
                 pathEntry.text = properties["path"];
                 loginEntry.text = properties["login"];
-                passwordEntry.text = properties["password"];
+                passwordEntry.text = properties["password:blowfish"];
 
                 var securityMethod = properties["securityMethod"];
                 var idx = _securityMethods.indexOf(securityMethod);
@@ -142,6 +143,7 @@ ServiceObject {
                         anchors.left: parent.left
                         anchors.right: parent.right
 
+                        inputMethodHints: Qt.ImhNoPredictiveText
                         echoMode: TextInput.Password
                         placeholderText: "Enter password"
                         label: "Password"
@@ -157,7 +159,7 @@ ServiceObject {
                     "address": addressEntry.text,
                     "path": pathEntry.text,
                     "login": loginEntry.text,
-                    "password": passwordEntry.text,
+                    "password:blowfish": passwordEntry.text,
                     "securityMethod": _securityMethods[securityCombo.currentIndex]
                 }
 

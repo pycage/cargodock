@@ -31,6 +31,21 @@ Page {
 
     function pushModel(typeName, uid, icon)
     {
+        if (serviceObject(typeName).usesEncryption)
+        {
+            if (_modelStack[0].useEncryptionPassphrase &&
+                _modelStack[0].checkEncryptionPassphrase(""))
+            {
+                var dlg = pageStack.push(Qt.resolvedUrl("PassphraseDialog.qml"));
+                dlg.passphraseAccepted.connect(function(passphrase) {
+                    console.log("setting passphrase " + passphrase);
+                    _modelStack[0].setEncryptionPassphrase(passphrase);
+                    pushModel(typeName, uid, icon);
+                });
+                return;
+            }
+        }
+
         var props = {
             "uid": uid
         };

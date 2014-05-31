@@ -11,6 +11,9 @@ class PlacesModel : public FolderBase
 {
     Q_OBJECT
     Q_PROPERTY(QStringList services READ services NOTIFY servicesChanged)
+    Q_PROPERTY(bool useEncryptionPassphrase READ useEncryptionPassphrase
+               WRITE setUseEncryptionPassphrase
+               NOTIFY useEncryptionPassphraseChanged)
 public:
     PlacesModel(QObject* parent = 0);
 
@@ -48,6 +51,7 @@ public:
 
 signals:
     void servicesChanged();
+    void useEncryptionPassphraseChanged();
 
 protected:
     virtual void init();
@@ -62,6 +66,9 @@ private:
                        const QString& icon,
                        const QString& type,
                        bool selectable);
+
+    bool useEncryptionPassphrase() const;
+    void setUseEncryptionPassphrase(bool value);
 };
 
 #endif // PLACESMODEL_H

@@ -19,6 +19,11 @@ QtObject {
      */
     property string icon: "image://theme/icon-m-folder"
 
+    /* Whether this service uses encryption. Accessing a service with encryption
+     * may require the user to enter a pass phrase first.
+     */
+    property bool usesEncryption: false
+
     /* The implementation of the service model.
      */
     property Component serviceModel

@@ -49,6 +49,69 @@ Page {
             }
 
             SectionHeader {
+                text: "Security"
+            }
+
+            TextSwitch {
+                automaticCheck: false
+
+                text: "Secure passwords"
+                description: "Set a custom pass phrase to encrypt passwords stored in " +
+                             "the configuration. Your pass phrase is not stored " +
+                             "anywhere and you will be prompted for it when needed.\n" +
+                             "If unchecked, passwords are encrypted with a default " +
+                             "pass phrase."
+                checked: placesModel.useEncryptionPassphrase
+
+                onClicked: {
+
+                    var props;
+                    var accepter;
+                    var rejecter;
+
+                    if (! checked)
+                    {
+                        props = {
+                            "confirm": false,
+                            "passphraseChecker": placesModel
+                        };
+
+                        accepter = function(passphrase) {
+                            placesModel.changeEncryptionPassphrase(passphrase);
+                            placesModel.useEncryptionPassphrase = true;
+                            checked = true;
+                        };
+
+                        rejecter = function() {
+                            checked = false;
+                        };
+                    }
+                    else
+                    {
+                        props = {
+                            "confirm": true,
+                            "passphraseChecker": placesModel
+                        };
+
+                        accepter = function(passphrase) {
+                            placesModel.changeEncryptionPassphrase("");
+                            placesModel.useEncryptionPassphrase = false;
+                            checked = false;
+                        };
+
+                        rejecter = function() {
+                            checked = true;
+                        };
+                    }
+                    var dlg = pageStack.push(Qt.resolvedUrl("PassphraseDialog.qml"),
+                                             props);
+                    dlg.passphraseAccepted.connect(accepter);
+                    dlg.rejected.connect(rejecter);
+                }
+
+            }
+
+            SectionHeader {
                 text: "Services"
             }
 

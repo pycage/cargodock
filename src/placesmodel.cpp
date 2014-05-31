@@ -330,3 +330,14 @@ void PlacesModel::loadDirectory(const QString&)
         appendItem(makeItem(uid, name, "Cloud", icon, type, false));
     }
 }
+
+bool PlacesModel::useEncryptionPassphrase() const
+{
+    return configValue("useEncryptionPassphrase").toBool();
+}
+
+void PlacesModel::setUseEncryptionPassphrase(bool value)
+{
+    setConfigValue("useEncryptionPassphrase", value);
+    emit useEncryptionPassphraseChanged();
+}

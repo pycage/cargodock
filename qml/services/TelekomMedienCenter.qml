@@ -7,6 +7,7 @@ ServiceObject {
 
     name: "Telekom® Mediencenter"
     icon: "image://theme/icon-m-folder"
+    usesEncryption: true
     serviceName: "telekom-mediencenter"
     serviceModel: DavModel { }
 
@@ -32,7 +33,7 @@ ServiceObject {
             onPropertiesChanged: {
                 nameEntry.text = properties["name"];
                 loginEntry.text = properties["login"];
-                passwordEntry.text = properties["password"];
+                passwordEntry.text = properties["password:blowfish"];
             }
 
             canAccept: nameEntry.text !== "" &&
@@ -124,7 +125,7 @@ ServiceObject {
                     "address": service._address,
                     "path": service._path,
                     "login": loginEntry.text,
-                    "password": passwordEntry.text,
+                    "password:blowfish": passwordEntry.text,
                     "securityMethod": service._securityMethod
                 }
 

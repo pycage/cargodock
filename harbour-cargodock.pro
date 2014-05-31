@@ -15,6 +15,10 @@ exists(../productkey.h) {
   DEFINES += HAVE_DROPBOX_PRODUCT_KEY
 }
 
+exists(../encryptionpassphrase.h) {
+  DEFINES += HAVE_ENCRYPTION_PASSPHRASE
+}
+
 SOURCES += src/harbour-cargodock.cpp \
     src/foldermodel.cpp \
     src/copyaction.cpp \
@@ -31,7 +35,8 @@ SOURCES += src/harbour-cargodock.cpp \
     src/davapi/davapi.cpp \
     src/pipedevice.cpp \
     src/sslhandler.cpp \
-    src/authenticator.cpp
+    src/authenticator.cpp \
+    src/blowfish.cpp
 
 OTHER_FILES += qml/harbour-cargodock.qml \
     qml/cover/CoverPage.qml \
@@ -74,7 +79,9 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/help.md \
     qml/pages/PreviewGeneric.qml \
     qml/services/TelekomMediencenter.qml \
-    qml/pages/SslHandler.qml
+    qml/pages/SslHandler.qml \
+    qml/pages/PassphraseDialog.qml \
+    qml/pages/PasswordField.qml
 
 HEADERS += \
     src/foldermodel.h \
@@ -96,5 +103,6 @@ HEADERS += \
     src/davapi/davapi.h \
     src/pipedevice.h \
     src/sslhandler.h \
-    src/authenticator.h
+    src/authenticator.h \
+    src/blowfish.h
 

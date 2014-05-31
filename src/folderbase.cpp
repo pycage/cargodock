@@ -1,8 +1,21 @@
 #include "folderbase.h"
 #include "copyaction.h"
+#include "blowfish.h"
 
 #include <QSettings>
 #include <QDebug>
+
+#ifdef HAVE_ENCRYPTION_PASSPHRASE
+#include "../../encryptionpassphrase.h"
+#else
+namespace
+{
+// when compiling Cargo Dock yourself, you should provide a more secret
+// passphrase, of course :)
+const QByteArray DEFAULT_ENCRYPTION_PASSPHRASE("not so secret");
+}
+#endif
+QByteArray theEncryptionPassphrase;
 
 
 FolderBase::FolderBase(QObject* parent)
@@ -84,6 +97,42 @@ void FolderBase::setUid(const QString& uid)
     myUid = uid;
     init();
     setPath(configValue("path").toString());
+}
+
+void FolderBase::setEncryptionPassphrase(const QString& passphrase)
+{
+    theEncryptionPassphrase = passphrase.toUtf8();
+}
+
+bool FolderBase::checkEncryptionPassphrase(const QString& passphrase) const
+{
+    return passphrase.toUtf8() == theEncryptionPassphrase;
+}
+
+void FolderBase::changeEncryptionPassphrase(const QString& passphrase)
+{
+    // open the settings and go through all encrypted entries
+    QSettings settings("harbour-cargodock", "CargoDock");
+    foreach (const QString& group, settings.childGroups())
+    {
+        settings.beginGroup(group);
+        foreach (const QString& key, settings.childKeys())
+        {
+            if (key.endsWith(":blowfish"))
+            {
+                Blowfish oldFish(theEncryptionPassphrase.size()
+                                 ? theEncryptionPassphrase
+                                 : DEFAULT_ENCRYPTION_PASSPHRASE);
+                Blowfish newFish(passphrase.size()
+                                 ? passphrase.toUtf8()
+                                 : DEFAULT_ENCRYPTION_PASSPHRASE);
+                QByteArray value = settings.value(key).toByteArray();
+                settings.setValue(key, newFish.encrypt(oldFish.decrypt(value)));
+            }
+        }
+        settings.endGroup();
+    }
+    theEncryptionPassphrase = passphrase.toUtf8();
 }
 
 void FolderBase::clearItems()
@@ -561,7 +610,17 @@ void FolderBase::setConfigValue(const QString& uid,
 {
     QSettings settings("harbour-cargodock", "CargoDock");
     settings.beginGroup(uid);
-    settings.setValue(key, value);
+    if (key.endsWith(":blowfish"))
+    {
+        Blowfish fish(theEncryptionPassphrase.size()
+                      ? theEncryptionPassphrase
+                      : DEFAULT_ENCRYPTION_PASSPHRASE);
+        settings.setValue(key, fish.encrypt(value.toString().toUtf8()));
+    }
+    else
+    {
+        settings.setValue(key, value);
+    }
 }
 
 QVariant FolderBase::configValue(const QString& uid,
@@ -569,7 +628,17 @@ QVariant FolderBase::configValue(const QString& uid,
 {
     QSettings settings("harbour-cargodock", "CargoDock");
     settings.beginGroup(uid);
-    return settings.value(key);
+    if (key.endsWith(":blowfish"))
+    {
+        Blowfish fish(theEncryptionPassphrase.size()
+                      ? theEncryptionPassphrase
+                      : DEFAULT_ENCRYPTION_PASSPHRASE);
+        return QString::fromUtf8(fish.decrypt(settings.value(key).toByteArray()));
+    }
+    else
+    {
+        return settings.value(key);
+    }
 }
 
 void FolderBase::removeConfigValues(const QString& uid)

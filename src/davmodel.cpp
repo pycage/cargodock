@@ -81,7 +81,7 @@ void DavModel::init()
     myDavApi->setAddress(address);
 
     const QString login = configValue("login").toString();
-    const QString password = configValue("password").toString();
+    const QString password = configValue("password:blowfish").toString();
     if (login.size())
     {
         myDavApi->setAuthorization(login, password);

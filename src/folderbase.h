@@ -103,6 +103,19 @@ public:
 
     QString uid() const { return myUid; }
 
+    /* Sets the passphrase for decrypting passwords.
+     */
+    Q_INVOKABLE void setEncryptionPassphrase(const QString& passphrase);
+
+    /* Checks if the given passphrase matches the current encryption passphrase.
+     */
+    Q_INVOKABLE bool checkEncryptionPassphrase(const QString& passphrase) const;
+
+    /* Changes the passphrase for decrypting passwords and recodes all
+     * encrypted data in the settings.
+     */
+    Q_INVOKABLE void changeEncryptionPassphrase(const QString& passphrase);
+
     virtual QHash<int, QByteArray> roleNames() const { return myRolenames; }
     virtual int rowCount(const QModelIndex&) const;
     virtual QVariant data(const QModelIndex& index, int role) const;
