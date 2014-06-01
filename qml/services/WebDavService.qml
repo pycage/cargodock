@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.cargodock 1.0
+import "../shared"
 
 ServiceObject {
     id: service
@@ -137,14 +138,12 @@ ServiceObject {
                         label: "Login"
                     }
 
-                    TextField {
+                    PasswordField {
                         id: passwordEntry
 
                         anchors.left: parent.left
                         anchors.right: parent.right
 
-                        inputMethodHints: Qt.ImhNoPredictiveText
-                        echoMode: TextInput.Password
                         placeholderText: "Enter password"
                         label: "Password"
                     }

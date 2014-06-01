@@ -55,16 +55,16 @@ Page {
             TextSwitch {
                 automaticCheck: false
 
-                text: "Secure passwords"
-                description: "Set a custom pass phrase to encrypt passwords stored in " +
-                             "the configuration. Your pass phrase is not stored " +
-                             "anywhere and you will be prompted for it when needed.\n" +
-                             "If unchecked, passwords are encrypted with a default " +
-                             "pass phrase."
+                text: "Secure password storage"
+                description: "Enable to set a custom passphrase to encrypt your " +
+                             "passwords stored in the configuration.\n" +
+                             "Your passphrase is not stored and will be asked for " +
+                             "once per session.\n" +
+                             "If not enabled, passwords are encrypted with a default " +
+                             "passphrase."
                 checked: placesModel.useEncryptionPassphrase
 
                 onClicked: {
-
                     var props;
                     var accepter;
                     var rejecter;
@@ -72,7 +72,7 @@ Page {
                     if (! checked)
                     {
                         props = {
-                            "confirm": false,
+                            "mode": "new",
                             "passphraseChecker": placesModel
                         };
 
@@ -89,7 +89,7 @@ Page {
                     else
                     {
                         props = {
-                            "confirm": true,
+                            "mode": "confirm",
                             "passphraseChecker": placesModel
                         };
 
@@ -103,6 +103,7 @@ Page {
                             checked = true;
                         };
                     }
+
                     var dlg = pageStack.push(Qt.resolvedUrl("PassphraseDialog.qml"),
                                              props);
                     dlg.passphraseAccepted.connect(accepter);

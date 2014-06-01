@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.cargodock 1.0
+import "../shared"
 
 ServiceObject {
     id: service
@@ -104,13 +105,12 @@ ServiceObject {
                         label: "T-Online-Adresse"
                     }
 
-                    TextField {
+                    PasswordField {
                         id: passwordEntry
 
                         anchors.left: parent.left
                         anchors.right: parent.right
 
-                        echoMode: TextInput.Password
                         placeholderText: "Passwort eingeben"
                         label: "Passwort"
                     }

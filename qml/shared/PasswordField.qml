@@ -28,6 +28,7 @@ Item {
         anchors.rightMargin: Theme.paddingLarge
         text: "Abc"
         font.pixelSize: Theme.fontSizeMedium
+        font.bold: true
         color: peek ? Theme.highlightColor : Theme.secondaryColor
 
         MouseArea {

@@ -36,7 +36,13 @@ Page {
             if (_modelStack[0].useEncryptionPassphrase &&
                 _modelStack[0].checkEncryptionPassphrase(""))
             {
-                var dlg = pageStack.push(Qt.resolvedUrl("PassphraseDialog.qml"));
+                var props = {
+                    "mode": "ask",
+                    "passphraseChecker": _modelStack[0]
+                };
+
+                var dlg = pageStack.push(Qt.resolvedUrl("PassphraseDialog.qml"),
+                                         props);
                 dlg.passphraseAccepted.connect(function(passphrase) {
                     console.log("setting passphrase " + passphrase);
                     _modelStack[0].setEncryptionPassphrase(passphrase);
