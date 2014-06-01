@@ -49,7 +49,7 @@ FolderBase::FolderBase(QObject* parent)
     myMimeTypeIcons.insert("application/ogg",                         "image://theme/icon-m-music");
     myMimeTypeIcons.insert("application/pdf",                         "image://theme/icon-m-document");
     myMimeTypeIcons.insert("application/rtf",                         "image://theme/icon-m-document");
-    myMimeTypeIcons.insert("application/msword"                       "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/msword",                      "image://theme/icon-m-document");
     myMimeTypeIcons.insert("application/vnd.android.package-archive", "image://theme/icon-m-device");
     myMimeTypeIcons.insert("application/vnd.oasis.opendocument.text", "image://theme/icon-m-document");
     myMimeTypeIcons.insert("application/vnd.oasis.opendocument.text-template", "image://theme/icon-m-document");

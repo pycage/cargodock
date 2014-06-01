@@ -13,7 +13,7 @@ Name:       harbour-cargodock
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    A two-paned filemanager.
-Version:    0.2.1.105
+Version:    0.2.1.106
 Release:    1
 Group:      Qt/Qt
 License:    LICENSE
