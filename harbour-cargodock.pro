@@ -81,7 +81,7 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/services/TelekomMediencenter.qml \
     qml/pages/SslHandler.qml \
     qml/pages/PassphraseDialog.qml \
-    qml/pages/PasswordField.qml
+    qml/shared/PasswordField.qml
 
 HEADERS += \
     src/foldermodel.h \

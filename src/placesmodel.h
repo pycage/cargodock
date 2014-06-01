@@ -17,6 +17,8 @@ class PlacesModel : public FolderBase
 public:
     PlacesModel(QObject* parent = 0);
 
+    Q_INVOKABLE bool verifyEncryptionPassphrase(const QString& passphrase) const;
+
     /* Adds a service instance with icon and name.
      */
     Q_INVOKABLE void addService(const QString& serviceName,

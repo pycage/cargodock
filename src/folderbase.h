@@ -261,6 +261,8 @@ protected:
 
     virtual void init() { }
 
+    QByteArray encryptionPassphraseHash(const QByteArray& passphrase = QByteArray()) const;
+
     void clearItems();
     void appendItem(Item::Ptr item);
     void removeItem(int idx);

@@ -1,6 +1,7 @@
 #include "placesmodel.h"
 #include "developermode.h"
 
+#include <QCryptographicHash>
 #include <QDateTime>
 #include <QDir>
 #include <QStandardPaths>
@@ -339,5 +340,16 @@ bool PlacesModel::useEncryptionPassphrase() const
 void PlacesModel::setUseEncryptionPassphrase(bool value)
 {
     setConfigValue("useEncryptionPassphrase", value);
+    if (value)
+    {
+        setConfigValue("encryptionPassphraseHash",
+                       encryptionPassphraseHash());
+    }
     emit useEncryptionPassphraseChanged();
+}
+
+bool PlacesModel::verifyEncryptionPassphrase(const QString& passphrase) const
+{
+    QByteArray hash = configValue("encryptionPassphraseHash").toByteArray();
+    return (encryptionPassphraseHash(passphrase.toUtf8()) == hash);
 }

@@ -2,6 +2,7 @@
 #include "copyaction.h"
 #include "blowfish.h"
 
+#include <QCryptographicHash>
 #include <QSettings>
 #include <QDebug>
 
@@ -133,6 +134,13 @@ void FolderBase::changeEncryptionPassphrase(const QString& passphrase)
         settings.endGroup();
     }
     theEncryptionPassphrase = passphrase.toUtf8();
+}
+
+QByteArray FolderBase::encryptionPassphraseHash(const QByteArray& passphrase) const
+{
+    return QCryptographicHash::hash(passphrase.size() ? passphrase
+                                                      : theEncryptionPassphrase,
+                                    QCryptographicHash::Sha1).toHex();
 }
 
 void FolderBase::clearItems()
@@ -400,7 +408,7 @@ void FolderBase::newFolder(const QString& name)
 {
     if (makeDirectory(joinPath(QStringList() << myPath << name)))
     {
-        emit finished();
+        refresh();
     }
     else
     {
