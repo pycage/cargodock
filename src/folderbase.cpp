@@ -44,11 +44,18 @@ FolderBase::FolderBase(QObject* parent)
     myRolenames.insert(SelectedRole, "selected");
     myRolenames.insert(CapabilitiesRole, "capabilities");
 
-    myMimeTypeIcons.insert("application/epub-zip",                    "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/epub+zip",                    "image://theme/icon-m-document");
     myMimeTypeIcons.insert("application/octet-stream",                "image://theme/icon-m-other");
+    myMimeTypeIcons.insert("application/ogg",                         "image://theme/icon-m-music");
     myMimeTypeIcons.insert("application/pdf",                         "image://theme/icon-m-document");
     myMimeTypeIcons.insert("application/rtf",                         "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/msword"                       "image://theme/icon-m-document");
     myMimeTypeIcons.insert("application/vnd.android.package-archive", "image://theme/icon-m-device");
+    myMimeTypeIcons.insert("application/vnd.oasis.opendocument.text", "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/vnd.oasis.opendocument.text-template", "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/vnd.oasis.opendocument.graphics", "image://theme/icon-m-image");
+    myMimeTypeIcons.insert("application/vnd.oasis.opendocument.spreadsheet", "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("application/vnd.oasis.opendocument.spreadsheet-template", "image://theme/icon-m-document");
     myMimeTypeIcons.insert("application/xml",                         "image://theme/icon-m-document");
     myMimeTypeIcons.insert("application/x-core",                      "image://theme/icon-m-crash-reporter");
     myMimeTypeIcons.insert("application/x-debian-package",            "image://theme/icon-m-other");
@@ -60,22 +67,28 @@ FolderBase::FolderBase(QObject* parent)
     myMimeTypeIcons.insert("application/x-sharedlib",                 "image://theme/icon-m-share");
     myMimeTypeIcons.insert("application/x-shellscript",               "image://theme/icon-m-document");
     myMimeTypeIcons.insert("application/x-sqlite3",                   "image://theme/icon-m-levels");
+    myMimeTypeIcons.insert("application/x-tex",                       "image://theme/icon-m-document");
     myMimeTypeIcons.insert("application/x-trash",                     "image://theme/icon-m-dismiss");
     myMimeTypeIcons.insert("application/x-x509-ca-cert",              "image://theme/icon-m-certificates");
     myMimeTypeIcons.insert("application/x-xcf",                       "image://theme/icon-m-image");
     myMimeTypeIcons.insert("application/zip",                         "image://theme/icon-m-other");
     myMimeTypeIcons.insert("audio/mp4",                               "image://theme/icon-m-music");
     myMimeTypeIcons.insert("audio/mpeg",                              "image://theme/icon-m-music");
+    myMimeTypeIcons.insert("audio/x-ms-wma",                          "image://theme/icon-m-music");
+    myMimeTypeIcons.insert("audio/x-scpls",                           "image://theme/icon-m-music");
+    myMimeTypeIcons.insert("audio/x-vorbis+ogg",                      "image://theme/icon-m-music");
     myMimeTypeIcons.insert("image/jpeg",                              "image://theme/icon-m-image");
     myMimeTypeIcons.insert("image/png",                               "image://theme/icon-m-image");
     myMimeTypeIcons.insert("image/rle",                               "image://theme/icon-m-image");
     myMimeTypeIcons.insert("image/svg+xml",                           "image://theme/icon-m-image");
     myMimeTypeIcons.insert("inode/directory",                         "image://theme/icon-m-folder");
+    myMimeTypeIcons.insert("text/csv",                                "image://theme/icon-m-document");
     myMimeTypeIcons.insert("text/html",                               "image://theme/icon-m-region");
     myMimeTypeIcons.insert("text/plain",                              "image://theme/icon-m-document");
     myMimeTypeIcons.insert("text/vcard",                              "image://theme/icon-m-people");
     myMimeTypeIcons.insert("text/x-c++src",                           "image://theme/icon-m-document");
     myMimeTypeIcons.insert("text/x-qml",                              "image://theme/icon-m-document");
+    myMimeTypeIcons.insert("text/x-vcard",                            "image://theme/icon-m-people");
     myMimeTypeIcons.insert("video/mp4",                               "image://theme/icon-m-video");
     myMimeTypeIcons.insert("video/x-flv",                             "image://theme/icon-m-video");
 }
