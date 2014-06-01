@@ -5,7 +5,7 @@ import harbour.cargodock 1.0
 ServiceObject {
     id: service
 
-    icon: Qt.resolvedUrl("../dropbox.png")
+    icon: Qt.resolvedUrl("dropbox.png")
     serviceName: "dropbox"
     name: "Dropbox"
 
@@ -92,7 +92,7 @@ ServiceObject {
                         Image {
                             id: dropboxIcon
                             x: Theme.paddingLarge
-                            source: Qt.resolvedUrl("../dropbox.png")
+                            source: Qt.resolvedUrl("dropbox.png")
                         }
 
                         Label {

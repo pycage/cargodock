@@ -18,7 +18,7 @@ ServiceObject {
 
     serviceDelegate: ServiceDelegate {
         title: service.name
-        subtitle: "Zugang zum Mediencenter einrichten."
+        subtitle: "Access Deutsche Telekom® Mediencenter."
         iconSource: service.icon
     }
 
