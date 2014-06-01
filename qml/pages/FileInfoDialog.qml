@@ -107,11 +107,13 @@ Dialog {
             }
 
             KeyValue {
+                visible: fileInfo.owner !== ""
                 key: "Owner"
                 value: fileInfo.owner
             }
 
             KeyValue {
+                visible: fileInfo.group !== ""
                 key: "Group"
                 value: fileInfo.group
             }
