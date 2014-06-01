@@ -33,6 +33,7 @@ FolderModel::FolderModel(QObject* parent)
 
     myPreviewComponents.insert("audio/mp4",               "PreviewAudio");
     myPreviewComponents.insert("audio/mpeg",              "PreviewAudio");
+    myPreviewComponents.insert("audio/x-vorbis+ogg",      "PreviewAudio");
     myPreviewComponents.insert("image/jpeg",              "PreviewImage");
     myPreviewComponents.insert("image/png",               "PreviewImage");
     myPreviewComponents.insert("text/plain",              "PreviewText");

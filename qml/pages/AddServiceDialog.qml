@@ -36,7 +36,8 @@ Page {
                 sourceComponent: serviceObj.serviceDelegate
             }
 
-            onClicked: {
+            function addService()
+            {
                 function closure(placesModel, refreshPanes)
                 {
                     return function(serviceName, icon, properties)
@@ -49,6 +50,12 @@ Page {
                 var obj = serviceObject(modelData);
                 var dlg = pageStack.replace(obj.serviceConfigurator);
                 dlg.serviceConfigured.connect(closure(placesModel, refreshPanes));
+            }
+
+            onClicked: {
+                passphraseGuard.run(serviceObj,
+                                    placesModel,
+                                    addService);
             }
         }
     }

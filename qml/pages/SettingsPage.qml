@@ -145,15 +145,8 @@ Page {
                                                           refreshPanes));
                     }
 
-                    ServiceDelegate {
-                        anchors.fill: parent
-                        iconSource: serviceObj.icon
-                        title: serviceObj.name
-                        subtitle: modelData.name
-                        highlighted: serviceItem.highlighted
-                    }
-
-                    onClicked: {
+                    function configureService()
+                    {
                         function closure(placesModel, uid, refreshPanes)
                         {
                             return function(serviceName, icon, properties)
@@ -169,6 +162,20 @@ Page {
                         dlg.serviceConfigured.connect(closure(placesModel,
                                                               modelData.uid,
                                                               refreshPanes));
+                    }
+
+                    ServiceDelegate {
+                        anchors.fill: parent
+                        iconSource: serviceObj.icon
+                        title: serviceObj.name
+                        subtitle: modelData.name
+                        highlighted: serviceItem.highlighted
+                    }
+
+                    onClicked: {
+                        passphraseGuard.run(serviceObj,
+                                            placesModel,
+                                            configureService);
                     }
 
                     Component {

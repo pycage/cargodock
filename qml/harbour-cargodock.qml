@@ -78,9 +78,13 @@ ApplicationWindow
      ******************************************/
     PlacesService { }
     LocalService { }
+
+    // cloud services
     DropboxService { }
-    WebDavService { }
+    OwnCloudService { }
     TelekomMediencenter { }
+    WebDavService { }
+    /******************************************/
 
     QtObject {
         id: sharedState
@@ -98,6 +102,10 @@ ApplicationWindow
 
     Notification {
         id: notification
+    }
+
+    PassphraseGuard {
+        id: passphraseGuard
     }
 
     SslHandler { }

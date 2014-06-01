@@ -31,43 +31,37 @@ Page {
 
     function pushModel(typeName, uid, icon)
     {
-        if (serviceObject(typeName).usesEncryption)
+        function f()
         {
-            if (_modelStack[0].useEncryptionPassphrase &&
-                _modelStack[0].checkEncryptionPassphrase(""))
-            {
-                var props = {
-                    "mode": "ask",
-                    "passphraseChecker": _modelStack[0]
-                };
+            var props = {
+                "uid": uid
+            };
+            var model;
+            console.log("create model " + typeName + " " + uid);
+            model = serviceObject(typeName).createModel(uid);
+            model.progress.connect(function(n, p) { sharedState.actionProgress = p; sharedState.actionTarget = n; });
+            model.finished.connect(page.finished);
+            model.error.connect(page.error);
 
-                var dlg = pageStack.push(Qt.resolvedUrl("PassphraseDialog.qml"),
-                                         props);
-                dlg.passphraseAccepted.connect(function(passphrase) {
-                    console.log("setting passphrase " + passphrase);
-                    _modelStack[0].setEncryptionPassphrase(passphrase);
-                    pushModel(typeName, uid, icon);
-                });
-                return;
-            }
+            _modelIconStack.push(icon);
+            _currentModelIcon = _modelIconStack[_modelIconStack.length - 1];
+            _modelStack.push(model);
+            sourceModel = model;
+            sharedState.currentContentModel = sourceModel;
+            page.modelChanged();
         }
 
-        var props = {
-            "uid": uid
-        };
-        var model;
-        console.log("create model " + typeName + " " + uid);
-        model = serviceObject(typeName).createModel(uid);
-        model.progress.connect(function(n, p) { sharedState.actionProgress = p; sharedState.actionTarget = n; });
-        model.finished.connect(page.finished);
-        model.error.connect(page.error);
+        if (_modelStack.length > 0)
+        {
+            passphraseGuard.run(serviceObject(typeName),
+                                _modelStack[0],
+                                f);
+        }
+        else
+        {
+            f();
+        }
 
-        _modelIconStack.push(icon);
-        _currentModelIcon = _modelIconStack[_modelIconStack.length - 1];
-        _modelStack.push(model);
-        sourceModel = model;
-        sharedState.currentContentModel = sourceModel;
-        page.modelChanged();
     }
 
     function popModels(model)
