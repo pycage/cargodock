@@ -603,7 +603,9 @@ Page {
         }//SilicaListView
 
         FancyScroller {
-            visible: contentlist.quickScrollEnabled !== true && ! _selectionMode
+            visible: (contentlist.quickScroll === undefined ||
+                      contentlist.quickScrollEnabled !== true) &&
+                     ! _selectionMode
             flickable: contentlist
         }
     }//Drawer
