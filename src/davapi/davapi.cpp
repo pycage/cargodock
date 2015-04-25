@@ -146,14 +146,16 @@ void DavApi::propfind(const QString& path)
     {
         myPropfindPath = path;
 
+        qDebug() << "path" << path;
         QByteArray encodedPath = QUrl::toPercentEncoding(path, "/");
+        qDebug() << "encodedPath" << encodedPath;
         if (encodedPath.right(1) != "/")
         {
             // some WebDAV servers don't like it if the trailing / is missing
             encodedPath += "/";
         }
         QUrl url(myAddress);
-        url.setPath(encodedPath);
+        url.setPath(encodedPath, QUrl::StrictMode);
         qDebug() << Q_FUNC_INFO << url;
 
         QNetworkRequest req = makeRequest(url, "PROPFIND");
@@ -172,7 +174,7 @@ void DavApi::mkcol(const QString& path)
     if (nam)
     {
         QUrl url(myAddress);
-        url.setPath(QUrl::toPercentEncoding(path, "/"));
+        url.setPath(QUrl::toPercentEncoding(path, "/"), QUrl::StrictMode);
 
         QNetworkRequest req = makeRequest(url, "MKCOL");
         QNetworkReply* reply = nam->sendCustomRequest(req, "MKCOL");
@@ -188,7 +190,7 @@ void DavApi::deleteResource(const QString& path)
     if (nam)
     {
         QUrl url(myAddress);
-        url.setPath(QUrl::toPercentEncoding(path, "/"));
+        url.setPath(QUrl::toPercentEncoding(path, "/"), QUrl::StrictMode);
 
         QNetworkRequest req = makeRequest(url, "DELETE");
         QNetworkReply* reply = nam->deleteResource(req);
@@ -204,7 +206,7 @@ void DavApi::moveResource(const QString& path, const QString& newPath)
     if (nam)
     {
         QUrl url(myAddress);
-        url.setPath(QUrl::toPercentEncoding(path, "/"));
+        url.setPath(QUrl::toPercentEncoding(path, "/"), QUrl::StrictMode);
 
         QNetworkRequest req = makeRequest(url, "MOVE");
         req.setRawHeader("Destination", QUrl::toPercentEncoding(newPath, "/"));
@@ -224,7 +226,7 @@ QNetworkReply* DavApi::getResource(const QString& path, qint64 offset, qint64 si
     if (nam)
     {
         QUrl url(myAddress);
-        url.setPath(QUrl::toPercentEncoding(path, "/"));
+        url.setPath(QUrl::toPercentEncoding(path, "/"), QUrl::StrictMode);
 
         QNetworkRequest req = makeRequest(url, "GET");
         reply = nam->get(req);
@@ -243,7 +245,7 @@ void DavApi::putResource(const QString& path, qint64 size, QIODevice* buffer)
     if (nam)
     {
         QUrl url(myAddress);
-        url.setPath(QUrl::toPercentEncoding(path, "/"));
+        url.setPath(QUrl::toPercentEncoding(path, "/"), QUrl::StrictMode);
 
         QNetworkRequest req = makeRequest(url, "PUT");
         req.setAttribute(QNetworkRequest::DoNotBufferUploadDataAttribute, true);

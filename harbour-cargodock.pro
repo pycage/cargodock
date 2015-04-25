@@ -83,7 +83,8 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/pages/PassphraseDialog.qml \
     qml/shared/PasswordField.qml \
     qml/services/OwnCloudService.qml \
-    qml/pages/PassphraseGuard.qml
+    qml/pages/PassphraseGuard.qml \
+    harbour-cargodock.png
 
 HEADERS += \
     src/foldermodel.h \
