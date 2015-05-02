@@ -36,7 +36,11 @@ SOURCES += src/harbour-cargodock.cpp \
     src/pipedevice.cpp \
     src/sslhandler.cpp \
     src/authenticator.cpp \
-    src/blowfish.cpp
+    src/blowfish.cpp \
+    src/ftpmodel.cpp \
+    src/ftpapi/ftpapi.cpp \
+    src/ftpapi/ftpcommand.cpp \
+    src/ftpapi/ftpfile.cpp
 
 OTHER_FILES += qml/harbour-cargodock.qml \
     qml/cover/CoverPage.qml \
@@ -84,7 +88,8 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/shared/PasswordField.qml \
     qml/services/OwnCloudService.qml \
     qml/pages/PassphraseGuard.qml \
-    harbour-cargodock.png
+    harbour-cargodock.png \
+    qml/services/FtpService.qml
 
 HEADERS += \
     src/foldermodel.h \
@@ -107,5 +112,9 @@ HEADERS += \
     src/pipedevice.h \
     src/sslhandler.h \
     src/authenticator.h \
-    src/blowfish.h
+    src/blowfish.h \
+    src/ftpmodel.h \
+    src/ftpapi/ftpapi.h \
+    src/ftpapi/ftpcommand.h \
+    src/ftpapi/ftpfile.h
 
