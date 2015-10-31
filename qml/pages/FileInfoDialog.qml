@@ -2,10 +2,10 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.cargodock 1.0
 
-Dialog {
+Page {
     id: dialog
 
-    allowedOrientations: Orientation.Landscape | Orientation.Portrait
+    allowedOrientations: Orientation.All
 
     property FileInfo fileInfo
 
@@ -13,14 +13,24 @@ Dialog {
         anchors.fill: parent
         contentHeight: column.height
 
+        PullDownMenu {
+            enabled: fileInfo.canOpen
+
+            MenuItem {
+                text: "Open"
+                onClicked: {
+                    fileInfo.open()
+                }
+            }
+        }
+
         Column {
             id: column
             width: parent.width
             height: childrenRect.height
 
-            DialogHeader {
-                title: fileInfo.canOpen ? "Open"
-                                        : "Close"
+            PageHeader {
+                title: "File information"
             }
 
             // preview item

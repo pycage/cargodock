@@ -4,6 +4,8 @@ import Sailfish.Silica 1.0
 Page {
     id: page
 
+    allowedOrientations: Orientation.All
+
     property variant placesModel
 
     SilicaListView {

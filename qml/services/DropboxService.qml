@@ -44,6 +44,8 @@ ServiceObject {
 
     serviceConfigurator: Component {
         Dialog {
+            allowedOrientations: Orientation.All
+
             signal serviceConfigured(string serviceName,
                                      string icon,
                                      variant properties)

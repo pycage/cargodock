@@ -5,6 +5,8 @@ import "../services"
 
 Page {
 
+    allowedOrientations: Orientation.All
+
     property variant placesModel
 
     function userServices(services)

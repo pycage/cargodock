@@ -13,6 +13,7 @@ Page {
     property var _modelIconStack: []
     property string _currentModelIcon
 
+    // the model for listing content
     property variant sourceModel
     property variant destinationModel
 
@@ -33,9 +34,6 @@ Page {
     {
         function f()
         {
-            var props = {
-                "uid": uid
-            };
             var model;
             console.log("create model " + typeName + " " + uid);
             model = serviceObject(typeName).createModel(uid);
@@ -43,12 +41,20 @@ Page {
             model.finished.connect(page.finished);
             model.error.connect(page.error);
 
+            var props = {
+                "sourceModel": model
+            };
+
+            pageStack.push(folderPage, props);
+
+            /*
             _modelIconStack.push(icon);
             _currentModelIcon = _modelIconStack[_modelIconStack.length - 1];
             _modelStack.push(model);
             sourceModel = model;
             sharedState.currentContentModel = sourceModel;
             page.modelChanged();
+            */
         }
 
         if (_modelStack.length > 0)
@@ -119,6 +125,20 @@ Page {
         return actions;
     }
 
+    function cdUp()
+    {
+        var model = _modelStack[_modelStack.length - 1];
+
+        if (model !== sourceModel)
+        {
+            popModels(model);
+        }
+
+        console.log("up one");
+        _selectionMode = false;
+        model.cdUp(modelData.level);
+    }
+
     onStatusChanged: {
         if (status === PageStatus.Active)
         {
@@ -127,8 +147,14 @@ Page {
         }
     }
 
+    /*
     Component.onCompleted: {
         pushModel("places", "places", "");
+    }
+    */
+
+    Component.onDestruction: {
+        sourceModel.cdUp(1);
     }
 
     RemorsePopup {
@@ -558,6 +584,11 @@ Page {
                             }
                         } else {
                             sourceModel.open(model.name);
+
+                            var props = {
+                                "sourceModel": sourceModel
+                            };
+                            pageStack.push(folderPage, props);
                         }
                     }
                     else if (! sharedState.actionInProgress && selectable)

@@ -371,13 +371,12 @@ void FolderBase::open(const QString& name)
 
 void FolderBase::copySelected(FolderBase* dest)
 {
-    QStringList paths;
-    foreach (int idx, mySelection)
-    {
-        paths << joinPath(QStringList() << myPath << myItems.at(idx)->name);
-    }
+    copyItems(dest, selection());
+}
 
-    CopyAction* action = new CopyAction(this, dest, paths, dest->path());
+void FolderBase::copyItems(FolderBase* dest, const QStringList& items)
+{
+    CopyAction* action = new CopyAction(this, dest, items, dest->path());
     connect(action, SIGNAL(progress(QString,double)),
             this, SIGNAL(progress(QString,double)));
     connect(action, SIGNAL(finished()),

@@ -16,6 +16,9 @@ ApplicationWindow
     property var _serviceObjects: ({ })
     property var serviceNames: []
 
+    property var path1: []
+    property var path2: []
+
     /* Registers the given service object.
      */
     function registerServiceObject(serviceObject)
@@ -61,16 +64,20 @@ ApplicationWindow
         }
     }
 
-    initialPage: folderPage
+    initialPage: folderPageNg
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
 
     Component.onCompleted: {
+
+
+        /*
         var props = {
             "isSecondPane": true
         };
 
         pageStack.pushExtra(folderPage, props);
         updateDestinationContentModels();
+        */
     }
 
     /******************************************
@@ -145,7 +152,44 @@ ApplicationWindow
         }
     }
 
+    Component {
+        id: loaderPage
 
+        Page {
+            id: page
+            BusyIndicator {
+                running: page.status === PageStatus.Active
+                anchors.centerIn: parent
+                size: BusyIndicatorSize.Large
+            }
+
+            onStatusChanged: {
+                if (status === PageStatus.Active)
+                {
+                    if (path1.length === 0)
+                    {
+                        var model = serviceObject("places").createModel("places");
+                        var props = {
+                            "sourceModel": model
+                        };
+                        var page = pageStack.push(folderPage, props);
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
+        }
+    }
+
+    Component {
+        id: folderPageNg
+
+        FolderPageNg { }
+    }
+
+    /*
     Component {
         id: folderPage
 
@@ -188,4 +232,5 @@ ApplicationWindow
             }
         }
     }
+    */
 }

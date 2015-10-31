@@ -181,13 +181,6 @@ void CopyAction::start()
         emit finished();
         return;
     }
-    else if (mySource->uid() == myDestination->uid() &&
-             mySource->path() == myDestinationPath)
-    {
-        emit error("Source and destination are the same.");
-        emit finished();
-        return;
-    }
 
     emit progress(QString(), 0);
 
@@ -213,7 +206,7 @@ void CopyAction::start()
 }
 
 void CopyAction::copy(const QString& sourcePath, const QString& destPath)
-{
+{    
     qDebug() << Q_FUNC_INFO << sourcePath << "->" << destPath;
     qDebug() << "type of" << sourcePath << myTypeMap.value(sourcePath);
     if (myTypeMap.value(sourcePath, FolderBase::Unsupported) /*mySource->type(sourcePath)*/ == FolderBase::Folder)
@@ -268,6 +261,14 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
                     myDestination->joinPath(QStringList()
                                             << destPath
                                             << mySource->basename(sourcePath));
+
+            qDebug() << "Copy" << sourcePath << "->" << destFile;
+            if (mySource->uid() == myDestination->uid() && sourcePath == destFile)
+            {
+                emit error("Source and destination are the same.");
+                return;
+            }
+
             QIODevice* srcFd = mySource->openFile(sourcePath,
                                                   size,
                                                   QIODevice::ReadOnly);

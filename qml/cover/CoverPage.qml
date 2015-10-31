@@ -49,7 +49,7 @@ CoverBackground {
         truncationMode: TruncationMode.Fade
         font.pixelSize: Theme.fontSizeMedium
         color: Theme.primaryColor
-        text: coverModel.name
+        //text: coverModel.name
     }
 
     ListView {
