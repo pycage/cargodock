@@ -9,11 +9,34 @@ Page {
 
     property ListModel trailModels: ListModel { }
 
+    function refresh()
+    {
+        fileView.model.refresh();
+    }
+
     Component {
         id: trailModelComponent
 
         TrailModel {
             onFsModelChanged: fileView.model = fsModel
+
+            onProgress: {
+                console.log("Progress: " + name + " " + amount + "%");
+                toolBox.progress.name = name;
+                toolBox.progress.amount = amount;
+            }
+
+            onFinished: {
+                toolBox.mode = 0;
+                toolBox.opened = false;
+                fileView.model.refresh();
+                console.log("Finished");
+            }
+
+            onError: {
+                notification.show(details);
+                console.log("Error: " + details);
+            }
         }
     }
 
@@ -25,6 +48,11 @@ Page {
         {
             fileView.trailModel = trailModel;
         }
+    }
+
+    function goUp()
+    {
+        fileView.trailModel.pop(1);
     }
 
     Component.onCompleted: {
@@ -50,14 +78,11 @@ Page {
         anchors.right: parent.right
         anchors.bottom: toolBox.top
 
+        selectionMode: toolBox.opened && toolBox.mode === 0
         clip: true
 
-        Connections {
-            ignoreUnknownSignals: true
-            target: fileView.model
-            onError: {
-                notification.show(details);
-            }
+        onPressAndHold: {
+            toolBox.opened = ! toolBox.opened;
         }
 
         PullDownMenu {
@@ -80,114 +105,38 @@ Page {
                     pageStack.push(Qt.resolvedUrl("SettingsPage.qml"), props);
                 }
             }
-        }
-    }
 
-    Item {
-        id: toolBox
-
-        property var sourceModel: null
-        property var selection: []
-
-        function copyTo(destModel)
-        {
-            console.log("Copying to " + destModel.path + ", " + selection);
-            sourceModel.copyItems(destModel, selection);
-        }
-
-        function deleteItems(model, items)
-        {
-            model.deleteItems(items);
-        }
-
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.bottom
-        anchors.topMargin: fileView.selectionMode ? -height : 0
-        height: Theme.itemSizeLarge
-
-        Behavior on anchors.topMargin {
-            NumberAnimation { duration: 300; easing.type: Easing.InOutQuad }
-        }
-
-        Row {
-            anchors.fill: parent
-            spacing: Theme.paddingSmall
-
-            Button {
-                visible: toolBox.sourceModel == null
-                text: "A"
-                width: height
-                onClicked: {
-                    fileView.selectAll();
-                }
-            }
-
-            Button {
-                visible: toolBox.sourceModel == null
-                text: "N"
-                width: height
+            MenuItem {
+                visible: toolBox.opened && toolBox.mode === 0
+                text: "Select none"
                 onClicked: {
                     fileView.unselectAll();
                 }
             }
 
-            Label {
-                text: qsTr("%1 selected").arg(fileView.selectionSize)
-            }
-
-            Button {
-                visible: toolBox.sourceModel == null
-                text: "X"
-                width: height
+            MenuItem {
+                visible: toolBox.opened && toolBox.mode === 0
+                text: "Select all"
                 onClicked: {
                     fileView.selectAll();
                 }
             }
+        }
+    }
 
-            Button {
-                visible: toolBox.sourceModel == null
-                text: "C"
-                width: height
-                onClicked: {
-                    toolBox.sourceModel = fileView.model;
-                    toolBox.selection = fileView.model.selection;
-                }
-            }
+    ToolBox {
+        id: toolBox
 
-            Button {
-                visible: toolBox.sourceModel != null
-                text: "V"
-                width: height
-                onClicked: {
-                    toolBox.copyTo(fileView.model);
-                    toolBox.sourceModel = null;
-                    toolBox.selection = [];
-                }
-            }
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.bottom
+        anchors.topMargin: opened ? -height : -Theme.itemSizeSmall
 
-            Button {
-                text: "Del"
-                width: height
+        fileView: fileView
+        remorse: remorse
 
-                onClicked: {
-                    console.log("Deleting items: " + fileView.model.selection);
-
-                    function closure(toolBox, model, items)
-                    {
-                        return function()
-                        {
-                            toolBox.deleteItems(model, items);
-                        }
-                    }
-
-                    var msg = qsTr("Deleting %1 items").arg(fileView.model.selected);
-                    remorse.execute(msg,
-                                    closure(toolBox,
-                                            fileView.model,
-                                            fileView.model.selection.slice()));
-                }
-            }
+        Behavior on anchors.topMargin {
+            NumberAnimation { duration: 300; easing.type: Easing.InOutQuad }
         }
     }
 
@@ -196,6 +145,7 @@ Page {
 
         PanesPage {
             trails: page.trailModels
+            currentTrailModel: fileView.trailModel
 
             onOpened: {
                 fileView.trailModel = model;

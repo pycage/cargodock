@@ -266,6 +266,7 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
             if (mySource->uid() == myDestination->uid() && sourcePath == destFile)
             {
                 emit error("Source and destination are the same.");
+                emit finished();
                 return;
             }
 
@@ -293,6 +294,8 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
             else
             {
                 emit error("Could not copy to destination.");
+                emit finished();
+                return;
             }
         }
     }

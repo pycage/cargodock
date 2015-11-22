@@ -203,7 +203,7 @@ Page {
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 text: "No services yet.\n" +
-                      "Drag down to add a service."
+                      "Pull down to add a service."
             }
 
         }

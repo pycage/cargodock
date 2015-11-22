@@ -38,7 +38,7 @@ PreviewItem {
         id: fullPageComponent
 
         Page {
-            allowedOrientations: Orientation.Landscape | Orientation.Portrait
+            allowedOrientations: Orientation.All
 
             property string source
 

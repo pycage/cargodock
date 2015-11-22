@@ -114,3 +114,6 @@ HEADERS += \
     src/authenticator.h \
     src/blowfish.h
 
+DISTFILES += \
+    qml/pages/ToolBox.qml
+

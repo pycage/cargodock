@@ -402,12 +402,32 @@ void FolderBase::deleteItems(const QStringList& items)
 
 void FolderBase::linkSelected(FolderBase* dest)
 {
+    copyItems(dest, selection());
+
+    /*
     foreach (int idx, mySelection)
     {
         const QString endpoint = joinPath(QStringList() << myPath << myItems.at(idx)->name);
         const QString destPath = dest->joinPath(QStringList() << dest->path() << myItems.at(idx)->name);
 
         if (! dest->linkFile(destPath, endpoint, this))
+        {
+            emit error("Could not link to destination.");
+        }
+    }
+    unselectAll();
+    emit finished();
+    */
+}
+
+void FolderBase::linkItems(FolderBase* dest, const QStringList& items)
+{
+    foreach (const QString& item, items)
+    {
+        const QString sourceName = dest->basename(item);
+        const QString destPath = dest->joinPath(QStringList() << dest->path() << sourceName);
+
+        if (! dest->linkFile(destPath, item, this))
         {
             emit error("Could not link to destination.");
         }

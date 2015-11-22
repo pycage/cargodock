@@ -15,7 +15,6 @@ ListItem {
 
     Image {
         id: iconImage
-        x: Theme.paddingMedium
         width: height
         height: Math.max(parent.height, 10)
         asynchronous: true

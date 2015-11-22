@@ -13,7 +13,7 @@ SilicaListView {
     // amount of selected items
     property int selectionSize: model ? model.selected : 0
 
-    //model: trailModel.fsModel
+    signal pressAndHold
 
     function selectAll()
     {
@@ -41,51 +41,6 @@ SilicaListView {
             height: Theme.itemSizeLarge
 
             model: trailModel
-        }
-
-        ListItem {
-            id: newFolderItem
-            visible: fileListView.model.isValid &&
-                     fileListView.model.isWritable &&
-                     ! fileListView.model.loading
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            Image {
-                id: newFolderIcon
-                x: Theme.paddingMedium
-                width: height
-                height: parent.height
-                fillMode: Image.Pad
-                source: "image://theme/icon-m-add"
-            }
-
-            Label {
-                anchors.left: newFolderIcon.right
-                anchors.leftMargin: Theme.paddingMedium
-                anchors.verticalCenter: parent.verticalCenter
-                text: "New folder ..."
-            }
-
-            onClicked: {
-                var dlg = pageStack.push(Qt.resolvedUrl("NewFolderDialog.qml"));
-
-                function closure(model, dlg)
-                {
-                    return function()
-                    {
-                        model.newFolder(dlg.name);
-                    }
-                }
-
-                dlg.accepted.connect(closure(fileListView.model, dlg));
-            }
-        }
-
-        Separator {
-            visible: newFolderItem.visible
-            width: parent.width
-            horizontalAlignment: Qt.AlignHCenter
-            color: Theme.highlightColor
         }
     }
 
@@ -146,19 +101,7 @@ SilicaListView {
         }
 
         onPressAndHold: {
-            if (! selectionMode)
-            {
-                if (model.selectable)
-                {
-                    fileListView.model.setSelected(index, true);
-                }
-                selectionMode = true;
-            }
-            else
-            {
-                selectionMode = false;
-                fileListView.model.unselectAll();
-            }
+            fileListView.pressAndHold()
         }
     }
 

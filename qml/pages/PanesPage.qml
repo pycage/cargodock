@@ -7,6 +7,7 @@ Page {
     allowedOrientations: Orientation.All
 
     property ListModel trails
+    property var currentTrailModel
 
     signal opened(var model)
     signal newPane
@@ -16,7 +17,7 @@ Page {
         id: gridView
         anchors.fill: parent
 
-        cellWidth: width / 3
+        cellWidth: width
         cellHeight: Theme.itemSizeLarge
 
         model: page.trails
@@ -31,46 +32,44 @@ Page {
             }
         }
 
-        delegate: Item {
+        header: PageHeader {
+            title: qsTr("Panes")
+        }
+
+        delegate: BackgroundItem {
             width: gridView.cellWidth
             height: gridView.cellHeight
 
-            Rectangle {
-                anchors.fill: parent
+            highlighted: page.currentTrailModel === trailModel
+
+            Image {
+                id: icon
+                anchors.left: parent.left
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.verticalCenter: parent.verticalCenter
                 anchors.margins: Theme.paddingSmall
-                radius: 5
-                color: Qt.darker(Theme.primaryColor, 3)
+                source: trailModel.fsIcon
+            }
 
-                Image {
-                    id: icon
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Theme.paddingSmall
-                    source: trailModel.fsIcon
-                }
+            Label {
+                anchors.left: icon.right
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingSmall
+                anchors.rightMargin: Theme.paddingLarge
+                anchors.verticalCenter: parent.verticalCenter
+                elide: Text.ElideRight
+                color: parent.pressed ? Theme.highlightColor : Theme.primaryColor
+                text: trailModel.fsModel.path
+            }
 
-                Label {
-                    anchors.left: icon.right
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Theme.paddingSmall
-                    elide: Text.ElideRight
-                    text: trailModel.fsModel.name
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-
-                    onClicked: {
-                        page.opened(trailModel);
-                    }
-                }
+            onClicked: {
+                page.opened(trailModel);
             }
 
             IconButton {
                 visible: gridView.count > 1
-                anchors.top: parent.top
                 anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
                 icon.source: "image://theme/icon-m-close"
 
                 onClicked: {
@@ -78,6 +77,11 @@ Page {
                 }
             }
 
+        }
+
+        ViewPlaceholder {
+            enabled: gridView.count < 2
+            text: "Pull down to add a new pane"
         }
     }
 

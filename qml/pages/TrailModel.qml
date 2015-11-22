@@ -1,10 +1,15 @@
 import QtQuick 2.0
 
 ListModel {
+    id: trailModel
 
     property var rootModel
     property var fsModel
     property string fsIcon
+
+    signal progress(string name, int amount)
+    signal finished()
+    signal error(string details)
 
     function push(model, name, icon)
     {
@@ -22,6 +27,13 @@ ListModel {
             rootModel = item.fsModel;
         }
         console.log("new fsModel: " + fsModel.name);
+
+        if (count > 1 && get(count - 2).fsModel !== fsModel)
+        {
+            fsModel.progress.connect(progress);
+            fsModel.finished.connect(finished);
+            fsModel.error.connect(error);
+        }
     }
 
     function pop(amount)

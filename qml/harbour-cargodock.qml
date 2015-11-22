@@ -9,15 +9,12 @@ ApplicationWindow
 {    
     id: win
 
-    // array of the folder panes
-    property var _panes: []
+    // the folder page
+    property var folderPage
 
     // dictionary of services
     property var _serviceObjects: ({ })
     property var serviceNames: []
-
-    property var path1: []
-    property var path2: []
 
     /* Registers the given service object.
      */
@@ -36,48 +33,19 @@ ApplicationWindow
         return _serviceObjects[serviceName];
     }
 
-    /* Registers the given page as a content pane.
-     */
-    function registerContentPane(page)
-    {
-        _panes.push(page);
-    }
-
-    function updateDestinationContentModels()
-    {
-        if (_panes.length === 2)
-        {
-            _panes[0].destinationModel = _panes[1].sourceModel;
-            _panes[1].destinationModel = _panes[0].sourceModel;
-        }
-    }
-
-
     /* Refreshes the panes.
      */
     function refreshPanes()
     {
-        console.log("refreshing panes");
-        for (var i = 0; i < _panes.length; ++i)
-        {
-            _panes[i].sourceModel.refresh();
-        }
+        folderPage.refresh();
     }
 
-    initialPage: folderPageNg
+    initialPage: loaderPageComponent
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
 
     Component.onCompleted: {
-
-
-        /*
-        var props = {
-            "isSecondPane": true
-        };
-
-        pageStack.pushExtra(folderPage, props);
-        updateDestinationContentModels();
-        */
+        folderPage = pageStack.pushAttached(folderPageComponent);
+        pageStack.navigateForward(PageStackAction.Immediate);
     }
 
     /******************************************
@@ -117,43 +85,8 @@ ApplicationWindow
 
     SslHandler { }
 
-    Rectangle {
-        width: parent.width
-        height: childrenRect.height + 2 * Theme.paddingLarge
-        anchors.bottom: parent.bottom
-
-        gradient: Gradient {
-            GradientStop { position: 0; color: "transparent" }
-            GradientStop { position: 1; color: "black" }
-        }
-
-        Behavior on opacity {
-            NumberAnimation { duration: 1500; easing.type: Easing.OutCurve }
-        }
-
-        Label {
-            y: Theme.paddingLarge
-            width: parent.width
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.Wrap
-            font.pixelSize: Theme.fontSizeExtraLarge
-            color: Theme.highlightColor
-            text: "Pull down for help"
-        }
-
-        Timer {
-            running: true
-            repeat: false
-            interval: 1500
-
-            onTriggered: {
-                parent.opacity = 0;
-            }
-        }
-    }
-
     Component {
-        id: loaderPage
+        id: loaderPageComponent
 
         Page {
             id: page
@@ -164,73 +97,19 @@ ApplicationWindow
             }
 
             onStatusChanged: {
-                if (status === PageStatus.Active)
+                if (status === PageStatus.Active && folderPage)
                 {
-                    if (path1.length === 0)
-                    {
-                        var model = serviceObject("places").createModel("places");
-                        var props = {
-                            "sourceModel": model
-                        };
-                        var page = pageStack.push(folderPage, props);
-                    }
-                    else
-                    {
-
-                    }
+                    pageStack.navigateForward(PageStackAction.Immediate)
+                    folderPage.goUp();
                 }
             }
         }
     }
 
     Component {
-        id: folderPageNg
+        id: folderPageComponent
 
         FolderPageNg { }
     }
 
-    /*
-    Component {
-        id: folderPage
-
-        FolderPage {
-            id: page
-
-            Component.onCompleted: {
-                registerContentPane(page);
-            }
-
-            onModelChanged: {
-                updateDestinationContentModels();
-            }
-
-            onCopyCommand: {
-                sharedState.actionName = "copying";
-                sharedState.actionInProgress = true;
-                sourceModel.copySelected(destModel);
-            }
-
-            onDeleteCommand: {
-                sharedState.actionName = "deleting";
-                sharedState.actionInProgress = true;
-                sourceModel.deleteItems(items);
-            }
-
-            onLinkCommand: {
-                sharedState.actionName = "linking";
-                sharedState.actionInProgress = true;
-                sourceModel.linkSelected(destModel);
-            }
-
-            onError: {
-                notification.show(details);
-            }
-
-            onFinished: {
-                sharedState.actionInProgress = false;
-                refreshPanes();
-            }
-        }
-    }
-    */
 }

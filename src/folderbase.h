@@ -142,6 +142,7 @@ public:
     Q_INVOKABLE void copyItems(FolderBase* dest, const QStringList& items);
     Q_INVOKABLE void deleteItems(const QStringList& items);
     Q_INVOKABLE void linkSelected(FolderBase* dest);
+    Q_INVOKABLE void linkItems(FolderBase* dest, const QStringList& items);
     Q_INVOKABLE void newFolder(const QString& name);
 
     Q_INVOKABLE virtual void setPermissions(const QString& name, int permissions);

@@ -284,7 +284,7 @@ void PlacesModel::loadDirectory(const QString&)
         const QString path = configValue(uid, "path").toString();
         qDebug() << "service" << type << name << path;
 
-        appendItem(makeItem(uid, name, "Bookmarks", icon, type, true));
+        appendItem(makeItem(uid, name, "Favorites", icon, type, true));
     }
 
     foreach (const QString& uid, localServices)
