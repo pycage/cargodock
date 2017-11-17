@@ -222,10 +222,10 @@ Page {
         Repeater {
             model: Math.ceil(page.height / (Theme.paddingMedium + 10))
 
-            Image {
-                source: isSecondPane ? Qt.resolvedUrl("../left-indicator.png")
-                                     : Qt.resolvedUrl("../right-indicator.png")
-            }
+//            Image {
+//                source: isSecondPane ? Qt.resolvedUrl("../left-indicator.png")
+//                                     : Qt.resolvedUrl("../right-indicator.png")
+//            }
         }
     }
 

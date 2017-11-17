@@ -13,7 +13,7 @@
 
 namespace
 {
-const QString API_CONTENT_DROPBOX_ENDPOINT("https://api-content.dropbox.com");
+const QString API_CONTENT_DROPBOX_ENDPOINT("https://content.dropboxapi.com");
 }
 
 DropboxThumbProvider::DropboxThumbProvider()

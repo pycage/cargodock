@@ -13,6 +13,10 @@ QT += network xml
 
 exists(../productkey.h) {
   DEFINES += HAVE_DROPBOX_PRODUCT_KEY
+  HEADERS += ../productkey.h
+}
+else{
+  HEADERS += src/dropboxapi/productkey.h
 }
 
 exists(../encryptionpassphrase.h) {
@@ -103,7 +107,6 @@ HEADERS += \
     src/dropboxthumbprovider.h \
     src/dropboxapi/dropboxfile.h \
     src/localfile.h \
-    src/dropboxapi/productkey.h \
     src/filereader.h \
     src/davmodel.h \
     src/network.h \
@@ -117,4 +120,7 @@ HEADERS += \
     src/ftpapi/ftpapi.h \
     src/ftpapi/ftpcommand.h \
     src/ftpapi/ftpfile.h
+
+DISTFILES += \
+    rpm/harbour-cargodock.changes.run.in
 

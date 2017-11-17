@@ -212,7 +212,7 @@ void DropboxModel::loadDirectory(const QString& path)
     {
         myIsLoading = true;
         emit loadingChanged();
-        myDropboxApi->requestMetadata(path);
+        myDropboxApi->requestListFolder(path);
     }
 }
 

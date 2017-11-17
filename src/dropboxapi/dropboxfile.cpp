@@ -70,7 +70,7 @@ void DropboxFile::close()
     if (myUploadId.size() && flush())
     {
         myWaitingForCommit = true;
-        myDropboxApi->commitUpload(myUploadId, myPath);
+        myDropboxApi->commitUpload(myUploadId, myPath, myWriteOffset);
         // this action needs to be synchronous, so wait for the response
         QEventLoop evLoop;
         while (myWaitingForCommit)

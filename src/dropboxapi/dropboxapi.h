@@ -33,11 +33,11 @@ public:
     struct AccountInfo
     {
         QString displayName;
-        QString uid;
+        QString id;
         QString country;
-        quint64 quota;
-        quint64 quotaShared;
-        quint64 quoteNormal;
+//        quint64 quota;
+//        quint64 quotaShared;
+//        quint64 quoteNormal;
     };
 
     struct Metadata
@@ -88,6 +88,7 @@ public:
      * Emits signal metadataReceived.
      */
     void requestMetadata(const QString& path);
+    void requestListFolder(const QString& path);
 
     /* Creates a folder at the given path.
      */
@@ -116,7 +117,7 @@ public:
     /* Commits the given upload and creates the file at the given path.
      * Every successful upload must be committed this way.
      */
-    void commitUpload(const QString& uploadId, const QString& path);
+    void commitUpload(const QString& uploadId, const QString& path, qint64 offset);
 
     /* Downloads a file portition. Emits downloaded.
      */
@@ -147,15 +148,14 @@ signals:
     void error(DropboxApi::ErrorCode error);
 
 private:
-    enum RequestMethod
+    enum APIType
     {
-        DELETE,
-        GET,
-        POST,
-        PUT
+        RPCRequest,
+        RPCDownload,
+        RPCUpload
     };
 
-    QNetworkReply* sendRequest(RequestMethod method,
+    QNetworkReply* sendRequest(APIType method,
                                const QUrl& url,
                                const QByteArray& payload = QByteArray(),
                                const QVariantMap& headers = QVariantMap());
