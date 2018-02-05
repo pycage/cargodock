@@ -8,6 +8,7 @@
 #include <QString>
 #include <QUrl>
 #include <QVariantMap>
+#include <QMimeDatabase>
 
 class QNetworkReply;
 
@@ -163,6 +164,7 @@ private:
     int getReplyStatus(QObject* sender) const;
     Metadata parseMetadata(const QVariantMap& map) const;
 
+
 private slots:
     void slotRequestFinished();
 
@@ -187,6 +189,7 @@ private:
     QString myUserId;
 
     QString myRoot;
+    QMimeDatabase myMimeDB;
 
     static QMap<QString, QString> thePathHashes;
     static QMap<QString, QByteArray> theHashCache;

@@ -237,16 +237,22 @@ DropboxApi::Metadata DropboxApi::parseMetadata(const QVariantMap& map) const
     metadata.bytes = map.value("size", 0).toULongLong();
     metadata.mtime = fromTimeString(map.value("client_modified", "").toString());
     metadata.isDir = map.value(".tag", "folder").toString()=="folder";
-    metadata.mimeType = map.value("mime_type", "application/octet-stream").toString();
+    QMimeType mType = myMimeDB.mimeTypeForFile(metadata.path,QMimeDatabase::MatchExtension);
+    metadata.mimeType = mType.name();
+    qDebug() << Q_FUNC_INFO << metadata.mimeType;
     metadata.icon = map.value("icon", "").toString();
     metadata.rev = map.value("rev", "").toString();
-
-    if (map.value("thumb_exists", false).toBool())
+    bool hasThumb = false;
+    QStringList extList;
+    extList <<  "jpg" << "jpeg" << "png" << "tiff" << "tif" << "gif" << "bmp";
+    foreach (const QString &val, extList) {
+        if(metadata.path.right(metadata.path.lastIndexOf('.')).contains(val,Qt::CaseInsensitive))
+            hasThumb=true;
+    }
+    if (hasThumb)
     {
-        metadata.thumb = QString("/%1/%2/thumbnails/%3%4")
+        metadata.thumb = QString("/%1/%2")
                 .arg(myAccessToken)
-                .arg(API)
-                .arg(myRoot)
                 .arg(metadata.path);
     }
 

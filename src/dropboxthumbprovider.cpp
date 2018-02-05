@@ -8,11 +8,14 @@
 #include <QUrl>
 #include <QUrlQuery>
 #include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <unistd.h>
 
 namespace
 {
+const int API(2);
 const QString API_CONTENT_DROPBOX_ENDPOINT("https://content.dropboxapi.com");
 }
 
@@ -40,6 +43,7 @@ QImage DropboxThumbProvider::requestImage(const QString& id,
 
     const QString accessToken = id.left(idx);
     const QString path = id.mid(idx);
+
 
     if (! myLoadingImages.contains(path))
     {
@@ -75,24 +79,26 @@ void DropboxThumbProvider::slotLoadImage(const QString& accessToken,
 {
     QUrl url;
     url.setUrl(API_CONTENT_DROPBOX_ENDPOINT, QUrl::StrictMode);
-    url.setPath(path.left(path.lastIndexOf('?')));
-    QUrlQuery query;
-    query.addQueryItem("format", "png");
+    url.setPath(QString("/%1/files/get_thumbnail").arg(API));
+    QJsonObject reqData;
+    reqData["path"]=path.left(path.lastIndexOf('?'));
+    reqData["format"]="png";
     if (requestedSize.width() <= 128 && requestedSize.height() <= 128)
     {
-        query.addQueryItem("size", "m" /* 128x128 */);
+        reqData["size"]="w128h128";
     }
     else
     {
-        query.addQueryItem("size", "l" /* 640x480 */);
+        reqData["size"]="w640h480";
     }
-    url.setQuery(query);
-    qDebug() << "fetching thumbnail:" << url;
+    QJsonDocument doc(reqData);
+    qDebug() << "fetching thumbnail:" << path;
     QNetworkRequest req(url);
     req.setRawHeader("Authorization",
                      QString("Bearer %1")
                      .arg(accessToken)
                      .toUtf8());
+    req.setRawHeader("Dropbox-API-Arg", doc.toJson(QJsonDocument::Compact));
     QNetworkReply* reply = Network::accessManager()->get(req);
     reply->setProperty("path", path);
 
