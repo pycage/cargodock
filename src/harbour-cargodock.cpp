@@ -15,8 +15,9 @@
 
 #include "davmodel.h"
 #include "dropboxmodel.h"
-#include "placesmodel.h"
 #include "foldermodel.h"
+#include "ftpmodel.h"
+#include "placesmodel.h"
 
 #include "dropboxthumbprovider.h"
 
@@ -53,6 +54,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<DavModel>(URI, 1, 0, "DavModel");
     qmlRegisterType<DropboxModel>(URI, 1, 0, "DropboxModel");
     qmlRegisterType<FolderModel>(URI, 1, 0, "FolderModel");
+    qmlRegisterType<FtpModel>(URI, 1, 0, "FtpModel");
     qmlRegisterType<PlacesModel>(URI, 1, 0, "PlacesModel");
 
     DropboxThumbProvider* dropBoxThumbProvider = new DropboxThumbProvider;

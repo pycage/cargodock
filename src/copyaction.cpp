@@ -178,6 +178,14 @@ void CopyAction::start()
     if (! mySource)
     {
         emit error("Source does not support copying.");
+        emit finished();
+        return;
+    }
+    else if (mySource->uid() == myDestination->uid() &&
+             mySource->path() == myDestinationPath)
+    {
+        emit error("Source and destination are the same.");
+        emit finished();
         return;
     }
 

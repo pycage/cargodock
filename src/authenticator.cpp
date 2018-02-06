@@ -91,7 +91,7 @@ QByteArray Authenticator::makeDigestA1() const
                 realm + ":" +
                 myPassword.toLatin1();
     }
-    qDebug() << Q_FUNC_INFO << a1;
+    qDebug() << Q_FUNC_INFO << "a1 length =" << a1.size();
     return QCryptographicHash::hash(a1, QCryptographicHash::Md5).toHex();
 }
 
@@ -167,7 +167,7 @@ void Authenticator::authenticate(QNetworkRequest& request,
             myDigestA1 = makeDigestA1();
         }
         QByteArray a2 = makeDigestA2(requestMethod,
-                                     request.url().path().toLatin1(),
+                                     request.url().path(QUrl::FullyEncoded).toLatin1(),
                                      body);
 
         ++myNc;
@@ -186,7 +186,7 @@ void Authenticator::authenticate(QNetworkRequest& request,
         QByteArray header = QString("Digest username=\"%1\"").arg(myUserName).toLatin1();
         header += QString(", realm=\"%1\"").arg(QLatin1String(realm)).toLatin1();
         header += QString(", nonce=\"%1\"").arg(QLatin1String(nonce)).toLatin1();
-        header += QString(", uri=\"%1\"").arg(request.url().path()).toLatin1();
+        header += QString(", uri=\"%1\"").arg(request.url().path(QUrl::FullyEncoded)).toLatin1();
         if (qop.size())
         {
             if (qop == "auth-int")

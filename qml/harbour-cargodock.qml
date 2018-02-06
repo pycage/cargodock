@@ -81,8 +81,9 @@ ApplicationWindow
 
     // cloud services
     DropboxService { }
+    FtpService { }
     OwnCloudService { }
-    TelekomMediencenter { }
+    TelekomMedienCenter { }
     WebDavService { }
     /******************************************/
 

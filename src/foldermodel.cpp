@@ -41,10 +41,10 @@ FolderModel::FolderModel(QObject* parent)
 
 FolderModel::FolderModel(const FolderModel& other)
     : FolderBase(other)
-    , myIsReadable(other.myIsReadable)
-    , myIsWritable(other.myIsWritable)
     , myMimeTypeIcons(other.myMimeTypeIcons)
     , myPreviewComponents(other.myPreviewComponents)
+    , myIsReadable(other.myIsReadable)
+    , myIsWritable(other.myIsWritable)
 {
 
 }

@@ -1,0 +1,8 @@
+*-debug/
+*-Debug/
+*-release/
+*-Release/
+**/*.pro.user*
+**/build*/*
+**/*.spec
+**/*.autosave
