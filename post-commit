@@ -1,0 +1,18 @@
+#!/bin/bash
+
+last_version=$(grep "^\*" */*.changes| awk '{print $NF}')
+
+current_version=$(grep "^Version:" */*.yaml | awk '{print $2}')-$(grep "^Release:" */*.yaml | awk '{print $2}')
+
+if [ "$last_version" != "$current_version" ]; then
+	echo "No changelog for current release"
+	echo $last_version
+	echo $current_version
+	userstring=$(git log --pretty='format:%an <%ae>' -1)
+	since_hash=$(git blame */*.changes | grep "\*" | grep "$last_version$" | awk '{print $1}')
+	logrecord=`echo -e "* $(date +"%a %b %d %Y") $userstring - $current_version\n$(git log $since_hash..HEAD | grep -E '\[[A-Za-z]+\]')\n"` #>> rpm/harbour-cargodock.changes
+	ex -sc"1i|$logrecord" */*.changes -sc"wq!"
+	cat */*.changes
+	git add */*.changes
+	git commit --amend
+fi

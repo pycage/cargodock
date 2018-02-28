@@ -27,7 +27,7 @@ Page {
             spacing: Theme.paddingMedium
 
             PageHeader {
-                title: "Help"
+                title: qsTr("Help")
             }
 
             Label {

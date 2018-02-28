@@ -28,7 +28,7 @@ Page {
 
         PullDownMenu {
             MenuItem {
-                text: "Add Service"
+                text: qsTr("Add Service")
 
                 onClicked: {
                     var props = {
@@ -45,23 +45,23 @@ Page {
             width: parent.width
 
             PageHeader {
-                title: "Settings"
+                title: qsTr("Settings")
             }
 
             SectionHeader {
-                text: "Security"
+                text: qsTr("Security")
             }
 
             TextSwitch {
                 automaticCheck: false
 
-                text: "Secure password storage"
-                description: "Enable to set a custom passphrase to encrypt your " +
+                text: qsTr("Secure password storage")
+                description: qsTr("Enable to set a custom passphrase to encrypt your " +
                              "passwords stored in the configuration.\n" +
                              "Your passphrase is not stored and will be asked for " +
                              "once per session.\n" +
                              "If not enabled, passwords are encrypted with a default " +
-                             "passphrase."
+                             "passphrase.")
                 checked: placesModel.useEncryptionPassphrase
 
                 onClicked: {
@@ -113,7 +113,7 @@ Page {
             }
 
             SectionHeader {
-                text: "Services"
+                text: qsTr("Services")
             }
 
             Repeater {
@@ -140,7 +140,7 @@ Page {
                             }
                         }
 
-                        remorseAction("Deleting", closure(placesModel,
+                        remorseAction(qsTr("Deleting"), closure(placesModel,
                                                           modelData.uid,
                                                           refreshPanes));
                     }
@@ -182,7 +182,7 @@ Page {
                         id: contextMenu
                         ContextMenu {
                             MenuItem {
-                                text: "Remove"
+                                text: qsTr("Remove")
 
                                 onClicked: {
                                     remove();
@@ -200,8 +200,8 @@ Page {
                 color: Theme.secondaryColor
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                text: "No services yet.\n" +
-                      "Drag down to add a service."
+                text: qsTr("No services yet.\n" +
+                      "Drag down to add a service.")
             }
 
         }

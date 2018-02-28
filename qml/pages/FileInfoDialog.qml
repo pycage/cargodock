@@ -19,8 +19,10 @@ Dialog {
             height: childrenRect.height
 
             DialogHeader {
-                title: fileInfo.canOpen ? "Open"
-                                        : "Close"
+                title: fileInfo.canOpen ? qsTr("Open")
+                                        : qsTr("Close")
+                acceptText: fileInfo.canOpen? qsTr("Accept"):""
+                cancelText: fileInfo.canOpen? qsTr("Cancel"):""
             }
 
             // preview item
@@ -59,7 +61,7 @@ Dialog {
                 text: fileInfo.name
                 inputMethodHints: Qt.ImhNoAutoUppercase
 
-                EnterKey.text: "Rename"
+                EnterKey.text: qsTr("Rename")
                 EnterKey.enabled: text !== ""
                 EnterKey.onClicked: {
                     fileInfo.rename(text);
@@ -82,39 +84,39 @@ Dialog {
             }
 
             KeyValue {
-                key: "Type"
+                key: qsTr("Type")
                 value: fileInfo.mimeType
             }
 
             KeyValue {
-                key: "Path"
+                key: qsTr("Path")
                 value: fileInfo.path
             }
 
             KeyValue {
-                key: "Size"
+                key: qsTr("Size")
                 value: Format.formatFileSize(fileInfo.size)
             }
 
             KeyValue {
-                key: "Last modified"
+                key: qsTr("Last modified")
                 value: Format.formatDate(fileInfo.mtime, Formatter.DurationElapsed)
             }
 
             KeyValue {
-                key: "Modification time"
+                key: qsTr("Modification time")
                 value: Format.formatDate(fileInfo.mtime, Formatter.TimePoint)
             }
 
             KeyValue {
                 visible: fileInfo.owner !== ""
-                key: "Owner"
+                key: qsTr("Owner")
                 value: fileInfo.owner
             }
 
             KeyValue {
                 visible: fileInfo.group !== ""
-                key: "Group"
+                key: qsTr("Group")
                 value: fileInfo.group
             }
 
@@ -124,14 +126,14 @@ Dialog {
                 width: parent.width
 
                 SectionHeader {
-                    text: "Permissions"
+                    text: qsTr("Permissions")
                 }
 
                 Repeater {
                     model: [
-                        ["Readable", FolderBase.ReadOwner],
-                        ["Writable", FolderBase.WriteOwner],
-                        ["Executable", FolderBase.ExecOwner]
+                        [qsTr("Readable"), FolderBase.ReadOwner],
+                        [qsTr("Writable"), FolderBase.WriteOwner],
+                        [qsTr("Executable"), FolderBase.ExecOwner]
                     ]
 
                     KeySwitch {
@@ -148,14 +150,14 @@ Dialog {
                 }
 
                 SectionHeader {
-                    text: "Group permissions"
+                    text: qsTr("Group permissions")
                 }
 
                 Repeater {
                     model: [
-                        ["Readable", FolderBase.ReadGroup],
-                        ["Writable", FolderBase.WriteGroup],
-                        ["Executable", FolderBase.ExecGroup]
+                        [qsTr("Readable"), FolderBase.ReadGroup],
+                        [qsTr("Writable"), FolderBase.WriteGroup],
+                        [qsTr("Executable"), FolderBase.ExecGroup]
                     ]
 
                     KeySwitch {
@@ -172,14 +174,14 @@ Dialog {
                 }
 
                 SectionHeader {
-                    text: "World permissions"
+                    text: qsTr("World permissions")
                 }
 
                 Repeater {
                     model:  [
-                        ["Readable", FolderBase.ReadOther],
-                        ["Writable", FolderBase.WriteOther],
-                        ["Executable", FolderBase.ExecOther]
+                        [qsTr("Readable"), FolderBase.ReadOther],
+                        [qsTr("Writable"), FolderBase.WriteOther],
+                        [qsTr("Executable"), FolderBase.ExecOther]
                     ]
 
                     KeySwitch {

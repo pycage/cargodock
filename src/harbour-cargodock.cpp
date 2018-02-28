@@ -25,6 +25,23 @@ namespace
 {
 const char* URI("harbour.cargodock");
 }
+bool DeveloperMode::inDebug=false;
+void silentOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    switch (type) {
+    case QtDebugMsg:
+        break;
+    case QtInfoMsg:
+        break;
+    case QtWarningMsg:
+        break;
+    case QtCriticalMsg:
+        break;
+    case QtFatalMsg:
+        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", msg.toLocal8Bit().constData(), context.file, context.line, context.function);
+        abort();
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -38,6 +55,12 @@ int main(int argc, char *argv[])
     // To display the view, call "show()" (will show fullscreen on device).
 
     QSharedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
+
+    if(!app->arguments().contains("-debug"))
+        qInstallMessageHandler(&silentOutput);
+    else
+        DeveloperMode::inDebug=true;
+
     QSharedPointer<QQuickView> view(SailfishApp::createView());
 
     Network::setAccessManager(view->engine()->networkAccessManager());

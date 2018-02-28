@@ -111,6 +111,7 @@ Page {
     function availableActions(sourceCapabilities, destCapabilities)
     {
         var actions = [];
+        if (propertiesAction.enabled) actions.push(propertiesAction);
         if (copyAction.enabled) actions.push(copyAction);
         if (bookmarkAction.enabled) actions.push(bookmarkAction);
         if (linkAction.enabled) actions.push(linkAction);
@@ -136,8 +137,27 @@ Page {
     }
 
     QtObject {
+        id: propertiesAction
+        property string name: qsTr("Properties")
+        property bool enabled: sourceModel.capabilities & FolderBase.CanDelete &&
+                               sourceModel.capabilities & FolderBase.CanBookmark &&
+                               sourceModel.selected === 1
+
+        function action()
+        {
+            var info = contentlist.currentItem["fileInfo"]
+            var props = {
+                "fileInfo": info
+            }
+            var dlg = pageStack.push(Qt.resolvedUrl("FileInfoDialog.qml"),
+                                     props);
+           _selectionMode = false;
+        }
+    }
+
+    QtObject {
         id: copyAction
-        property string name: "Copy to other side"
+        property string name: qsTr("Copy to other side")
         property bool enabled: sourceModel.capabilities & FolderBase.CanCopy &&
                                destinationModel.capabilities & FolderBase.AcceptCopy
 
@@ -150,7 +170,7 @@ Page {
 
     QtObject {
         id: bookmarkAction
-        property string name: "Bookmark"
+        property string name: qsTr("Bookmark")
         property bool enabled: sourceModel.capabilities & FolderBase.CanBookmark &&
                                destinationModel.capabilities & FolderBase.AcceptBookmark
 
@@ -163,7 +183,7 @@ Page {
 
     QtObject {
         id: linkAction
-        property string name: "Link to other side"
+        property string name: qsTr("Link to other side")
         property bool enabled: sourceModel.capabilities & FolderBase.CanLink &&
                                destinationModel.capabilities & FolderBase.AcceptLink
 
@@ -176,7 +196,7 @@ Page {
 
     QtObject {
         id: deleteAction
-        property string name: "Delete"
+        property string name: qsTr("Delete")
         property bool enabled: sourceModel.capabilities & FolderBase.CanDelete
 
         function action()
@@ -318,7 +338,7 @@ Page {
                     anchors.centerIn: parent
 
                     Button {
-                        text: "All"
+                        text: qsTr("All")
 
                         onClicked: {
                             sourceModel.selectAll();
@@ -326,7 +346,7 @@ Page {
                     }
 
                     Button {
-                        text: "None"
+                        text: qsTr("None")
 
                         onClicked: {
                             sourceModel.unselectAll();
@@ -413,7 +433,7 @@ Page {
                         anchors.left: newFolderIcon.right
                         anchors.leftMargin: Theme.paddingMedium
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "New folder ..."
+                        text: qsTr("New folder ...")
                     }
 
                     onClicked: {
@@ -445,7 +465,7 @@ Page {
 
                 MenuItem {
                     visible: breadcrumbRepeater.count === 0
-                    text: "About"
+                    text: qsTr("About")
 
                     onClicked: {
                         pageStack.push(Qt.resolvedUrl("AboutPage.qml"));
@@ -454,7 +474,7 @@ Page {
 
                 MenuItem {
                     visible: breadcrumbRepeater.count === 0
-                    text: "Settings"
+                    text: qsTr("Settings")
 
                     onClicked: {
                         var props = {
@@ -467,7 +487,7 @@ Page {
 
                 MenuItem {
                     visible: breadcrumbRepeater.count === 0
-                    text: "Help"
+                    text: qsTr("Help")
 
                     onClicked: {
                         pageStack.push(Qt.resolvedUrl("HelpPage.qml"));
@@ -571,6 +591,7 @@ Page {
                     {
                         if (selectable)
                         {
+                            contentlist.currentIndex = index;
                             sourceModel.setSelected(index, true);
                         }
                         page._selectionMode = true;
@@ -585,17 +606,17 @@ Page {
 
             ViewPlaceholder {
                 enabled: sourceModel ? ! sourceModel.isValid : true
-                text: "Not available"
+                text: qsTr("Not available")
             }
 
             ViewPlaceholder {
                 enabled: sourceModel ? ! sourceModel.isReadable : false
-                text: "You have no permission for this folder"
+                text: qsTr("You have no permission for this folder")
             }
 
             ViewPlaceholder {
                 enabled: sourceModel ? (sourceModel.count === 0 && sourceModel.isReadable) : false
-                text: "No files"
+                text: qsTr("No files")
             }
 
             VerticalScrollDecorator { id: scrollDecorator }

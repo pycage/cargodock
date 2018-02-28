@@ -132,7 +132,7 @@ ApplicationWindow
             wrapMode: Text.Wrap
             font.pixelSize: Theme.fontSizeExtraLarge
             color: Theme.highlightColor
-            text: "Pull down for help"
+            text: qsTr("Pull down for help")
         }
 
         Timer {
@@ -162,19 +162,19 @@ ApplicationWindow
             }
 
             onCopyCommand: {
-                sharedState.actionName = "copying";
+                sharedState.actionName = qsTr("copying");
                 sharedState.actionInProgress = true;
                 sourceModel.copySelected(destModel);
             }
 
             onDeleteCommand: {
-                sharedState.actionName = "deleting";
+                sharedState.actionName = qsTr("deleting");
                 sharedState.actionInProgress = true;
                 sourceModel.deleteItems(items);
             }
 
             onLinkCommand: {
-                sharedState.actionName = "linking";
+                sharedState.actionName = qsTr("linking");
                 sharedState.actionInProgress = true;
                 sourceModel.linkSelected(destModel);
             }
