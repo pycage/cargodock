@@ -152,7 +152,14 @@ QNetworkReply* DropboxApi::sendRequest(APIType method,
     {
         req.setRawHeader(key.toUtf8(), headers.value(key).toByteArray());
     }
-    qDebug() << Q_FUNC_INFO << myAccessToken << url << " " << payload << " " << headers;
+
+
+    qDebug() << Q_FUNC_INFO << myAccessToken << url
+#ifdef __DEBUG__
+             << " " << payload << " " << headers
+#endif
+                ;
+
 
     QNetworkReply* reply = 0;
     QNetworkAccessManager* nam = Network::accessManager();
@@ -235,7 +242,7 @@ DropboxApi::Metadata DropboxApi::parseMetadata(const QVariantMap& map) const
     Metadata metadata;
     metadata.path = map.value("path_display", "/").toString();
     metadata.bytes = map.value("size", 0).toULongLong();
-    metadata.mtime = fromTimeString(map.value("client_modified", "").toString());
+    metadata.mtime = fromTimeString(map.value("server_modified", "").toString());
     metadata.isDir = map.value(".tag", "folder").toString()=="folder";
     QMimeType mType = myMimeDB.mimeTypeForFile(metadata.path,QMimeDatabase::MatchExtension);
     metadata.mimeType = mType.name();

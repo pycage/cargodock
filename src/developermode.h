@@ -13,12 +13,13 @@ class DeveloperMode : public QObject
 public:
     bool enabled() const
     {
-        return QFile::exists("/usr/bin/devel-su");
+        return inDebug||QFile::exists("/usr/bin/devel-su");
     }
     bool isRoot() const
     {
         return (geteuid() == 0);
     }
+    static bool inDebug;
 };
 
 #endif // DEVELOPERMODE_H

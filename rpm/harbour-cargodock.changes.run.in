@@ -1,2 +1,0 @@
-#!/bin/bash
-git log `git describe --tags --abbrev=0 master`...HEAD --reverse | grep -E "\[[A-Za-z]+\]"

@@ -48,7 +48,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: qsTr("Version 0.2.5")
+            text: qsTr("Version %1").arg("0.2.5")
         }
 
         Label {
@@ -64,7 +64,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: "Dropbox support by Vladimir Ulrich"
+            text: qsTr("Dropbox support by Vladimir Ulrich")
         }
 
         Label {
@@ -72,7 +72,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: "Icon by Morpog"
+            text: qsTr("Icon by Morpog")
         }
 
         Item {
@@ -86,8 +86,8 @@ Page {
             font.pixelSize: Theme.fontSizeSmall
             color: Theme.secondaryColor
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            text: qsTr("Cargo Dock is open source software licensed under the terms of ")
-                  + qsTr("the GNU General Public License.")
+            text: qsTr("Cargo Dock is open source software licensed under the terms of "
+                  + "the GNU General Public License.")
         }
 
         Item {

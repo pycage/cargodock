@@ -14,7 +14,7 @@ ServiceObject {
 
     serviceDelegate: ServiceDelegate {
         title: "ownCloud"
-        subtitle: "Access an ownCloud file server."
+        subtitle: qsTr("Access an ownCloud file server.")
         iconSource: service.icon
     }
 
@@ -54,7 +54,7 @@ ServiceObject {
                     width: parent.width
 
                     DialogHeader {
-                        title: "Configure ownCloud"
+                        title: qsTr("Configure ownCloud")
                     }
 
                     Item {
@@ -79,8 +79,8 @@ ServiceObject {
                         anchors.right: parent.right
 
                         focus: true
-                        label: "Name"
-                        placeholderText: "Enter name"
+                        label: qsTr("Name")
+                        placeholderText: qsTr("Enter name")
                     }
 
                     TextField {
@@ -90,8 +90,8 @@ ServiceObject {
                         anchors.right: parent.right
 
                         inputMethodHints: Qt.ImhNoPredictiveText
-                        label: "Server"
-                        placeholderText: "Enter server address"
+                        label: qsTr("Server")
+                        placeholderText: qsTr("Enter server address")
                         text: "myserver.org"
                     }
 
@@ -102,8 +102,8 @@ ServiceObject {
                         anchors.right: parent.right
 
                         inputMethodHints: Qt.ImhNoPredictiveText
-                        placeholderText: "Enter path"
-                        label: "Path"
+                        placeholderText: qsTr("Enter path")
+                        label: qsTr("Path")
                         text: "/owncloud/remote.php/webdav"
                     }
 
@@ -115,22 +115,22 @@ ServiceObject {
                         wrapMode: Text.Wrap
                         font.pixelSize: Theme.fontSizeSmall
                         color: Theme.secondaryColor
-                        text: "Usually the default path is fine. Edit only if " +
-                              "the path of your ownCloud installation differs."
+                        text: qsTr("Usually the default path is fine. Edit only if " +
+                              "the path of your ownCloud installation differs.")
                     }
 
                     ComboBox {
                         id: securityCombo
-                        label: "Secure connection"
+                        label: qsTr("Secure connection")
 
                         menu: ContextMenu {
-                            MenuItem { text: "Not in use" }
-                            MenuItem { text: "SSL" }
+                            MenuItem { text: qsTr("Not in use") }
+                            MenuItem { text: qsTr("SSL") }
                         }
                     }
 
                     SectionHeader {
-                        text: "Authorization"
+                        text: qsTr("Authorization")
                     }
 
                     TextField {
@@ -140,8 +140,8 @@ ServiceObject {
                         anchors.right: parent.right
 
                         inputMethodHints: Qt.ImhNoPredictiveText
-                        placeholderText: "Enter login name"
-                        label: "Login"
+                        placeholderText: qsTr("Enter login name")
+                        label: qsTr("Login")
                     }
 
                     PasswordField {
@@ -150,8 +150,8 @@ ServiceObject {
                         anchors.left: parent.left
                         anchors.right: parent.right
 
-                        placeholderText: "Enter password"
-                        label: "Password"
+                        placeholderText: qsTr("Enter password")
+                        label: qsTr("Password")
                     }
                 }
 
