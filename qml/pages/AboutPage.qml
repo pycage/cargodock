@@ -48,7 +48,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: qsTr("Version 0.2.4")
+            text: qsTr("Version 0.2.5")
         }
 
         Label {
@@ -56,7 +56,15 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: "Copyright © 2013 - 2015 Martin Grimme"
+            text: "Copyright © 2013 - 2018 Martin Grimme"
+        }
+
+        Label {
+            width: parent.width
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: Theme.fontSizeExtraSmall
+            color: Theme.secondaryColor
+            text: "Dropbox support by Vladimir Ulrich"
         }
 
         Label {
@@ -66,7 +74,6 @@ Page {
             color: Theme.secondaryColor
             text: "Icon by Morpog"
         }
-
 
         Item {
             width: 1
