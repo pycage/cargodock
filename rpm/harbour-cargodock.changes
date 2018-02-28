@@ -1,0 +1,6 @@
+* Ср фев 28 2018 Vladimir Ulrich <admin@evl.su> - 0.2.5-1
+    [NEW] Folder properties.
+    [IMPROVED] Most of UI strings were prepared for translation
+    [MISC] Debug output to console is optional now
+    [MISC] "server_modified" is now used for DB files
+    [FIX] Adapted mime handling and thumbnail fetching for DB API v2
