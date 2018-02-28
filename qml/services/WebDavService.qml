@@ -14,7 +14,7 @@ ServiceObject {
 
     serviceDelegate: ServiceDelegate {
         title: "WebDAV"
-        subtitle: "Access a WebDAV share."
+        subtitle: qsTr("Access a WebDAV share.")
         iconSource: service.icon
     }
 
@@ -54,7 +54,7 @@ ServiceObject {
                     width: parent.width
 
                     DialogHeader {
-                        title: "Configure WebDAV"
+                        title: qsTr("Configure WebDAV")
                     }
 
                     Item {
@@ -69,8 +69,8 @@ ServiceObject {
                         anchors.right: parent.right
 
                         focus: true
-                        label: "Name"
-                        placeholderText: "Enter name"
+                        label: qsTr("Name")
+                        placeholderText: qsTr("Enter name")
                     }
 
                     TextField {
@@ -80,8 +80,8 @@ ServiceObject {
                         anchors.right: parent.right
 
                         inputMethodHints: Qt.ImhNoPredictiveText
-                        label: "Server"
-                        placeholderText: "Enter server address"
+                        label: qsTr("Server")
+                        placeholderText: qsTr("Enter server address")
                         text: "webdav.example.com"
                     }
 
@@ -92,23 +92,23 @@ ServiceObject {
                         anchors.right: parent.right
 
                         inputMethodHints: Qt.ImhNoPredictiveText
-                        placeholderText: "Enter path"
-                        label: "Path"
+                        placeholderText: qsTr("Enter path")
+                        label: qsTr("Path")
                         text: "/"
                     }
 
                     ComboBox {
                         id: securityCombo
-                        label: "Secure connection"
+                        label: qsTr("Secure connection")
 
                         menu: ContextMenu {
-                            MenuItem { text: "Not in use" }
-                            MenuItem { text: "SSL" }
+                            MenuItem { text: qsTr("Not in use") }
+                            MenuItem { text: qsTr("SSL") }
                         }
                     }
 
                     SectionHeader {
-                        text: "Authorization"
+                        text: qsTr("Authorization")
                     }
 
                     Label {
@@ -119,7 +119,7 @@ ServiceObject {
                         wrapMode: Text.Wrap
                         font.pixelSize: Theme.fontSizeSmall
                         color: Theme.secondaryColor
-                        text: "Leave empty if the server requires no authorization."
+                        text: qsTr("Leave empty if the server requires no authorization.")
                     }
 
                     Item {
@@ -134,8 +134,8 @@ ServiceObject {
                         anchors.right: parent.right
 
                         inputMethodHints: Qt.ImhNoPredictiveText
-                        placeholderText: "Enter login name"
-                        label: "Login"
+                        placeholderText: qsTr("Enter login name")
+                        label: qsTr("Login")
                     }
 
                     PasswordField {
@@ -144,8 +144,8 @@ ServiceObject {
                         anchors.left: parent.left
                         anchors.right: parent.right
 
-                        placeholderText: "Enter password"
-                        label: "Password"
+                        placeholderText: qsTr("Enter password")
+                        label: qsTr("Password")
                     }
                 }
 

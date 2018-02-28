@@ -46,7 +46,7 @@ SOURCES += src/harbour-cargodock.cpp \
     src/ftpapi/ftpcommand.cpp \
     src/ftpapi/ftpfile.cpp
 
-OTHER_FILES += qml/harbour-cargodock.qml \
+DISTFILES += qml/harbour-cargodock.qml \
     qml/cover/CoverPage.qml \
     rpm/harbour-cargodock.spec \
     rpm/harbour-cargodock.yaml \
@@ -93,7 +93,8 @@ OTHER_FILES += qml/harbour-cargodock.qml \
     qml/services/OwnCloudService.qml \
     qml/pages/PassphraseGuard.qml \
     harbour-cargodock.png \
-    qml/services/FtpService.qml
+    qml/services/FtpService.qml \
+    rpm/harbour-cargodock.changes
 
 HEADERS += \
     src/foldermodel.h \
@@ -121,6 +122,9 @@ HEADERS += \
     src/ftpapi/ftpcommand.h \
     src/ftpapi/ftpfile.h
 
+CONFIG += sailfishapp_i18n
+TRANSLATIONS += translations/harbour-cargodock-*.ts
+
 DISTFILES += \
-    rpm/harbour-cargodock.changes.run.in
+    translations/*.ts
 

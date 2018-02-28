@@ -48,7 +48,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: qsTr("Version 0.2.4")
+            text: qsTr("Version %1").arg("0.2.5")
         }
 
         Label {
@@ -56,7 +56,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: "Copyright © 2013 - 2015 Martin Grimme"
+            text: "Copyright © 2013 - 2018 Martin Grimme"
         }
 
         Label {
@@ -79,8 +79,8 @@ Page {
             font.pixelSize: Theme.fontSizeSmall
             color: Theme.secondaryColor
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            text: qsTr("Cargo Dock is open source software licensed under the terms of ")
-                  + qsTr("the GNU General Public License.")
+            text: qsTr("Cargo Dock is open source software licensed under the terms of "
+                  + "the GNU General Public License.")
         }
 
         Item {

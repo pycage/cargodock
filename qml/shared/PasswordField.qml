@@ -18,8 +18,8 @@ Item {
 
         inputMethodHints: Qt.ImhNoPredictiveText
         echoMode: peek ? TextInput.Normal : TextInput.Password
-        placeholderText: "Enter password"
-        label: "Password"
+        placeholderText: qsTr("Enter password")
+        label: qsTr("Password")
     }
 
     Label {

@@ -32,7 +32,7 @@ Item {
                     width: parent.width
 
                     DialogHeader {
-                        title: "Accept certificate"
+                        title: qsTr("Accept certificate")
                     }
 
                     Item {
@@ -56,7 +56,7 @@ Item {
                     }
 
                     SectionHeader {
-                        text: "Certificate"
+                        text: qsTr("Certificate")
                     }
 
                     Label {

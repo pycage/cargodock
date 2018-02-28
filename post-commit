@@ -1,0 +1,18 @@
+#!/bin/bash
+
+last_version=$(grep "^\*" rpm/harbour-cargodock.changes| awk '{print $NF}')
+
+current_version=$(grep "^Version:" rpm/harbour-cargodock.yaml | awk '{print $2}')-$(grep "^Release:" rpm/harbour-cargodock.yaml | awk '{print $2}')
+
+if [ "$last_version" != "$current_version" ]; then
+	echo "No changelog for current release"
+	echo $last_version
+	echo $current_version
+	userstring=$(git log --pretty='format:%an <%ae>' -1)
+	since_hash=$(git blame rpm/harbour-cargodock.yaml | grep "\*" | grep "$last_version$" | awk '{print $1}')
+	echo -e "* $(date +"%a %b %d %Y") $userstring - $current_version\n$(git log -1 | grep -E '\[[A-Za-z]+\]')\n" >> rpm/harbour-cargodock.changes
+	cat rpm/harbour-cargodock.changes
+	git add rpm/harbour-cargodock.changes
+	git commit --amend
+fi
+

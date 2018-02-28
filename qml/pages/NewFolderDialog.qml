@@ -15,7 +15,7 @@ Dialog {
             width: parent.width
 
             DialogHeader {
-                title: "Create folder"
+                title: qsTr("Create folder")
             }
 
             Item {
@@ -32,7 +32,7 @@ Dialog {
                 anchors.rightMargin: Theme.paddingLarge
 
                 inputMethodHints: Qt.ImhNoAutoUppercase
-                placeholderText: "Name"
+                placeholderText: qsTr("Name")
                 focus: true
             }
 

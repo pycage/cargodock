@@ -18,7 +18,7 @@ ServiceObject {
 
     serviceDelegate: ServiceDelegate {
         title: service.name
-        subtitle: "Access Deutsche Telekom® Mediencenter."
+        subtitle: qsTr("Access Deutsche Telekom® Mediencenter.")
         iconSource: service.icon
     }
 

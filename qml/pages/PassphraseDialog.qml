@@ -23,7 +23,7 @@ Dialog {
         width: parent.width
 
         DialogHeader {
-            title: "Accept"
+            title: qsTr("Accept")
         }
 
         Item {
@@ -51,12 +51,12 @@ Dialog {
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.secondaryColor
                 text: mode === "ask"
-                      ? "Enter your passphrase to unlock the password storage."
+                      ? qsTr("Enter your passphrase to unlock the password storage.")
                       : mode === "new"
-                        ? "Set a passphrase to secure the password storage.\n" +
+                        ? qsTr("Set a passphrase to secure the password storage.\n" +
                           "If you forget the passphrase, your stored passwords will " +
-                          "become unusable."
-                        : "Enter current passphrase to confirm."
+                          "become unusable.")
+                        : qsTr("Enter current passphrase to confirm.")
             }
         }
 
@@ -71,8 +71,8 @@ Dialog {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            placeholderText: "Enter passphrase"
-            label: "Passphrase"
+            placeholderText: qsTr("Enter passphrase")
+            label: qsTr("Passphrase")
         }
 
         PasswordField {
@@ -82,8 +82,8 @@ Dialog {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            placeholderText: "Verify passphrase"
-            label: "Passphrase"
+            placeholderText: qsTr("Verify passphrase")
+            label: qsTr("Passphrase")
         }
     }
 
@@ -102,16 +102,16 @@ Dialog {
             wrapMode: Text.Wrap
             font.pixelSize: Theme.fontSizeSmall
             color: Theme.secondaryColor
-            text: "If you forgot your passphrase, the stored passwords will " +
-                  "become unusable and you will have to enter them again."
+            text: qsTr("If you forgot your passphrase, the stored passwords will " +
+                  "become unusable and you will have to enter them again.")
         }
 
         Button {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "I forgot"
+            text: qsTr("I forgot")
 
             onClicked: {
-                remorse.execute("Resetting passphrase",
+                remorse.execute(qsTr("Resetting passphrase"),
                                 function() {
                                     page.passphraseAccepted("");
                                     page.close();
