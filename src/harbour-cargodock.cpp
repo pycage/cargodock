@@ -82,8 +82,13 @@ int main(int argc, char *argv[])
 
     DropboxThumbProvider* dropBoxThumbProvider = new DropboxThumbProvider;
     view->engine()->addImageProvider("dropbox", dropBoxThumbProvider);
-
-    view->setSource(SailfishApp::pathTo("qml/harbour-cargodock.qml"));
+    QSettings settings("harbour-cargodock", "CargoDock");
+    settings.beginGroup("uiconfig");
+    view->setSource(SailfishApp::pathTo(
+                        settings.value("useNewUI").toBool()?
+                        "qml/NewUi.qml":
+                        "qml/ClassicUi.qml"
+                        ));
     view->show();
 
     return app->exec();

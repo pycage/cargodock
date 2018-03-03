@@ -113,6 +113,22 @@ Page {
             }
 
             SectionHeader {
+                text: qsTr("Interface")
+            }
+
+            TextSwitch {
+                automaticCheck: false
+                text: qsTr("Enable alternative UI")
+                description: qsTr("This is unfinished ui from new-ui development branch.\n"
+                                  +"Restart application after changing.")
+                checked: placesModel.useNewUI
+                onClicked: {
+                    checked = !checked
+                    placesModel.useNewUI = checked
+                }
+            }
+
+            SectionHeader {
                 text: qsTr("Services")
             }
 

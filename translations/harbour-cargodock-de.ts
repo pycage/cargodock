@@ -40,6 +40,25 @@
     </message>
 </context>
 <context>
+    <name>ClassicUi</name>
+    <message>
+        <source>Pull down for help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>copying</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>deleting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>linking</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DropboxService</name>
     <message>
         <source>Login to a Dropbox account.</source>
@@ -131,6 +150,21 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
 </context>
 <context>
+    <name>FileListView</name>
+    <message>
+        <source>Not available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have no permission for this folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No files</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FolderPage</name>
     <message>
         <source>Deleting %1 items</source>
@@ -202,6 +236,25 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>No files</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FolderPageNg</name>
+    <message>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select none</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select all</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -298,6 +351,21 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PanesPage</name>
+    <message>
+        <source>Panes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New pane</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pull down to add a new pane</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -408,6 +476,19 @@ If not enabled, passwords are encrypted with a default passphrase.</source>
 Drag down to add a service.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable alternative UI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is unfinished ui from new-ui development branch.
+Restart application after changing.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SslHandler</name>
@@ -424,6 +505,21 @@ Drag down to add a service.</source>
     <name>TelekomMedienCenter</name>
     <message>
         <source>Access Deutsche Telekom® Mediencenter.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ToolBox</name>
+    <message>
+        <source>%1 selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy %1 items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete %1 items</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -495,25 +591,6 @@ Drag down to add a service.</source>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>harbour-cargodock</name>
-    <message>
-        <source>Pull down for help</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>copying</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>deleting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>linking</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
