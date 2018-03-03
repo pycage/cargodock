@@ -2,7 +2,7 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.cargodock 1.0
 
-Dialog {
+Page {
     id: dialog
 
     allowedOrientations: Orientation.Landscape | Orientation.Portrait
@@ -13,17 +13,35 @@ Dialog {
         anchors.fill: parent
         contentHeight: column.height
 
+        PullDownMenu {
+            enabled: fileInfo.canOpen
+
+            MenuItem {
+                text: "Open"
+                onClicked: {
+                    fileInfo.open()
+                }
+            }
+        }
+
         Column {
             id: column
             width: parent.width
             height: childrenRect.height
 
-            DialogHeader {
-                title: fileInfo.canOpen ? qsTr("Open")
-                                        : qsTr("Close")
-                acceptText: fileInfo.canOpen? qsTr("Accept"):""
-                cancelText: fileInfo.canOpen? qsTr("Cancel"):""
+            PageHeader{
+                title: fileInfo.type === FolderBase.FolderLink ||
+                       fileInfo.type === FolderBase.Folder ?
+                           qsTr("Folder"):
+                           qsTr("File")
             }
+
+//            DialogHeader {
+//                title: fileInfo.canOpen ? qsTr("Open")
+//                                        : qsTr("Close")
+//                acceptText: fileInfo.canOpen? qsTr("Accept"):""
+//                cancelText: fileInfo.canOpen? qsTr("Cancel"):""
+//            }
 
             // preview item
             Loader {

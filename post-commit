@@ -1,5 +1,6 @@
 #!/bin/bash
-
+LANG="C"
+LC_TIME="C"
 last_version=$(grep "^\*" */*.changes| awk '{print $NF}')
 
 current_version=$(grep "^Version:" */*.yaml | awk '{print $2}')-$(grep "^Release:" */*.yaml | awk '{print $2}')

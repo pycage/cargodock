@@ -41,4 +41,9 @@ QtObject {
     {
         return sourceModel.readFile(name);
     }
+
+    function open()
+    {
+        sourceModel.open(name);
+    }
 }

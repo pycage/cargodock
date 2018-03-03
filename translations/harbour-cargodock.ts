@@ -23,6 +23,14 @@
         <source>Version %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Dropbox support by Vladimir Ulrich</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icon by Morpog</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AddServiceDialog</name>
@@ -57,22 +65,6 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
 </context>
 <context>
     <name>FileInfoDialog</name>
-    <message>
-        <source>Open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Rename</source>
         <translation type="unfinished"></translation>
@@ -127,6 +119,14 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>World permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
