@@ -1,3 +1,6 @@
+* Sun Mar 04 2018 Vladimir Ulrich <admin@evl.su> - 0.2.6-2
+    [FIX] Some more strings are translatable.
+    [FIX] Updated nl translation with actual fields
 * Sat Mar 03 2018 Vladimir Ulrich <admin@evl.su> - 0.2.6-1
     [NEW] Added new-ui branch interface as an option.
 * Wed Feb 28 2018 Vladimir Ulrich <admin@evl.su> - 0.2.5-1

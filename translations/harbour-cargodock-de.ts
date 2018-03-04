@@ -148,6 +148,10 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FileListView</name>
@@ -255,6 +259,61 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>Select all</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FtpService</name>
+    <message>
+        <source>FTP Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Access a FTP server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Configure FTP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter server address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authorization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Leave empty if the server requires no authorization. Please keep in mind that FTP is an insecure protocol and transfers all data, including your login and password in plain text.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter login name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Login</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -519,7 +578,7 @@ Restart application after changing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Delete %1 items</source>
+        <source>Deleting %1 items</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
