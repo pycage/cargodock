@@ -73,6 +73,7 @@ FolderBase::FolderBase(QObject* parent)
     myMimeTypeIcons.insert("application/x-xcf",                       "image://theme/icon-m-image");
     myMimeTypeIcons.insert("application/zip",                         "image://theme/icon-m-other");
     myMimeTypeIcons.insert("audio/mp4",                               "image://theme/icon-m-music");
+    myMimeTypeIcons.insert("audio/flac",                              "image://theme/icon-m-music");
     myMimeTypeIcons.insert("audio/mpeg",                              "image://theme/icon-m-music");
     myMimeTypeIcons.insert("audio/x-ms-wma",                          "image://theme/icon-m-music");
     myMimeTypeIcons.insert("audio/x-scpls",                           "image://theme/icon-m-music");
@@ -371,13 +372,12 @@ void FolderBase::open(const QString& name)
 
 void FolderBase::copySelected(FolderBase* dest)
 {
-    QStringList paths;
-    foreach (int idx, mySelection)
-    {
-        paths << joinPath(QStringList() << myPath << myItems.at(idx)->name);
-    }
+    copyItems(dest, selection());
+}
 
-    CopyAction* action = new CopyAction(this, dest, paths, dest->path());
+void FolderBase::copyItems(FolderBase *dest, const QStringList &items)
+{
+    CopyAction* action = new CopyAction(this, dest, items, dest->path());
     connect(action, SIGNAL(progress(QString,double)),
             this, SIGNAL(progress(QString,double)));
     connect(action, SIGNAL(finished()),
@@ -403,12 +403,30 @@ void FolderBase::deleteItems(const QStringList& items)
 
 void FolderBase::linkSelected(FolderBase* dest)
 {
+    linkItems(dest,selection());
+/*
     foreach (int idx, mySelection)
     {
         const QString endpoint = joinPath(QStringList() << myPath << myItems.at(idx)->name);
         const QString destPath = dest->joinPath(QStringList() << dest->path() << myItems.at(idx)->name);
 
         if (! dest->linkFile(destPath, endpoint, this))
+        {
+            emit error("Could not link to destination.");
+        }
+    }
+    unselectAll();
+    emit finished();
+*/
+}
+
+void FolderBase::linkItems(FolderBase *dest, const QStringList &items)
+{
+    foreach (const QString& item, items)
+    {
+        const QString sourceName = dest->basename(item);
+        const QString destPath = dest->joinPath(QStringList() << dest->path() << sourceName);
+        if (! dest->linkFile(destPath, item, this))
         {
             emit error("Could not link to destination.");
         }

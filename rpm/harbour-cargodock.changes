@@ -1,4 +1,6 @@
-* Ср фев 28 2018 Vladimir Ulrich <admin@evl.su> - 0.2.5-1
+* Sat Mar 03 2018 Vladimir Ulrich <admin@evl.su> - 0.2.6-1
+    [NEW] Added new-ui branch interface as an option.
+* Wed Feb 28 2018 Vladimir Ulrich <admin@evl.su> - 0.2.5-1
     [NEW] Folder properties.
     [IMPROVED] Most of UI strings were prepared for translation
     [MISC] Debug output to console is optional now
