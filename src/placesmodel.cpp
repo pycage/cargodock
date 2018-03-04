@@ -351,6 +351,17 @@ void PlacesModel::setUseEncryptionPassphrase(bool value)
     emit useEncryptionPassphraseChanged();
 }
 
+bool PlacesModel::useNewUI() const
+{
+    return configValue("uiconfig","useNewUI").toBool();
+}
+
+void PlacesModel::setUseNewUI(bool value)
+{
+    setConfigValue("uiconfig","useNewUI", value);
+    emit useNewUIChanged();
+}
+
 bool PlacesModel::verifyEncryptionPassphrase(const QString& passphrase) const
 {
     QByteArray hash = configValue("encryptionPassphraseHash").toByteArray();

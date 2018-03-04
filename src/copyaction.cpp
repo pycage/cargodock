@@ -181,13 +181,6 @@ void CopyAction::start()
         emit finished();
         return;
     }
-    else if (mySource->uid() == myDestination->uid() &&
-             mySource->path() == myDestinationPath)
-    {
-        emit error("Source and destination are the same.");
-        emit finished();
-        return;
-    }
 
     emit progress(QString(), 0);
 
@@ -268,6 +261,14 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
                     myDestination->joinPath(QStringList()
                                             << destPath
                                             << mySource->basename(sourcePath));
+
+            if (mySource->uid() == myDestination->uid() && sourcePath == destFile)
+            {
+                emit error("Source and destination are the same.");
+                emit finished();
+                return;
+            }
+
             QIODevice* srcFd = mySource->openFile(sourcePath,
                                                   size,
                                                   QIODevice::ReadOnly);
@@ -292,6 +293,7 @@ void CopyAction::copy(const QString& sourcePath, const QString& destPath)
             else
             {
                 emit error("Could not copy to destination.");
+                emit finished();
             }
         }
     }

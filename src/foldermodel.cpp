@@ -17,6 +17,7 @@ const QStringList OPENABLE_TYPES = QStringList()
         << "application/x-rpm"
         << "audio/mp4"
         << "audio/mpeg"
+        << "audio/flac"
         << "image/jpeg"
         << "image/png"
         << "text/html"
@@ -32,6 +33,7 @@ FolderModel::FolderModel(QObject* parent)
     myMimeTypeIcons.insert("image/png",                               "");
 
     myPreviewComponents.insert("audio/mp4",               "PreviewAudio");
+    myPreviewComponents.insert("audio/flac",              "PreviewAudio");
     myPreviewComponents.insert("audio/mpeg",              "PreviewAudio");
     myPreviewComponents.insert("audio/x-vorbis+ogg",      "PreviewAudio");
     myPreviewComponents.insert("image/jpeg",              "PreviewImage");

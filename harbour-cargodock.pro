@@ -46,7 +46,7 @@ SOURCES += src/harbour-cargodock.cpp \
     src/ftpapi/ftpcommand.cpp \
     src/ftpapi/ftpfile.cpp
 
-DISTFILES += qml/harbour-cargodock.qml \
+DISTFILES += \
     qml/cover/CoverPage.qml \
     rpm/harbour-cargodock.spec \
     rpm/harbour-cargodock.yaml \
@@ -94,7 +94,15 @@ DISTFILES += qml/harbour-cargodock.qml \
     qml/pages/PassphraseGuard.qml \
     harbour-cargodock.png \
     qml/services/FtpService.qml \
-    rpm/harbour-cargodock.changes
+    rpm/harbour-cargodock.changes \
+    qml/ClassicUi.qml \
+    qml/NewUi.qml \
+    qml/pages/FolderPageNg.qml \
+    qml/pages/FileListView.qml \
+    qml/pages/Trail.qml \
+    qml/pages/TrailModel.qml \
+    qml/pages/PanesPage.qml \
+    qml/pages/ToolBox.qml
 
 HEADERS += \
     src/foldermodel.h \

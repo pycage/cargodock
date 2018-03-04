@@ -565,17 +565,17 @@ Page {
                             var dlg = pageStack.push(Qt.resolvedUrl("FileInfoDialog.qml"),
                                                      props);
 
-                            if (fileInfo.canOpen)
-                            {
-                                function closure(model, name)
-                                {
-                                    return function()
-                                    {
-                                        model.open(name);
-                                    }
-                                }
-                                dlg.accepted.connect(closure(sourceModel, model.name));
-                            }
+//                            if (fileInfo.canOpen)
+//                            {
+//                                function closure(model, name)
+//                                {
+//                                    return function()
+//                                    {
+//                                        model.open(name);
+//                                    }
+//                                }
+//                                dlg.accepted.connect(closure(sourceModel, model.name));
+//                            }
                         } else {
                             sourceModel.open(model.name);
                         }
