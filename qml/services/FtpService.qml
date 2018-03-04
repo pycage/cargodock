@@ -71,7 +71,7 @@ ServiceObject {
                         inputMethodHints: Qt.ImhNoPredictiveText
                         label: "Server"
                         placeholderText: "Enter server address"
-                        text: "webdav.example.com"
+                        text: "ftp.example.com"
                     }
 
                     SectionHeader {

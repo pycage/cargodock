@@ -155,6 +155,21 @@ void FtpModel::slotListReceived(const QString& data)
                 item->mimeType = mimeDb.mimeTypeForName(item->name).name(); //"application/x-octet-stream";
                 item->icon = item->type == Folder ? "image://theme/icon-m-folder"
                                                   : mimeTypeIcon(item->mimeType);
+
+                QString month = RE_UNIX_LS.cap(6);
+                QString day = RE_UNIX_LS.cap(7);
+                QString yearOrTime = RE_UNIX_LS.cap(8);
+                QString year = yearOrTime.contains(":") ? QString::number(QDate::currentDate().year())
+                                                        : yearOrTime;
+                QString time = yearOrTime.contains(":") ? yearOrTime
+                                                        : "00:00";
+
+                item->mtime = QDateTime::fromString(QString("%1 %2 %3 %4")
+                                                    .arg(year)
+                                                    .arg(month)
+                                                    .arg(day)
+                                                    .arg(time),
+                                                    "yyyy MMM dd HH:mm");
                 appendItem(item);
             }
 

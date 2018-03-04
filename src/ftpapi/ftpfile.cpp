@@ -54,10 +54,12 @@ void FtpFile::close()
     // TODO: timeout!
     QEventLoop evLoop;
     qDebug() << Q_FUNC_INFO << myWaitingForDownload << myWaitingForUpload;
+    /*
     while (myWaitingForDownload || myWaitingForUpload)
     {
         evLoop.processEvents();
     }
+    */
     qDebug() << Q_FUNC_INFO << "finished";
 }
 
@@ -105,7 +107,7 @@ qint64 FtpFile::readData(char* data, qint64 maxlen)
 
 qint64 FtpFile::writeData(const char* data, qint64 len)
 {
-    //qDebug() << Q_FUNC_INFO << len;
+    qDebug() << Q_FUNC_INFO << len;
     return myWriteBuffer.write(data, len);
 }
 
