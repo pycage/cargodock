@@ -39,6 +39,7 @@ FolderModel::FolderModel(QObject* parent)
     myPreviewComponents.insert("image/jpeg",              "PreviewImage");
     myPreviewComponents.insert("image/png",               "PreviewImage");
     myPreviewComponents.insert("text/plain",              "PreviewText");
+    myPreviewComponents.insert("application/x-desktop",   "PreviewText");
 }
 
 FolderModel::FolderModel(const FolderModel& other)
@@ -186,12 +187,25 @@ QString FolderModel::readFile(const QString& name) const
     QFile file(filePath);
     if (file.open(QIODevice::ReadOnly))
     {
-        return file.read(8192);
+        return file.read(16384);
     }
     else
     {
         return QString();
     }
+}
+
+qint64 FolderModel::writeFile(const QString &name, const QByteArray &data) const
+{
+    qint64 ret=0;
+    const QString filePath = joinPath(QStringList() << path() << name);
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        ret = file.write(data);
+        if(ret<0) qDebug() << Q_FUNC_INFO <<" Error: " << file.errorString();
+    }
+    return ret;
 }
 
 QString FolderModel::friendlyBasename(const QString& path) const

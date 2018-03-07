@@ -1,7 +1,7 @@
 Name: harbour-cargodock
 Summary: A two-paned filemanager.
 Version: 0.2.6
-Release: 2
+Release: 3
 Group: Qt/Qt
 License: LICENSE
 URL: https://github.com/Wedmer/cargodock
