@@ -17,7 +17,7 @@ Page {
             enabled: fileInfo.canOpen
 
             MenuItem {
-                text: "Open"
+                text: qsTr("Open")
                 onClicked: {
                     fileInfo.open()
                 }

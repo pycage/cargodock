@@ -6,7 +6,7 @@ import "../shared"
 ServiceObject {
     id: service
 
-    name: "FTP Server"
+    name: qsTr("FTP Server")
     icon: "image://theme/icon-m-region"
     usesEncryption: true
     serviceName: "ftp"
@@ -14,7 +14,7 @@ ServiceObject {
 
     serviceDelegate: ServiceDelegate {
         title: "FTP"
-        subtitle: "Access a FTP server."
+        subtitle: qsTr("Access a FTP server.")
         iconSource: service.icon
     }
 
@@ -43,7 +43,7 @@ ServiceObject {
                     width: parent.width
 
                     DialogHeader {
-                        title: "Configure FTP"
+                        title: qsTr("Configure FTP")
                     }
 
                     Item {
@@ -58,8 +58,8 @@ ServiceObject {
                         anchors.right: parent.right
 
                         focus: true
-                        label: "Name"
-                        placeholderText: "Enter name"
+                        label: qsTr("Name")
+                        placeholderText: qsTr("Enter name")
                     }
 
                     TextField {
@@ -69,13 +69,13 @@ ServiceObject {
                         anchors.right: parent.right
 
                         inputMethodHints: Qt.ImhNoPredictiveText
-                        label: "Server"
-                        placeholderText: "Enter server address"
+                        label: qsTr("Server")
+                        placeholderText: qsTr("Enter server address")
                         text: "ftp.example.com"
                     }
 
                     SectionHeader {
-                        text: "Authorization"
+                        text: qsTr("Authorization")
                     }
 
                     Label {
@@ -86,10 +86,10 @@ ServiceObject {
                         wrapMode: Text.Wrap
                         font.pixelSize: Theme.fontSizeSmall
                         color: Theme.secondaryColor
-                        text: "Leave empty if the server requires no authorization. " +
+                        text: qsTr("Leave empty if the server requires no authorization. " +
                               "Please keep in mind that FTP is an insecure protocol " +
                               "and transfers all data, including your login and password " +
-                              "in plain text."
+                              "in plain text.")
                     }
 
                     Item {
@@ -104,8 +104,8 @@ ServiceObject {
                         anchors.right: parent.right
 
                         inputMethodHints: Qt.ImhNoPredictiveText
-                        placeholderText: "Enter login name"
-                        label: "Login"
+                        placeholderText: qsTr("Enter login name")
+                        label: qsTr("Login")
                     }
 
                     PasswordField {
@@ -114,8 +114,8 @@ ServiceObject {
                         anchors.left: parent.left
                         anchors.right: parent.right
 
-                        placeholderText: "Enter password"
-                        label: "Password"
+                        placeholderText: qsTr("Enter password")
+                        label: qsTr("Password")
                     }
                 }
 

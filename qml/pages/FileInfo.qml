@@ -42,6 +42,11 @@ QtObject {
         return sourceModel.readFile(name);
     }
 
+    function writeFile(data)
+    {
+        return sourceModel.writeFile(name,data);
+    }
+
     function open()
     {
         sourceModel.open(name);

@@ -180,7 +180,7 @@ Item {
                         }
                     }
 
-                    var msg = qsTr("Delete %1 items").arg(fileView.model.selected);
+                    var msg = qsTr("Deleting %1 items").arg(fileView.model.selected);
                     remorse.execute(msg,
                                     closure(toolBox,
                                             fileView.model,

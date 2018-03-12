@@ -23,12 +23,39 @@
         <source>Version %1</source>
         <translation>Versie %1</translation>
     </message>
+    <message>
+        <source>Dropbox support by Vladimir Ulrich</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icon by Morpog</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AddServiceDialog</name>
     <message>
         <source>Add service</source>
         <translation>Dienst toevoegen</translation>
+    </message>
+</context>
+<context>
+    <name>ClassicUi</name>
+    <message>
+        <source>Pull down for help</source>
+        <translation>Trek omlaag voor hulp</translation>
+    </message>
+    <message>
+        <source>copying</source>
+        <translation>wordt gekopieerd</translation>
+    </message>
+    <message>
+        <source>deleting</source>
+        <translation>wordt verwijderd</translation>
+    </message>
+    <message>
+        <source>linking</source>
+        <translation>wordt gekoppeld</translation>
     </message>
 </context>
 <context>
@@ -60,18 +87,6 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     <message>
         <source>Open</source>
         <translation>Openen</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Sluiten</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation>Aanvaarden</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Annuleren</translation>
     </message>
     <message>
         <source>Rename</source>
@@ -128,6 +143,29 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     <message>
         <source>World permissions</source>
         <translation>Wereldrechten</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FileListView</name>
+    <message>
+        <source>Not available</source>
+        <translation>Niet beschikbaar</translation>
+    </message>
+    <message>
+        <source>You have no permission for this folder</source>
+        <translation>Je hebt onvoldoende rechten om deze map te openen</translation>
+    </message>
+    <message>
+        <source>No files</source>
+        <translation>Geen bestanden</translation>
     </message>
 </context>
 <context>
@@ -203,6 +241,80 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     <message>
         <source>No files</source>
         <translation>Geen bestanden</translation>
+    </message>
+</context>
+<context>
+    <name>FolderPageNg</name>
+    <message>
+        <source>About</source>
+        <translation>Over</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Instellingen</translation>
+    </message>
+    <message>
+        <source>Select none</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select all</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FtpService</name>
+    <message>
+        <source>FTP Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Access a FTP server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Configure FTP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Naam</translation>
+    </message>
+    <message>
+        <source>Enter name</source>
+        <translation>Voer naam in</translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation>Server</translation>
+    </message>
+    <message>
+        <source>Enter server address</source>
+        <translation>Voer serveradres in</translation>
+    </message>
+    <message>
+        <source>Authorization</source>
+        <translation>Autorisatie</translation>
+    </message>
+    <message>
+        <source>Leave empty if the server requires no authorization. Please keep in mind that FTP is an insecure protocol and transfers all data, including your login and password in plain text.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter login name</source>
+        <translation>Voer naam in</translation>
+    </message>
+    <message>
+        <source>Login</source>
+        <translation>Naam</translation>
+    </message>
+    <message>
+        <source>Enter password</source>
+        <translation>Voer wachtwoord in</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation>Wachtwoord</translation>
     </message>
 </context>
 <context>
@@ -299,6 +411,21 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     <message>
         <source>Password</source>
         <translation>Wachtwoord</translation>
+    </message>
+</context>
+<context>
+    <name>PanesPage</name>
+    <message>
+        <source>New pane</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Panes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pull down to add a new pane</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -411,6 +538,19 @@ Drag down to add a service.</source>
         <translation>Nog geen diensten.
 Trek omlaag om er een toe te voegen.</translation>
     </message>
+    <message>
+        <source>Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable alternative UI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is unfinished ui from new-ui development branch.
+Restart application after changing.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SslHandler</name>
@@ -428,6 +568,21 @@ Trek omlaag om er een toe te voegen.</translation>
     <message>
         <source>Access Deutsche Telekom® Mediencenter.</source>
         <translation>Verkrijg toegang tot een Deutsche Telekom®-mediacentrum.</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBox</name>
+    <message>
+        <source>%1 selected</source>
+        <translation>%1 geselecteerd</translation>
+    </message>
+    <message>
+        <source>Copy %1 items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deleting %1 items</source>
+        <translation>%1 items worden verwijderd</translation>
     </message>
 </context>
 <context>
@@ -499,25 +654,6 @@ Trek omlaag om er een toe te voegen.</translation>
     <message>
         <source>Password</source>
         <translation>Wachtwoord</translation>
-    </message>
-</context>
-<context>
-    <name>harbour-cargodock</name>
-    <message>
-        <source>Pull down for help</source>
-        <translation>Trek omlaag voor hulp</translation>
-    </message>
-    <message>
-        <source>copying</source>
-        <translation>wordt gekopieerd</translation>
-    </message>
-    <message>
-        <source>deleting</source>
-        <translation>wordt verwijderd</translation>
-    </message>
-    <message>
-        <source>linking</source>
-        <translation>wordt gekoppeld</translation>
     </message>
 </context>
 </TS>

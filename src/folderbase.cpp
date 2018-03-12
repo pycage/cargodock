@@ -462,6 +462,11 @@ QString FolderBase::readFile(const QString&) const
     return QString();
 }
 
+qint64 FolderBase::writeFile(const QString&, const QByteArray&) const
+{
+    return 0;
+}
+
 void FolderBase::refresh()
 {
     loadDirectory(myPath);
