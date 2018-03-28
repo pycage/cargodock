@@ -138,6 +138,7 @@ public:
     QStringList selection() const;
 
     Q_INVOKABLE void open(const QString& name);
+    Q_INVOKABLE void useTool(const QString& toolUid, const QString& name);
     Q_INVOKABLE void copySelected(FolderBase* dest);
     Q_INVOKABLE void copyItems(FolderBase* dest, const QStringList& items);
     Q_INVOKABLE void deleteItems(const QStringList& items);

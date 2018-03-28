@@ -11,6 +11,7 @@ class PlacesModel : public FolderBase
 {
     Q_OBJECT
     Q_PROPERTY(QStringList services READ services NOTIFY servicesChanged)
+    Q_PROPERTY(QStringList tools READ tools NOTIFY toolsChanged)
     Q_PROPERTY(bool useEncryptionPassphrase READ useEncryptionPassphrase
                WRITE setUseEncryptionPassphrase
                NOTIFY useEncryptionPassphraseChanged)
@@ -46,6 +47,18 @@ public:
      */
     Q_INVOKABLE QVariantMap service(const QString& uid) const;
 
+    /*! New tool creation */
+    Q_INVOKABLE void addTool(const QVariantMap& options);
+
+    /*! Update tool options */
+    Q_INVOKABLE void updateTool(const QString& uid, const QVariantMap& options);
+
+    /*! Remove tool */
+    Q_INVOKABLE void removeTool(const QString& uid);
+
+    /*! Returns tool options */
+    Q_INVOKABLE QVariantMap getToolOptions(const QString& uid) const;
+
     int capabilities() const;
 
     virtual bool linkFile(const QString& path,
@@ -56,6 +69,7 @@ public:
 
 signals:
     void servicesChanged();
+    void toolsChanged();
     void useEncryptionPassphraseChanged();
     void useNewUIChanged();
 
@@ -66,6 +80,7 @@ protected:
 
 private:
     QStringList services() const;
+    QStringList tools() const;
     Item::Ptr makeItem(const QString& uid,
                        const QString& name,
                        const QString& section,

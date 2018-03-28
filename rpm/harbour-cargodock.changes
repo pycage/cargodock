@@ -1,3 +1,8 @@
+* Wed Mar 28 2018 Vladimir Ulrich <admin@evl.su> - 0.2.7-1
+    [FIX] Fixed infinite back navigation from Places in modern ui.
+    [FIX] Fixed using of unreachable models in classic ui.
+    [MISC] Changed wrap mode for internal text editor.
+    [NEW] Added basic "Tools" to manipulate files with external commands.
 * Thu Mar 08 2018 Vladimir Ulrich <admin@evl.su> - 0.2.6-3
     [NEW] Simple editor for text/plain mime type and for *.desktop files. Press and hold preview text to enter edit mode.
     [NEW] ES locale added to package. Thanks to @carmenfdezb

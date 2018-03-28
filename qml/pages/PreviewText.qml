@@ -7,7 +7,7 @@ PreviewItem {
     TextArea {
         anchors.fill: parent
         readOnly: true
-        wrapMode: Text.NoWrap
+        wrapMode: Text.Wrap
         font.pixelSize: Theme.fontSizeSmall
         text: fileInfo.readFile()
         onPressAndHold: {
@@ -24,7 +24,6 @@ PreviewItem {
             SilicaFlickable {
                 id: fl
                 anchors.fill: parent
-                contentHeight: editor.height
                 TextArea{
                     id: editor
                     text: page.currentText
@@ -33,13 +32,12 @@ PreviewItem {
                         family: Theme.fontFamily;
                         pixelSize: Theme.fontSizeMedium
                     }
-                    width: Math.max(page.width * 2, implicitWidth +1)
                     anchors.fill: parent
-                    wrapMode: Text.NoWrap
+                    wrapMode: Text.Wrap
                     readOnly: (fileInfo.capabilities & FolderBase.CanDelete)
                     background: null
                 }
-                contentWidth: page.width + editor.width // for long lines
+                contentHeight: Math.max(editor.height,editor.implicitHeight)
                 ScrollDecorator {}
             }
             onStatusChanged: {

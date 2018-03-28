@@ -183,6 +183,11 @@ QStringList PlacesModel::services() const
                          << configValue("user-services").toStringList();
 }
 
+QStringList PlacesModel::tools() const
+{
+    return QStringList() << configValue("tools").toStringList();
+}
+
 QVariantMap PlacesModel::service(const QString& uid) const
 {
     QVariantMap data;
@@ -193,6 +198,42 @@ QVariantMap PlacesModel::service(const QString& uid) const
     return data;
 }
 
+void PlacesModel::addTool(const QVariantMap &options)
+{
+    QStringList toolList=configValue("tools").toStringList();
+    const QString uid = makeUid();
+    toolList << uid;
+    setConfigValue("tools",toolList);
+    updateTool(uid,options);
+}
+
+void PlacesModel::updateTool(const QString &uid, const QVariantMap &options)
+{
+    foreach (const QString& prop, options.keys())
+    {
+        setConfigValue(uid, prop, options.value(prop));
+    }
+    emit toolsChanged();
+}
+
+void PlacesModel::removeTool(const QString &uid)
+{
+    QStringList toolList=configValue("tools").toStringList();
+    toolList.removeOne(uid);
+    setConfigValue("tools",toolList);
+    removeConfigValues(uid);
+    emit toolsChanged();
+}
+
+QVariantMap PlacesModel::getToolOptions(const QString &uid) const
+{
+    QVariantMap options;
+    foreach (const QString& key, configKeys(uid))
+    {
+        options.insert(key, configValue(uid, key));
+    }
+    return options;
+}
 
 FolderBase::Item::Ptr PlacesModel::makeItem(const QString& uid,
                                             const QString& name,
