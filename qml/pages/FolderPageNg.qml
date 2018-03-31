@@ -14,6 +14,8 @@ Page {
         fileView.model.refresh();
     }
 
+    backNavigation: fileView.model !== fileView.trailModel.rootModel
+
     Component {
         id: trailModelComponent
 

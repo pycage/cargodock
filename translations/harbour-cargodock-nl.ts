@@ -152,6 +152,10 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tools</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FileListView</name>
@@ -533,12 +537,6 @@ Indien uitgeschakeld worden wachtwoorden versleuteld met een standaardwachtwoord
         <translation>Verwijderen</translation>
     </message>
     <message>
-        <source>No services yet.
-Drag down to add a service.</source>
-        <translation>Nog geen diensten.
-Trek omlaag om er een toe te voegen.</translation>
-    </message>
-    <message>
         <source>Interface</source>
         <translation type="unfinished"></translation>
     </message>
@@ -549,6 +547,45 @@ Trek omlaag om er een toe te voegen.</translation>
     <message>
         <source>This is unfinished ui from new-ui development branch.
 Restart application after changing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No tools yet.
+Pull down to add a new tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No services yet.
+Pull down to add a service.</source>
+        <translation>Nog geen diensten.
+Trek omlaag om er een toe te voegen.</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Naam</translation>
+    </message>
+    <message>
+        <source>Enter name</source>
+        <translation>Voer naam in</translation>
+    </message>
+    <message>
+        <source>Command line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter command to use with files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Command should contain %1 sequence for location placement.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

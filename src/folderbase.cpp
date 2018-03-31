@@ -5,6 +5,7 @@
 #include <QCryptographicHash>
 #include <QSettings>
 #include <QDebug>
+#include <QProcess>
 
 #ifdef HAVE_ENCRYPTION_PASSPHRASE
 #include "../../encryptionpassphrase.h"
@@ -367,6 +368,17 @@ void FolderBase::open(const QString& name)
             qDebug() << "opening file" << path;
             runFile(path);
         }
+    }
+}
+
+void FolderBase::useTool(const QString &toolUid, const QString &name)
+{
+    Item::ConstPtr item = itemByName(name);
+    if(! item.isNull()){
+        QString path = joinPath(QStringList() << myPath << name);
+        const QString& cmd=configValue(toolUid,"Command").toString().arg(path);
+        bool ret = QProcess::startDetached(cmd);
+        qDebug() << "Command " << cmd << (ret?" started":" failed");
     }
 }
 
