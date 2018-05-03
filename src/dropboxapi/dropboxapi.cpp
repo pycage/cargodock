@@ -528,7 +528,7 @@ void DropboxApi::slotFileMoved()
 void DropboxApi::slotFileDeleted()
 {
     QVariantMap jsonMap = getReplyMap(sender());
-    if (jsonMap.contains("path"))
+    if (jsonMap.contains("metadata"))
     {
         Metadata metadata = parseMetadata(jsonMap.value("metadata").toMap());
         emit fileDeleted(metadata.path);
