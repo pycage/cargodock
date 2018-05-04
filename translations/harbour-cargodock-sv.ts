@@ -153,6 +153,10 @@ Du kan lägga till flera Dropbox-tjänster, anslutna till olika Dropbox-konton. 
         <source>Open</source>
         <translation>Öppna</translation>
     </message>
+    <message>
+        <source>Tools</source>
+        <translation>Verktyg</translation>
+    </message>
 </context>
 <context>
     <name>FileListView</name>
@@ -535,12 +539,6 @@ Vid inaktivering krypteras lösenorden med en standardlösenordsfras.</translati
         <translation>Ta bort</translation>
     </message>
     <message>
-        <source>No services yet.
-Drag down to add a service.</source>
-        <translation>Inga tjänster än.
-Dra neråt för att lägga till en tjänst.</translation>
-    </message>
-    <message>
         <source>Interface</source>
         <translation>Gränssnitt</translation>
     </message>
@@ -553,6 +551,46 @@ Dra neråt för att lägga till en tjänst.</translation>
 Restart application after changing.</source>
         <translation>Detta är ett icke färdigt UI från ny UI-utvecklingsgren.
 Starta om appen efter ändring.</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Verktyg</translation>
+    </message>
+    <message>
+        <source>New Tool</source>
+        <translation>Nytt verktyg</translation>
+    </message>
+    <message>
+        <source>No tools yet.
+Pull down to add a new tool.</source>
+        <translation>Inga verktyg ännu.
+Dra neråt för att lägga till ett nytt verktyg.</translation>
+    </message>
+    <message>
+        <source>No services yet.
+Pull down to add a service.</source>
+        <translation>Inga tjänster ännu.
+Dra neråt för att lägga till en ny tjänst.</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Namn</translation>
+    </message>
+    <message>
+        <source>Enter name</source>
+        <translation>Ange namn</translation>
+    </message>
+    <message>
+        <source>Command line</source>
+        <translation>Kommandorad</translation>
+    </message>
+    <message>
+        <source>Enter command to use with files</source>
+        <translation>Ange kommando för filåtgärd</translation>
+    </message>
+    <message>
+        <source>Command should contain %1 sequence for location placement.</source>
+        <translation>Kommandot skall innehålla %1-sekvens för platsplacering.</translation>
     </message>
 </context>
 <context>
