@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="es_ES">
+<TS version="2.1" language="es_ES">
 <context>
     <name>AboutPage</name>
     <message>
@@ -152,6 +152,10 @@ Debes añadir diferentes servicios de Dropbox para diferentes cuentas de Dropbox
     <message>
         <source>Open</source>
         <translation>Abrir</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -535,12 +539,6 @@ Si no lo habilitas, las contraseñas se encriptan con una frase de contraseña p
         <translation>Eliminar</translation>
     </message>
     <message>
-        <source>No services yet.
-Drag down to add a service.</source>
-        <translation>No hay servicios aún.
-Arrastra hacia abajo para añadir servicio.</translation>
-    </message>
-    <message>
         <source>Interface</source>
         <translation>Interfaz</translation>
     </message>
@@ -553,6 +551,45 @@ Arrastra hacia abajo para añadir servicio.</translation>
 Restart application after changing.</source>
         <translation>Esta es una iu sin finalizar de la rama de desarrollo new-iu.
 Reinicia la aplicación después del cambio.</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No tools yet.
+Pull down to add a new tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No services yet.
+Pull down to add a service.</source>
+        <translation>No hay servicios aún.
+Tira hacia abajo para añadir servicio.</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nombre</translation>
+    </message>
+    <message>
+        <source>Enter name</source>
+        <translation type="unfinished">Introduce nombre</translation>
+    </message>
+    <message>
+        <source>Command line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter command to use with files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Command should contain %1 sequence for location placement.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

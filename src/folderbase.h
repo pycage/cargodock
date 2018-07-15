@@ -138,6 +138,7 @@ public:
     QStringList selection() const;
 
     Q_INVOKABLE void open(const QString& name);
+    Q_INVOKABLE void useTool(const QString& toolUid, const QString& name);
     Q_INVOKABLE void copySelected(FolderBase* dest);
     Q_INVOKABLE void copyItems(FolderBase* dest, const QStringList& items);
     Q_INVOKABLE void deleteItems(const QStringList& items);
@@ -148,6 +149,7 @@ public:
     Q_INVOKABLE virtual void setPermissions(const QString& name, int permissions);
     Q_INVOKABLE virtual void rename(const QString& name, const QString& newName);
     Q_INVOKABLE virtual QString readFile(const QString& name) const;
+    Q_INVOKABLE virtual qint64 writeFile(const QString& name, const QByteArray& data) const;
 
     /* Refreshes the current folder by reloading its contents.
      */

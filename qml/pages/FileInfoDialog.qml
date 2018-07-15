@@ -9,17 +9,48 @@ Page {
 
     property FileInfo fileInfo
 
+    property variant placesModel
+    function toolMenuModel()
+    {
+        var ret = [];
+        var tools = placesModel.tools
+        for (var i = 0; i < tools.length;++i){
+            var data = {
+                "uid": tools[i],
+                "name": placesModel.getToolOptions(tools[i]).Name
+            }
+            ret.push(data);
+        }
+        return ret;
+    }
+
     SilicaFlickable {
         anchors.fill: parent
         contentHeight: column.height
 
         PullDownMenu {
-            enabled: fileInfo.canOpen
-
+            enabled: fileInfo.canOpen ||
+                     (fileInfo.capabilities & FolderBase.HasPermissions && toolsMenu.count !==0)
             MenuItem {
+                visible: fileInfo.canOpen
                 text: qsTr("Open")
                 onClicked: {
                     fileInfo.open()
+                }
+            }
+            MenuLabel{
+                id: toolsLabel
+                text: qsTr("Tools")
+                visible: fileInfo.capabilities & FolderBase.HasPermissions && toolsMenu.count !==0
+            }
+            Repeater{
+                id: toolsMenu
+                model: toolMenuModel()
+                MenuItem{
+                    text: modelData.name
+                    onClicked: {
+                        fileInfo.sourceModel.useTool(modelData.uid,fileInfo.name)
+                    }
                 }
             }
         }

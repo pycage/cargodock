@@ -147,7 +147,8 @@ Page {
         {
             var info = contentlist.currentItem["fileInfo"]
             var props = {
-                "fileInfo": info
+                "fileInfo": info,
+                "placesModel":_modelStack[0]
             }
             var dlg = pageStack.push(Qt.resolvedUrl("FileInfoDialog.qml"),
                                      props);
@@ -514,15 +515,17 @@ Page {
                                 if (! menu.active && pathMenuItem._chosen)
                                 {
                                     pathMenuItem._chosen = false;
-
+                                    var mdlLevel = modelData.level
                                     if (modelData.model !== sourceModel)
                                     {
                                         popModels(modelData.model);
                                     }
 
-                                    console.log("up " + modelData.level);
-                                    _selectionMode = false;
-                                    modelData.model.cdUp(modelData.level);
+                                    console.log("up " + mdlLevel);
+                                    if(mdlLevel){
+                                        _selectionMode = false;
+                                        modelData.model.cdUp(mdlLevel);
+                                    }
                                 }
                             }
                         }
@@ -560,7 +563,8 @@ Page {
                         else if (model.type === FolderBase.File || model.type === FolderBase.FileLink)
                         {
                             var props = {
-                                "fileInfo": fileInfo
+                                "fileInfo": fileInfo,
+                                "placesModel":_modelStack[0]
                             }
                             var dlg = pageStack.push(Qt.resolvedUrl("FileInfoDialog.qml"),
                                                      props);

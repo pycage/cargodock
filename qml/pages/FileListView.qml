@@ -79,7 +79,8 @@ SilicaListView {
                 {
                     // open file
                     var props = {
-                        "fileInfo": fileInfo
+                        "fileInfo": fileInfo,
+                        "placesModel":trailModel.rootModel
                     };
                     pageStack.push(Qt.resolvedUrl("FileInfoDialog.qml"),
                                    props);
