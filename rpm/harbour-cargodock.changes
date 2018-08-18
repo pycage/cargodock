@@ -1,3 +1,7 @@
+* Mon Jul 16 2018 Vladimir Ulrich <admin@evl.su> - 0.2.7-3
+    [UPD] Spanish translation by @carmenfdezb
+* Thu May 03 2018 Vladimir Ulrich <admin@evl.su> - 0.2.7-2
+    [FIX] Fake error when deleting files at DropBox location
 * Wed Mar 28 2018 Vladimir Ulrich <admin@evl.su> - 0.2.7-1
     [FIX] Fixed infinite back navigation from Places in modern ui.
     [FIX] Fixed using of unreachable models in classic ui.

@@ -43,7 +43,7 @@
     <name>ClassicUi</name>
     <message>
         <source>Pull down for help</source>
-        <translation>Desliza hacia abajo para ayuda</translation>
+        <translation>Tira hacia abajo para ver ayuda</translation>
     </message>
     <message>
         <source>copying</source>
@@ -155,7 +155,7 @@ Debes añadir diferentes servicios de Dropbox para diferentes cuentas de Dropbox
     </message>
     <message>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramientas</translation>
     </message>
 </context>
 <context>
@@ -554,42 +554,43 @@ Reinicia la aplicación después del cambio.</translation>
     </message>
     <message>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramientas</translation>
     </message>
     <message>
         <source>New Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Nueva herramienta</translation>
     </message>
     <message>
         <source>No tools yet.
 Pull down to add a new tool.</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay herramientas aún.
+Tira hacia abajo para añadir una.</translation>
     </message>
     <message>
         <source>No services yet.
 Pull down to add a service.</source>
         <translation>No hay servicios aún.
-Tira hacia abajo para añadir servicio.</translation>
+Tira hacia abajo para añadir uno.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nombre</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <source>Enter name</source>
-        <translation type="unfinished">Introduce nombre</translation>
+        <translation>Introduce nombre</translation>
     </message>
     <message>
         <source>Command line</source>
-        <translation type="unfinished"></translation>
+        <translation>Línea de comandos</translation>
     </message>
     <message>
         <source>Enter command to use with files</source>
-        <translation type="unfinished"></translation>
+        <translation>Introduce comando para archivos</translation>
     </message>
     <message>
         <source>Command should contain %1 sequence for location placement.</source>
-        <translation type="unfinished"></translation>
+        <translation>El comando debe contener la secuencia %1 para el lugar de colocación.</translation>
     </message>
 </context>
 <context>
