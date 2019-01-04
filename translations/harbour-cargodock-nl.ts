@@ -588,6 +588,54 @@ Trek omlaag om er een toe te voegen.</translation>
         <source>Command should contain %1 sequence for location placement.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Sort by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>modification time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>extension</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directories placement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>first</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>last</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Local filesystem sort options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reverse order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Case-insensitive</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SslHandler</name>

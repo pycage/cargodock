@@ -154,6 +154,57 @@ Page {
             }
 
             SectionHeader {
+                text: qsTr("Local filesystem sort options")
+            }
+
+            ComboBox {
+                label: qsTr("Sort by")
+                currentIndex: placesModel.sortBy
+                menu: ContextMenu{
+                    MenuItem{text:qsTr("name")}
+                    MenuItem{text:qsTr("modification time")}
+                    MenuItem{text:qsTr("size")}
+                    MenuItem{text:qsTr("extension")}
+                }
+                onCurrentIndexChanged: {
+                    placesModel.sortBy = currentIndex
+                }
+            }
+
+            ComboBox {
+                label: qsTr("Directories placement")
+                currentIndex: placesModel.dirsPosition
+                menu: ContextMenu{
+                    MenuItem{text:qsTr("first")}
+                    MenuItem{text:qsTr("last")}
+                    MenuItem{text:qsTr("disabled")}
+                }
+                onCurrentIndexChanged: {
+                    placesModel.dirsPosition = currentIndex
+                }
+            }
+
+            TextSwitch {
+                automaticCheck: false
+                text: qsTr("Reverse order")
+                checked: placesModel.reverseSort
+                onClicked: {
+                    checked = !checked
+                    placesModel.reverseSort = checked
+                }
+            }
+
+            TextSwitch {
+                automaticCheck: false
+                text: qsTr("Case-insensitive")
+                checked: placesModel.ignoreCase
+                onClicked: {
+                    checked = !checked
+                    placesModel.ignoreCase = checked
+                }
+            }
+
+            SectionHeader {
                 text: qsTr("Tools")
             }
 

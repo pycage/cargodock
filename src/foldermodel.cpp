@@ -258,10 +258,37 @@ void FolderModel::loadDirectory(const QString& path)
                                         QDir::Hidden
                                       : QDir::AllEntries |
                                         QDir::NoDotAndDotDot;
+    QDir::SortFlags sortFlags;
+    switch(configValue("uiconfig","sortBy").toInt()){
+    case 1: sortFlags=QDir::Time;
+        break;
+    case 2: sortFlags=QDir::Size;
+        break;
+    case 3: sortFlags=QDir::Type;
+        break;
+    default: sortFlags=QDir::Name;
+        break;
+    }
+
+    switch(configValue("uiconfig","dirsPosition").toInt()){
+    case 1: sortFlags|=QDir::DirsLast;
+        break;
+    case 2: break;
+    default: sortFlags|=QDir::DirsFirst;
+        break;
+    }
+
+    if(configValue("uiconfig","reverseSort").toBool()){
+        sortFlags|=QDir::Reversed;
+    }
+
+    if(configValue("uiconfig","ignoreCase").toBool()){
+        sortFlags|=QDir::IgnoreCase;
+    }
 
     if (dir.isReadable())
     {
-        foreach (const QFileInfo& finfo, dir.entryInfoList(filter))
+        foreach (const QFileInfo& finfo, dir.entryInfoList(filter,sortFlags))
         {
             Item::Ptr item(new Item);
             item->selectable = true;

@@ -18,6 +18,18 @@ class PlacesModel : public FolderBase
     Q_PROPERTY(bool useNewUI READ useNewUI
                WRITE setUseNewUI
                NOTIFY useNewUIChanged)
+    Q_PROPERTY(int sortBy READ sortBy
+               WRITE setSortBy
+               NOTIFY sortByChanged)
+    Q_PROPERTY(int dirsPosition READ dirsPosition
+               WRITE setDirsPosition
+               NOTIFY dirsPositionChanged)
+    Q_PROPERTY(bool reverseSort READ reverseSort
+               WRITE setReverseSort
+               NOTIFY reverseSortChanged)
+    Q_PROPERTY(bool ignoreCase READ ignoreCase
+               WRITE setIgnoreCase
+               NOTIFY ignoreCaseChanged)
 public:
     PlacesModel(QObject* parent = 0);
 
@@ -72,6 +84,10 @@ signals:
     void toolsChanged();
     void useEncryptionPassphraseChanged();
     void useNewUIChanged();
+    void sortByChanged();
+    void dirsPositionChanged();
+    void reverseSortChanged();
+    void ignoreCaseChanged();
 
 protected:
     virtual void init();
@@ -92,6 +108,14 @@ private:
     void setUseEncryptionPassphrase(bool value);
     bool useNewUI() const;
     void setUseNewUI(bool value);
+    int sortBy() const;
+    void setSortBy(int value);
+    int dirsPosition() const;
+    void setDirsPosition(int value);
+    bool reverseSort() const;
+    void setReverseSort(bool value);
+    bool ignoreCase() const;
+    void setIgnoreCase(bool value);
 };
 
 #endif // PLACESMODEL_H
