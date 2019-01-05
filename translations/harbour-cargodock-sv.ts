@@ -594,51 +594,51 @@ Dra neråt för att lägga till en ny tjänst.</translation>
     </message>
     <message>
         <source>Sort by</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortera efter</translation>
     </message>
     <message>
         <source>name</source>
-        <translation type="unfinished"></translation>
+        <translation>namn</translation>
     </message>
     <message>
         <source>modification time</source>
-        <translation type="unfinished"></translation>
+        <translation>senast ändrad</translation>
     </message>
     <message>
         <source>size</source>
-        <translation type="unfinished"></translation>
+        <translation>storlek</translation>
     </message>
     <message>
         <source>extension</source>
-        <translation type="unfinished"></translation>
+        <translation>filändelse</translation>
     </message>
     <message>
         <source>Directories placement</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapplacering</translation>
     </message>
     <message>
         <source>first</source>
-        <translation type="unfinished"></translation>
+        <translation>först</translation>
     </message>
     <message>
         <source>last</source>
-        <translation type="unfinished"></translation>
+        <translation>sist</translation>
     </message>
     <message>
         <source>disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>inaktiverad</translation>
     </message>
     <message>
         <source>Local filesystem sort options</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokalt filsystems sorteringsordning</translation>
     </message>
     <message>
         <source>Reverse order</source>
-        <translation type="unfinished"></translation>
+        <translation>Omvänd ordning</translation>
     </message>
     <message>
         <source>Case-insensitive</source>
-        <translation type="unfinished"></translation>
+        <translation>Ej skiftlägeskänslig</translation>
     </message>
 </context>
 <context>
