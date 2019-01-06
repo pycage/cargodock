@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>Icon by Morpog</source>
-        <translation>I图标由Morpog制作</translation>
+        <translation>图标由Morpog制作</translation>
     </message>
 </context>
 <context>
