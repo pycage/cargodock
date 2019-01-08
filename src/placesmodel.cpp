@@ -403,6 +403,50 @@ void PlacesModel::setUseNewUI(bool value)
     emit useNewUIChanged();
 }
 
+int PlacesModel::sortBy() const
+{
+    return configValue("uiconfig","sortBy").toInt();
+}
+
+void PlacesModel::setSortBy(int value)
+{
+    setConfigValue("uiconfig","sortBy", value);
+    emit sortByChanged();
+}
+
+int PlacesModel::dirsPosition() const
+{
+    return configValue("uiconfig","dirsPosition").toInt();
+}
+
+void PlacesModel::setDirsPosition(int value)
+{
+    setConfigValue("uiconfig","dirsPosition", value);
+    emit dirsPositionChanged();
+}
+
+bool PlacesModel::reverseSort() const
+{
+    return configValue("uiconfig","reverseSort").toBool();
+}
+
+void PlacesModel::setReverseSort(bool value)
+{
+    setConfigValue("uiconfig","reverseSort", value);
+    emit reverseSortChanged();
+}
+
+bool PlacesModel::ignoreCase() const
+{
+    return configValue("uiconfig","ignoreCase").toBool();
+}
+
+void PlacesModel::setIgnoreCase(bool value)
+{
+    setConfigValue("uiconfig","ignoreCase", value);
+    emit ignoreCaseChanged();
+}
+
 bool PlacesModel::verifyEncryptionPassphrase(const QString& passphrase) const
 {
     QByteArray hash = configValue("encryptionPassphraseHash").toByteArray();

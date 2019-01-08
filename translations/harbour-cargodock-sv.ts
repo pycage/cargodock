@@ -592,6 +592,54 @@ Dra neråt för att lägga till en ny tjänst.</translation>
         <source>Command should contain %1 sequence for location placement.</source>
         <translation>Kommandot skall innehålla %1-sekvens för platsplacering.</translation>
     </message>
+    <message>
+        <source>Sort by</source>
+        <translation>Sortera efter</translation>
+    </message>
+    <message>
+        <source>name</source>
+        <translation>namn</translation>
+    </message>
+    <message>
+        <source>modification time</source>
+        <translation>senast ändrad</translation>
+    </message>
+    <message>
+        <source>size</source>
+        <translation>storlek</translation>
+    </message>
+    <message>
+        <source>extension</source>
+        <translation>filändelse</translation>
+    </message>
+    <message>
+        <source>Directories placement</source>
+        <translation>Mapplacering</translation>
+    </message>
+    <message>
+        <source>first</source>
+        <translation>först</translation>
+    </message>
+    <message>
+        <source>last</source>
+        <translation>sist</translation>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation>inaktiverad</translation>
+    </message>
+    <message>
+        <source>Local filesystem sort options</source>
+        <translation>Lokalt filsystems sorteringsordning</translation>
+    </message>
+    <message>
+        <source>Reverse order</source>
+        <translation>Omvänd ordning</translation>
+    </message>
+    <message>
+        <source>Case-insensitive</source>
+        <translation>Ej skiftlägeskänslig</translation>
+    </message>
 </context>
 <context>
     <name>SslHandler</name>
