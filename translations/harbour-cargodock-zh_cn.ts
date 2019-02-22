@@ -79,7 +79,7 @@
     <message>
         <source>Enter the name under which you want to access your Dropbox folder in Cargo Dock.
 You may add several Dropbox services connected to different Dropbox accounts. The name will help you distinguish them.</source>
-        <translation>输入要在Cargo Dock访问Dropbox 文件夹的名称。
+        <translation>输入要在 Cargo Dock 访问 Dropbox 文件夹的名称。
 你可以添加多个连接到不同 Dropbox 帐户的 Dropbox 服务。名称将帮助你区分它们。</translation>
     </message>
 </context>
@@ -177,11 +177,11 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     <name>FolderPage</name>
     <message>
         <source>Deleting %1 items</source>
-        <translation>正在删除 %1项目</translation>
+        <translation>正在删除 %1 项目</translation>
     </message>
     <message>
         <source>%1 selected</source>
-        <translation>已选%1</translation>
+        <translation>已选 %1 </translation>
     </message>
     <message>
         <source>Pull up for actions</source>
@@ -271,11 +271,11 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     <name>FtpService</name>
     <message>
         <source>FTP Server</source>
-        <translation> FTP服务</translation>
+        <translation> FTP 服务</translation>
     </message>
     <message>
         <source>Access a FTP server.</source>
-        <translation>访问一个FTP服务器。</translation>
+        <translation>访问一个FTP 服务器。</translation>
     </message>
     <message>
         <source>Configure FTP</source>
@@ -351,11 +351,11 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     <name>OwnCloudService</name>
     <message>
         <source>Access an ownCloud file server.</source>
-        <translation>访问一个ownCloud文件服务器。</translation>
+        <translation>访问一个 ownCloud 文件服务器。</translation>
     </message>
     <message>
         <source>Configure ownCloud</source>
-        <translation>构建ownCloud</translation>
+        <translation>配置 ownCloud</translation>
     </message>
     <message>
         <source>Name</source>
@@ -467,7 +467,7 @@ If you forget the passphrase, your stored passwords will become unusable.</sourc
     </message>
     <message>
         <source>If you forgot your passphrase, the stored passwords will become unusable and you will have to enter them again.</source>
-        <translation>如果你忘记口令，储存的密码将不再可用，你不得不在此输入它们。</translation>
+        <translation>如果你忘记口令，储存的密码将不再可用，你不得不在此输入它们</translation>
     </message>
     <message>
         <source>I forgot</source>
@@ -497,7 +497,7 @@ If you forget the passphrase, your stored passwords will become unusable.</sourc
     </message>
     <message>
         <source>Name</source>
-        <translation>Nombre</translation>
+        <translation>名称</translation>
     </message>
 </context>
 <context>
@@ -508,7 +508,7 @@ If you forget the passphrase, your stored passwords will become unusable.</sourc
     </message>
     <message>
         <source>Settings</source>
-        <translation>Ajustes</translation>
+        <translation>设置</translation>
     </message>
     <message>
         <source>Security</source>
@@ -548,7 +548,7 @@ If not enabled, passwords are encrypted with a default passphrase.</source>
     <message>
         <source>This is unfinished ui from new-ui development branch.
 Restart application after changing.</source>
-        <translation这是来自信UI开发部门的未完成的UI，重启应用以生效。</translation>
+        <translation这是一个来自UI开发部门的未完成的新UI，重启应用程序以生效</translation>
     </message>
     <message>
         <source>Tools</source>
@@ -561,13 +561,13 @@ Restart application after changing.</source>
     <message>
         <source>No tools yet.
 Pull down to add a new tool.</source>
-        <translation>尚未有工具。
+        <translation>尚未有工具，
 下拉以添加一个新工具。</translation>
     </message>
     <message>
         <source>No services yet.
 Pull down to add a service.</source>
-        <translation>尚未有服务器。
+        <translation>尚未有服务器，
 下拉以添加服务器。</translation>
     </message>
     <message>
@@ -588,55 +588,55 @@ Pull down to add a service.</source>
     </message>
     <message>
         <source>Command should contain %1 sequence for location placement.</source>
-        <translation>命令应包含% 1 序列以进行位置放置。</translation>
+        <translation>命令应包含 %1 序列以进行位置放置</translation>
     </message>
     <message>
         <source>Sort by</source>
-        <translation type="unfinished"></translation>
+        <translation>分类方式</translation>
     </message>
     <message>
         <source>name</source>
-        <translation type="unfinished"></translation>
+        <translation>名称</translation>
     </message>
     <message>
         <source>modification time</source>
-        <translation type="unfinished"></translation>
+        <translation>最近修改</translation>
     </message>
     <message>
         <source>size</source>
-        <translation type="unfinished"></translation>
+        <translation>大小</translation>
     </message>
     <message>
         <source>extension</source>
-        <translation type="unfinished"></translation>
+        <translation>扩展名</translation>
     </message>
     <message>
         <source>Directories placement</source>
-        <translation type="unfinished"></translation>
+        <translation>目录放置</translation>
     </message>
     <message>
         <source>first</source>
-        <translation type="unfinished"></translation>
+        <translation>先</translation>
     </message>
     <message>
         <source>last</source>
-        <translation type="unfinished"></translation>
+        <translation>后</translation>
     </message>
     <message>
         <source>disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>禁用</translation>
     </message>
     <message>
         <source>Local filesystem sort options</source>
-        <translation type="unfinished"></translation>
+        <translation>本地文件系统分类操作</translation>
     </message>
     <message>
         <source>Reverse order</source>
-        <translation type="unfinished"></translation>
+        <translation>颠倒顺序</translation>
     </message>
     <message>
         <source>Case-insensitive</source>
-        <translation type="unfinished"></translation>
+        <translation>不区分大小写</translation>
     </message>
 </context>
 <context>
@@ -661,26 +661,26 @@ Pull down to add a service.</source>
     <name>ToolBox</name>
     <message>
         <source>%1 selected</source>
-        <translation>已选取%1</translation>
+        <translation>已选取 %1</translation>
     </message>
     <message>
         <source>Copy %1 items</source>
-        <translation>复制%1项目</translation>
+        <translation>复制 %1 项目</translation>
     </message>
     <message>
         <source>Deleting %1 items</source>
-        <translation>正在删除%1项目</translation>
+        <translation>正在删除 %1 项目</translation>
     </message>
 </context>
 <context>
     <name>WebDavService</name>
     <message>
         <source>Access a WebDAV share.</source>
-        <translation>访问WebDAV分享。</translation>
+        <translation>访问 WebDAV 分享</translation>
     </message>
     <message>
         <source>Configure WebDAV</source>
-        <translation>配置WebDAV</translation>
+        <translation>配置 WebDAV </translation>
     </message>
     <message>
         <source>Name</source>
@@ -724,7 +724,7 @@ Pull down to add a service.</source>
     </message>
     <message>
         <source>Leave empty if the server requires no authorization.</source>
-        <translation>如果服务器不需要授权, 则留空。</translation>
+        <translation>如果服务器不需要授权, 则留空</translation>
     </message>
     <message>
         <source>Enter login name</source>
