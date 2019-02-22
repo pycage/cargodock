@@ -1,3 +1,6 @@
+* Sat Feb 23 2019 Vladimir Ulrich <admin@evl.su> - 0.2.8-4
+    [UPD] Chinese translation by @dashinfantry
+    [FIX] Due of messed xml syntax in zh_cn translation no translation files were included to package.
 * Fri Feb 22 2019 Vladimir Ulrich <admin@evl.su> - 0.2.8-3
     [NEW] German translation by @liquidsky
 * Thu Jan 10 2019 Vladimir Ulrich <admin@evl.su> - 0.2.8-2

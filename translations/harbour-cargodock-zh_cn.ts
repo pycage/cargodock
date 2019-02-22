@@ -12,7 +12,7 @@
         <translation>一个双窗格文件管理器</translation>
     </message>
     <message>
-        <source>Cargo Dock is open source software licensed under the terms of the GNU General Public License.</source>q
+        <source>Cargo Dock is open source software licensed under the terms of the GNU General Public License.</source>
         <translation>Cargo Dock是一个在 GNU General Public许可证之下的开源软件。</translation>
     </message>
     <message>
@@ -548,7 +548,7 @@ If not enabled, passwords are encrypted with a default passphrase.</source>
     <message>
         <source>This is unfinished ui from new-ui development branch.
 Restart application after changing.</source>
-        <translation这是一个来自UI开发部门的未完成的新UI，重启应用程序以生效</translation>
+        <translation>这是一个来自UI开发部门的未完成的新UI，重启应用程序以生效</translation>
     </message>
     <message>
         <source>Tools</source>
@@ -653,8 +653,8 @@ Pull down to add a service.</source>
 <context>
     <name>TelekomMedienCenter</name>
     <message>
-        <source>Access Deutsche Telekom? Mediencenter.</source>
-        <translation>访问 Deutsche Telekom? Mediencenter.</translation>
+        <source>Access Deutsche Telekom® Mediencenter.</source>
+        <translation>访问 Deutsche Telekom® Mediencenter.</translation>
     </message>
 </context>
 <context>
