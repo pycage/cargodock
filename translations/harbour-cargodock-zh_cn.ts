@@ -43,7 +43,7 @@
     <name>ClassicUi</name>
     <message>
         <source>Pull down for help</source>
-        <translation>下拉以求助</translation>
+        <translation>下拉以查找帮助</translation>
     </message>
     <message>
         <source>copying</source>
@@ -62,11 +62,11 @@
     <name>DropboxService</name>
     <message>
         <source>Login to a Dropbox account.</source>
-        <translation>登录到一个Dropbox账户。</translation>
+        <translation>登录一个Dropbox账户</translation>
     </message>
     <message>
         <source>Configure Dropbox</source>
-        <translation>配置Dropbox</translation>
+        <translation>配置 Dropbox</translation>
     </message>
     <message>
         <source>Enter name</source>
@@ -80,7 +80,7 @@
         <source>Enter the name under which you want to access your Dropbox folder in Cargo Dock.
 You may add several Dropbox services connected to different Dropbox accounts. The name will help you distinguish them.</source>
         <translation>输入要在 Cargo Dock 访问 Dropbox 文件夹的名称。
-你可以添加多个连接到不同 Dropbox 帐户的 Dropbox 服务。名称将帮助你区分它们。</translation>
+你可以添加多个连接到不同 Dropbox 帐户的 Dropbox 服务。名称将会帮助你区分它们。</translation>
     </message>
 </context>
 <context>
@@ -275,11 +275,11 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>Access a FTP server.</source>
-        <translation>访问一个FTP 服务器。</translation>
+        <translation>访问一个 FTP 服务器</translation>
     </message>
     <message>
         <source>Configure FTP</source>
-        <translation>构建FTP</translation>
+        <translation>配置 FTP</translation>
     </message>
     <message>
         <source>Name</source>
@@ -351,7 +351,7 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     <name>OwnCloudService</name>
     <message>
         <source>Access an ownCloud file server.</source>
-        <translation>访问一个 ownCloud 文件服务器。</translation>
+        <translation>访问一个 ownCloud 文件服务器</translation>
     </message>
     <message>
         <source>Configure ownCloud</source>
@@ -561,13 +561,13 @@ Restart application after changing.</source>
     <message>
         <source>No tools yet.
 Pull down to add a new tool.</source>
-        <translation>尚未有工具，
+        <translation>暂无工具，
 下拉以添加一个新工具。</translation>
     </message>
     <message>
         <source>No services yet.
 Pull down to add a service.</source>
-        <translation>尚未有服务器，
+        <translation>暂无服务器，
 下拉以添加服务器。</translation>
     </message>
     <message>
@@ -654,7 +654,8 @@ Pull down to add a service.</source>
     <name>TelekomMedienCenter</name>
     <message>
         <source>Access Deutsche Telekom® Mediencenter.</source>
-        <translation>访问 Deutsche Telekom® Mediencenter.</translation>
+        <translation>访问 Deutsche Telekom® Mediencenter 
+        </translation>
     </message>
 </context>
 <context>
