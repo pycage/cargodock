@@ -13,7 +13,7 @@
     </message>
     <message>
         <source>Cargo Dock is open source software licensed under the terms of the GNU General Public License.</source>
-        <translation>Cargo Dock是一个在 GNU General Public许可证之下的开源软件。</translation>
+        <translation>Cargo Dock是一个在 GNU General Public 许可证之下的开源软件。</translation>
     </message>
     <message>
         <source>View license</source>
@@ -62,7 +62,7 @@
     <name>DropboxService</name>
     <message>
         <source>Login to a Dropbox account.</source>
-        <translation>登录一个Dropbox账户</translation>
+        <translation>登录一个 Dropbox 账户</translation>
     </message>
     <message>
         <source>Configure Dropbox</source>
@@ -221,7 +221,7 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>New folder ...</source>
-        <translation>新文件夹 ...</translation>
+        <translation>新建文件夹 ...</translation>
     </message>
     <message>
         <source>About</source>
@@ -482,7 +482,7 @@ If you forget the passphrase, your stored passwords will become unusable.</sourc
     <name>PasswordField</name>
     <message>
         <source>Enter password</source>
-        <translation>I输入密码</translation>
+        <translation>输入密码</translation>
     </message>
     <message>
         <source>Password</source>
@@ -543,7 +543,7 @@ If not enabled, passwords are encrypted with a default passphrase.</source>
     </message>
     <message>
         <source>Enable alternative UI</source>
-        <translation>启用替代UI</translation>
+        <translation>启用替代UU</translation>
     </message>
     <message>
         <source>This is unfinished ui from new-ui development branch.
@@ -662,15 +662,15 @@ Pull down to add a service.</source>
     <name>ToolBox</name>
     <message>
         <source>%1 selected</source>
-        <translation>已选取 %1</translation>
+        <translation>%1 已选择</translation>
     </message>
     <message>
         <source>Copy %1 items</source>
-        <translation>复制 %1 项目</translation>
+        <translation>复制 %1 个项目</translation>
     </message>
     <message>
         <source>Deleting %1 items</source>
-        <translation>正在删除 %1 项目</translation>
+        <translation>正在删除 %1 个项目</translation>
     </message>
 </context>
 <context>
@@ -725,7 +725,7 @@ Pull down to add a service.</source>
     </message>
     <message>
         <source>Leave empty if the server requires no authorization.</source>
-        <translation>如果服务器不需要授权, 则留空</translation>
+        <translation>如果服务器不需要授权，则留空</translation>
     </message>
     <message>
         <source>Enter login name</source>
