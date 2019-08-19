@@ -1,3 +1,6 @@
+* Mon Aug 19 2019 Vladimir Ulrich <admin@evl.su> - 0.2.9-1
+    [FIX] Fixed unresponsive OAuth2 page.
+    [UPD] Chinese translation by @dashinfantry
 * Sat Feb 23 2019 Vladimir Ulrich <admin@evl.su> - 0.2.8-4
     [UPD] Chinese translation by @dashinfantry
     [FIX] Due of messed xml syntax in zh_cn translation no translation files were included to package.
