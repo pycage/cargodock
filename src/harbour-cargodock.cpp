@@ -20,12 +20,16 @@
 #include "placesmodel.h"
 
 #include "dropboxthumbprovider.h"
-
+#define VERSION MKQUOTE(CARGO_VER)
+#define MKQUOTE(in) MKQUOTE2(in)
+#define MKQUOTE2(in) MKQUOTE1(in)
+#define MKQUOTE1(in) #in
 namespace
 {
 const char* URI("harbour.cargodock");
 }
 bool DeveloperMode::inDebug=false;
+QString DeveloperMode::appVersion=VERSION;
 void silentOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     switch (type) {
@@ -60,7 +64,7 @@ int main(int argc, char *argv[])
         qInstallMessageHandler(&silentOutput);
     else
         DeveloperMode::inDebug=true;
-
+    app->setApplicationVersion(DeveloperMode::appVersion);
     QSharedPointer<QQuickView> view(SailfishApp::createView());
 
     Network::setAccessManager(view->engine()->networkAccessManager());

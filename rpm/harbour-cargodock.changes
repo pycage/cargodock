@@ -1,3 +1,6 @@
+* Fri Aug 23 2019 Vladimir Ulrich <admin@evl.su> - 0.2.10-1
+    [NEW] Unfinished French translation by @Quenty31
+    [UPD] No hardcoded version strings
 * Mon Aug 19 2019 Vladimir Ulrich <admin@evl.su> - 0.2.9-1
     [FIX] Fixed unresponsive OAuth2 page.
     [UPD] Chinese translation by @dashinfantry

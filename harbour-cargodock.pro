@@ -23,6 +23,8 @@ exists(../encryptionpassphrase.h) {
   DEFINES += HAVE_ENCRYPTION_PASSPHRASE
 }
 
+DEFINES+=CARGO_VER=$$system("grep \"^\\*\" */*.changes| awk 'NR==1{print $NF}'")
+
 SOURCES += src/harbour-cargodock.cpp \
     src/foldermodel.cpp \
     src/copyaction.cpp \

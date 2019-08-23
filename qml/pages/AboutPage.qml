@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-
+import harbour.cargodock 1.0
 Page {
 
     Column {
@@ -48,7 +48,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
-            text: qsTr("Version %1").arg("0.2.8")
+            text: qsTr("Version %1").arg(developerMode.version)
         }
 
         Label {
