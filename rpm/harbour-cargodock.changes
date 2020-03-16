@@ -1,3 +1,6 @@
+* Tue Mar 17 2020 Vladimir Ulrich <admin@evl.su> - 0.2.11-1
+    [FIX] Test fix for lost sd cards. Only automounted partitions will be seen.
+    [UPD] French translation automatic fixup by translation compiler.
 * Fri Aug 23 2019 Vladimir Ulrich <admin@evl.su> - 0.2.10-1
     [NEW] Unfinished French translation by @Quenty31
     [UPD] No hardcoded version strings

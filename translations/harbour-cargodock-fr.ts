@@ -43,7 +43,7 @@
     <name>ClassicUi</name>
     <message>
         <source>Pull down for help</source>
-        <translation>Tirer vers le bas pour l'aide</translation>
+        <translation>Tirer vers le bas pour l&apos;aide</translation>
     </message>
     <message>
         <source>copying</source>
@@ -165,7 +165,7 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>You have no permission for this folder</source>
-        <translation>Vous n'avez pas l'autorisation pour ce dossier</translation>
+        <translation>Vous n&apos;avez pas l&apos;autorisation pour ce dossier</translation>
     </message>
     <message>
         <source>No files</source>
@@ -240,7 +240,7 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>You have no permission for this folder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous n&apos;avez pas l&apos;autorisation pour ce dossier</translation>
     </message>
     <message>
         <source>No files</source>
@@ -294,11 +294,11 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>Enter server address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrez l&apos;adresse du serveur</translation>
     </message>
     <message>
         <source>Authorization</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Autorisation</translation>
     </message>
     <message>
         <source>Leave empty if the server requires no authorization. Please keep in mind that FTP is an insecure protocol and transfers all data, including your login and password in plain text.</source>
@@ -306,19 +306,19 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>Enter login name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrez l&apos;identifiant</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Identifiant</translation>
     </message>
     <message>
         <source>Enter password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrez le mot de passe</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mot de passe</translation>
     </message>
 </context>
 <context>
@@ -362,23 +362,23 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>Enter name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrez un nom</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Serveur</translation>
     </message>
     <message>
         <source>Enter server address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrez l&apos;adresse du serveur</translation>
     </message>
     <message>
         <source>Enter path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrez le chemin</translation>
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chemin</translation>
     </message>
     <message>
         <source>Usually the default path is fine. Edit only if the path of your ownCloud installation differs.</source>
@@ -386,11 +386,11 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>Secure connection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Connexion sécurisée</translation>
     </message>
     <message>
         <source>Not in use</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Non utilisé</translation>
     </message>
     <message>
         <source>SSL</source>
@@ -398,23 +398,23 @@ You may add several Dropbox services connected to different Dropbox accounts. Th
     </message>
     <message>
         <source>Authorization</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Autorisation</translation>
     </message>
     <message>
         <source>Enter login name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrez l&apos;identifiant</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Identifiant</translation>
     </message>
     <message>
         <source>Enter password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrez le mot de passe</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mot de passe</translation>
     </message>
 </context>
 <context>
@@ -495,7 +495,7 @@ If you forget the passphrase, your stored passwords will become unusable.</sourc
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nom</translation>
     </message>
 </context>
 <context>
@@ -506,7 +506,7 @@ If you forget the passphrase, your stored passwords will become unusable.</sourc
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Paramètres</translation>
     </message>
     <message>
         <source>Security</source>
@@ -567,11 +567,11 @@ Pull down to add a service.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nom</translation>
     </message>
     <message>
         <source>Enter name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrez un nom</translation>
     </message>
     <message>
         <source>Command line</source>
@@ -627,7 +627,7 @@ Pull down to add a service.</source>
     </message>
     <message>
         <source>Reverse order</source>
-        <translation>Inverser l'ordre</translation>
+        <translation>Inverser l&apos;ordre</translation>
     </message>
     <message>
         <source>Case-insensitive</source>
@@ -691,7 +691,7 @@ Pull down to add a service.</source>
     </message>
     <message>
         <source>Enter server address</source>
-        <translation>Entrez l'adresse du serveur</translation>
+        <translation>Entrez l&apos;adresse du serveur</translation>
     </message>
     <message>
         <source>Enter path</source>
@@ -719,11 +719,11 @@ Pull down to add a service.</source>
     </message>
     <message>
         <source>Leave empty if the server requires no authorization.</source>
-        <translation>Laisser vide si le serveur ne requiert pas d'autorisation</translation>
+        <translation>Laisser vide si le serveur ne requiert pas d&apos;autorisation</translation>
     </message>
     <message>
         <source>Enter login name</source>
-        <translation>Entrez l'identifiant</translation>
+        <translation>Entrez l&apos;identifiant</translation>
     </message>
     <message>
         <source>Login</source>

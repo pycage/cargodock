@@ -14,7 +14,7 @@
 namespace
 {
 const QString LEGACY_SD_CARD("/run/user/100000/media/sdcard");
-const QString SD_CARD_BASE("/media/sdcard");
+const QString SD_CARD_BASE("/run/media/nemo");
 const QString LEGACY_ANDROID_STORAGE("/data/sdcard");
 const QString ANDROID_STORAGE(QDir::homePath() + "/android_storage");
 
@@ -25,34 +25,26 @@ QString makeUid()
 
 QString sdPath()
 {
-    if (QDir(LEGACY_SD_CARD).exists())
-    {
-        return LEGACY_SD_CARD;
-    }
-
     QStringList partitions;
     QDir baseDir(SD_CARD_BASE);
     foreach (const QString& partition,
              baseDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
-        if (QFile(QString("/dev/disk/by-uuid/%1").arg(partition)).exists())
-        {
             partitions << partition;
-        }
     }
 
     qDebug() << "PARTITIONS" << partitions;
-    if (partitions.size() == 1)
+    if (partitions.size() )
     {
-        return SD_CARD_BASE + "/" + partitions.at(0);
-    }
-    else if (partitions.empty())
-    {
-        return QString();
+        return SD_CARD_BASE;
     }
     else
     {
-        return SD_CARD_BASE;
+        if (QDir(LEGACY_SD_CARD).exists())
+        {
+            return LEGACY_SD_CARD;
+        }
+        return QString();
     }
 
 }
@@ -117,9 +109,11 @@ void PlacesModel::init()
     setConfigValue("storage1", "type", "local");
     setConfigValue("storage1", "name", "Android Storage");
     setConfigValue("storage1", "icon", "image://theme/icon-m-folder");
-    setConfigValue("storage1", "path", QDir(ANDROID_STORAGE).exists()
-                                       ? ANDROID_STORAGE
-                                       : LEGACY_ANDROID_STORAGE);
+    setConfigValue("storage1", "path",
+                   QDir(ANDROID_STORAGE).exists()?
+                       ANDROID_STORAGE:
+                       QDir(LEGACY_ANDROID_STORAGE).exists()?
+                           LEGACY_ANDROID_STORAGE:QString());
 
     setConfigValue("developer-services", QStringList() << "developer0");
 
